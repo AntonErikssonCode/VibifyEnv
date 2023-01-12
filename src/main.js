@@ -1,8 +1,3 @@
-/* import {
-  AnalysisResults,
-  toggleUploadDisplayHTML,
-  PlaybackControls,
-} from "./viz.js"; */
 import { preprocess, shortenAudio } from "./audioUtils.js";
 import { fetchLabeledData, fetchBpmAndKey } from "./updateState.js";
 const loudnessHTML = document.querySelector("#loudnessTag");
@@ -63,24 +58,17 @@ function initMeyda(file) {
       bufferSize: 512,
       featureExtractors: ["energy"],
       callback: (features) => {
-
         if (features.energy > 15) {
           console.dir("beat");
           beatContainer.style.background = "red";
-          if(beatUsed == false){
+          if (beatUsed == false) {
             audioFeatures["beatSwitch"] = !audioFeatures["beatSwitch"];
             beatUsed = true;
           }
-          
-          
-         
-          
-        } 
-        else {
+        } else {
           beatContainer.style.background = "blue";
           console.dir("not beat");
           beatUsed = false;
-          
         }
       },
     });
@@ -127,7 +115,7 @@ function initMeyda(file) {
           Math.max(...audioFeatures["chroma"])
         );
         chromaHTML.innerHTML = "Chroma: " + keys[result];
-        /*  console.dir(audioFeatures) */
+       
       },
     });
     analyzer.start();
@@ -148,18 +136,8 @@ const modelNames = [
   "danceability",
 ];
 let inferenceResultPromises = [];
-
-/* const resultsViz = new AnalysisResults(modelNames);
- */ let wavesurfer;
+let wavesurfer;
 let controls;
-
-/* const dropInput = document.createElement("input");
-dropInput.setAttribute("type", "file");
-
-dropInput.addEventListener("change", () => {
-  processFileUpload(dropInput.files);
- 
-}); */
 
 let uploadedFile;
 dropArea.addEventListener("dragover", (e) => {
@@ -194,8 +172,6 @@ function decodeFile(arrayBuffer) {
       .then(async function handleDecodedAudio(audioBuffer) {
         console.info("Done decoding audio!");
 
-        /*         toggleLoader();
-         */
         const prepocessedAudio = preprocess(audioBuffer);
         await audioCtx.suspend();
 
@@ -208,10 +184,8 @@ function decodeFile(arrayBuffer) {
           fetchBpmAndKey();
         }
 
-        // reduce amount of audio to analyse
-        let audioData = shortenAudio(prepocessedAudio, KEEP_PERCENTAGE, true); // <-- TRIMMED start/end
+        let audioData = shortenAudio(prepocessedAudio, KEEP_PERCENTAGE, true);
 
-        // send for feature extraction
         createFeatureExtractionWorker();
 
         featureExtractionWorker.postMessage(
@@ -254,9 +228,6 @@ function computeKeyBPM(audioSignal) {
     50,
     16000
   ).bpm;
-
-  // const bpm = essentia.RhythmExtractor(vectorSignal, 1024, 1024, 256, 0.1, 208, 40, 1024, 16000, [], 0.24, true, true).bpm;
-  // const bpm = essentia.RhythmExtractor2013(vectorSignal, 208, 'multifeature', 40).bpm;
 
   return {
     keyData: keyData,
@@ -312,14 +283,6 @@ function collectPredictions() {
     Promise.all(inferenceResultPromises).then((predictions) => {
       const allPredictions = {};
       Object.assign(allPredictions, ...predictions);
-      console.dir(allPredictions);
-      /* 
-      resultsViz.updateMeters(allPredictions);
-      resultsViz.updateValueBoxes(essentiaAnalysis);
-  */
-      /*  controls.toggleEnabled(true); */
-
-      console.dir(essentiaAnalysis);
       audioFeatures["predictions"] = allPredictions;
       inferenceResultPromises = []; // clear array
       initMeyda(uploadedFile);

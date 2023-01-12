@@ -20,8 +20,6 @@ function fetchBpmAndKey() {
   key.innerHTML +=  " " + audioFeatures["key"];
   scale.innerHTML +=  " " + audioFeatures["scale"];
   bpm.innerHTML += " " + audioFeatures["bpm"];
-
-
 }
 
 
