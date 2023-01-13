@@ -1,5 +1,6 @@
 import { preprocess, shortenAudio } from "./audioUtils.js";
 import { fetchLabeledData, fetchBpmAndKey } from "./updateState.js";
+import { addSmallCube } from "../geometry.js";
 const loudnessHTML = document.querySelector("#loudnessTag");
 const chromaHTML = document.querySelector("#chromaTag");
 const rmsHTML = document.querySelector("#rmsTag");
@@ -64,6 +65,10 @@ function initMeyda(file) {
           if (beatUsed == false) {
             audioFeatures["beatSwitch"] = !audioFeatures["beatSwitch"];
             beatUsed = true;
+            arrayOfSmallObject.push(addSmallCube(scene));
+            
+            console.dir(arrayOfSmallObject);
+            
           }
         } else {
           beatContainer.style.background = "blue";

@@ -4,7 +4,7 @@
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <title>VibifyEnv</title>
-   
+
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="stylesheet" href="style.css" />
 
@@ -29,13 +29,14 @@
         scale: 0,
         beatSwitch: false,
       };
+      let scene;
+      let arrayOfSmallObject = [];
     </script>
   </head>
   <body>
     <main id="main">
       <div class="audio-container">
         <div id="file-select-area">
-     
           <div id="file-drop-area">
             <span>Drop file here or click to upload</span>
           </div>
@@ -68,7 +69,6 @@
         </div>
       </div>
       <div id="beatContainer">BEAT</div>
-
     </main>
 
     <script src="https://cdn.jsdelivr.net/npm/essentia.js@0.1.0/dist/essentia-wasm.web.js"></script>
@@ -78,14 +78,13 @@
       type="text/javascript"
       src="https://unpkg.com/meyda@5.5.1/dist/web/meyda.min.js"
     ></script>
-  
-    <script src="src/main.js" type="module" async defer></script>
     <canvas id="myCanvasId"></canvas>
 
     <script type="module">
       import * as THREE from "./modules/three.module.js";
       import { OrbitControls } from "./modules/OrbitControls.js";
-      const scene = new THREE.Scene();
+      import { addSmallCube } from "./geometry.js";
+      scene = new THREE.Scene();
       const camera = new THREE.PerspectiveCamera(
         75,
         window.innerWidth / window.innerHeight,
@@ -95,17 +94,23 @@
 
       const renderer = new THREE.WebGLRenderer({
         /* alpha: true, */
+        antialias: true,
 
         canvas: myCanvasId,
       });
       renderer.setClearColor(0x323232);
       renderer.setSize(window.innerWidth, window.innerHeight * 0.6);
-    
-      const light = new THREE.AmbientLight(0xffffff, 0.3); 
+      renderer.shadowMap.enabled = true;
+      renderer.shadowMap.type = THREE.PCFSoftShadowMap; // default THREE.PCFShadowMap
+
+      const light = new THREE.AmbientLight(0xffffff, 0.3);
+
       scene.add(light);
 
       const pointLight = new THREE.PointLight(0x0a3e9a, 5, 1000);
       pointLight.position.set(-5, -5, 0);
+      pointLight.castShadow = true;
+
       scene.add(pointLight);
 
       const sphereSize = 1;
@@ -114,8 +119,10 @@
         sphereSize
       );
 
-      const pointLight2 = new THREE.PointLight(0xf31a21, 5, 1000);
+      const pointLight2 = new THREE.PointLight(0xff0012, 5, 1000);
       pointLight2.position.set(5, 5, 0);
+      pointLight2.castShadow = true;
+
       scene.add(pointLight2);
 
       const pointLightHelper2 = new THREE.PointLightHelper(
@@ -125,31 +132,61 @@
 
       const pointLight3 = new THREE.PointLight(0xffffff, 0.2, 1000);
       pointLight3.position.set(0, 0, 10);
+      pointLight3.castShadow = true;
       scene.add(pointLight3);
 
       const pointLightHelper3 = new THREE.PointLightHelper(pointLight3, 2);
 
-      scene.add(pointLightHelper);
+      /*  scene.add(pointLightHelper);
       scene.add(pointLightHelper2);
       scene.add(pointLightHelper3);
+ */
+      function removeEntity(object) {
+        var selectedObject = scene.getObjectByName(object.name);
+        scene.remove(selectedObject);
+      }
 
       const geometry = new THREE.BoxGeometry(1, 1, 1);
 
       const material = new THREE.MeshLambertMaterial({ color: 0xffffff });
       const cube = new THREE.Mesh(geometry, material);
-
-      cube.rotation.x = 0.7;
-      cube.rotation.y = 0.7;
+      cube.castShadow = true;
+      cube.rotation.x = 0.8;
+      cube.rotation.y = 0.8;
       scene.add(cube);
       camera.position.z = 5;
+
       const control = new OrbitControls(camera, renderer.domElement);
+      /*      const helper = new THREE.CameraHelper( pointLight2.shadow.camera );
+scene.add( helper ); */
+      var geo = new THREE.PlaneBufferGeometry(10, 10, 8, 8);
+      var mat = new THREE.MeshStandardMaterial({
+        color: 0x00ff,
+        side: THREE.DoubleSide,
+      });
+
+      var plane = new THREE.Mesh(geo, mat);
+      plane.rotation.x = 3.1415 / 2;
+      plane.position.y = -3;
+      scene.add(plane);
+      plane.receiveShadow = true;
       function animate() {
         requestAnimationFrame(animate);
         control.update();
         console.dir(audioFeatures);
-
+        arrayOfSmallObject.forEach((object) => {
+          console.dir(object);
+          console.dir(object.position.y);
+          object.position.y -= 0.03;
+          object.scale.x = (audioFeatures["loudness"] / 200) * 3;
+          object.scale.y = (audioFeatures["loudness"] / 200) * 3;
+          object.scale.z = (audioFeatures["loudness"] / 200) * 3;
+          if (object.position.y < -3) {
+            scene.remove(object);
+          }
+        });
         if (audioFeatures.beatSwitch) {
-          cube.rotation.x += audioFeatures.rms /5;
+          cube.rotation.x += audioFeatures.rms / 5;
           cube.rotation.y += audioFeatures.energy / 160;
         } else {
           cube.rotation.x -= audioFeatures.rms / 5;
@@ -164,5 +201,6 @@
 
       animate();
     </script>
+    <script src="src/main.js" type="module" async defer></script>
   </body>
 </html>
