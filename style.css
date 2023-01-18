@@ -1,107 +1,96 @@
-
-body{
-    background-color: #d5d5d5;
-    height: auto;
-    font-family: Arial, Helvetica, sans-serif;
-    overflow: hidden;
-    margin: 0;
+body {
+  background-color: #d5d5d5;
+  height: auto;
+  font-family: Arial, Helvetica, sans-serif;
+  overflow: hidden;
+  margin: 0;
 }
 
 #main {
-    display: flex;
-   
+  display: flex;
 
-    flex-direction: row;
-    
-    
-    height: 100vh;
-    
+  flex-direction: row;
+
+  height: 100vh;
 }
-h3{
-    font-size: 1rem;
+h3 {
+  font-size: 1rem;
 }
-#beatContainer{
-    color: #ffffff;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    position: absolute;
-    top: 39%;
-    right: 1%;
-    height: 5rem;
-    width: 5rem;
-    background: black;
+#beatContainer {
+  color: #ffffff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  top: 39%;
+  right: 1%;
+  height: 5rem;
+  width: 5rem;
+  background: black;
 }
-.audio-container{
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    gap: 1rem;
-    width: 30%;
+.audio-container {
+  display: flex;
+  flex-direction: column;
+  
+  align-items: center;
+  gap: 1rem;
+  width: 30%;
 }
-h2{
-    font-size: 1.2rem;
-    margin-top: 0rem;
+h2 {
+  font-size: 1.2rem;
+  margin-top: 0rem;
 }
 
 /* FILE UPLOAD AREA */
 
-.features{
-    display: flex;
-    width: 100%;
-    justify-content: flex-start;
-    flex-direction: column;
- 
-  
+.features {
+  display: flex;
+  width: 100%;
+  justify-content: flex-start;
+  flex-direction: column;
+  overflow-y:scroll;
 }
 
-.features-div{
-    margin: 1rem;
-    
+.features-div {
+  margin: 0.2rem 1rem;
 }
-
 
 #file-select-area {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: space-evenly;
-   
-    width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-evenly;
 
-
+  width: 100%;
 }
 
 #file-drop-area {
-    border: 3px dashed #BFBFBF;
- 
-    width: 100%;
-    
-    background-color: #f7f7f7;
-  
+  border: 3px dashed #bfbfbf;
 
-    text-align: center;
-    line-height: 20vh;
-    color: #AFAFAF;
+  width: 100%;
+
+  background-color: #f7f7f7;
+
+  text-align: center;
+  line-height: 10vh;
+  color: #afafaf;
 }
 
 #file-drop-area:hover {
-    cursor: pointer;
-    color: #7f7f7f;
-    border-color: #7f7f7f;
+  cursor: pointer;
+  color: #7f7f7f;
+  border-color: #7f7f7f;
 }
 
 #file-drop-area > span {
-    display: inline-block;
-    vertical-align: center;
-    line-height: normal;
+  display: inline-block;
+  vertical-align: center;
+  line-height: normal;
 }
 
-
-canvas{
-    display: block;
-    width: 60%  ;
-    height: 100%;
-    background-color: #757575;
+canvas {
+  display: block;
+  width: 60%;
+  height: 100%;
+  background-color: #757575;
 }
