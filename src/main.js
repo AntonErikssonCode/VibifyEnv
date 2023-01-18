@@ -19,8 +19,8 @@ const aggressive = document.querySelector("#aggressiveTag");
 const dance = document.querySelector("#danceTag");
 
 const beatContainer = document.querySelector("#beatContainer");
-console.dir(beatContainer);
-
+/* console.dir(beatContainer);
+ */
 const keys = ["C", "C♯", "D", "D♯", "E", "F", "F♯", "G", "G♯", "A", "A♯", "B"];
 function initMeyda(file) {
   const meydaContext = new AudioContext();
@@ -56,12 +56,13 @@ function initMeyda(file) {
     const lowPassAnalyzer = Meyda.createMeydaAnalyzer({
       audioContext: meydaContext,
       source: filter,
-      bufferSize: 512,
+      bufferSize: 256,
       featureExtractors: ["energy"],
       callback: (features) => {
         if (features.energy > 15) {
-          console.dir("beat");
-          beatContainer.style.background = "red";
+       
+/*           console.dir("beat");
+ */          beatContainer.style.background = "red";
           if (beatUsed == false) {
             audioFeatures["beatSwitch"] = !audioFeatures["beatSwitch"];
             beatUsed = true;
@@ -72,8 +73,8 @@ function initMeyda(file) {
           }
         } else {
           beatContainer.style.background = "blue";
-          console.dir("not beat");
-          beatUsed = false;
+/*           console.dir("not beat");
+ */          beatUsed = false;
         }
       },
     });
@@ -82,7 +83,7 @@ function initMeyda(file) {
     const analyzer = Meyda.createMeydaAnalyzer({
       audioContext: meydaContext,
       source: source,
-      bufferSize: 512,
+      bufferSize: 256,
       featureExtractors: [
         "rms",
         "zcr",
@@ -120,6 +121,7 @@ function initMeyda(file) {
           Math.max(...audioFeatures["chroma"])
         );
         chromaHTML.innerHTML = "Chroma: " + keys[result];
+        console.dir(features)
        
       },
     });
@@ -152,6 +154,7 @@ dropArea.addEventListener("drop", (e) => {
   e.preventDefault();
   const files = e.dataTransfer.files;
   uploadedFile = e.dataTransfer.files[0];
+ 
 
   processFileUpload(files);
 });
@@ -182,8 +185,8 @@ function decodeFile(arrayBuffer) {
 
         if (essentia) {
           essentiaAnalysis = computeKeyBPM(prepocessedAudio);
-          console.dir(essentiaAnalysis);
-          audioFeatures["bpm"] = essentiaAnalysis.bpm;
+/*           console.dir(essentiaAnalysis);
+ */          audioFeatures["bpm"] = essentiaAnalysis.bpm;
           audioFeatures["key"] = essentiaAnalysis.keyData.key;
           audioFeatures["scale"] = essentiaAnalysis.keyData.scale;
           fetchBpmAndKey();
@@ -290,8 +293,8 @@ function collectPredictions() {
       Object.assign(allPredictions, ...predictions);
       audioFeatures["predictions"] = allPredictions;
       inferenceResultPromises = []; // clear array
-      initMeyda(uploadedFile);
       fetchLabeledData();
+      initMeyda(uploadedFile);
     });
   }
 }
