@@ -24,7 +24,7 @@
         loudness: 1,
         energy: 0,
         spectralCentroid: 0,
-        chroma: 0,
+        chroma: [],
         bpm: 0,
         scale: 0,
         beatSwitch: false,
@@ -68,7 +68,6 @@
         </div>
       </div>
 
-      
       <div id="beatContainer">BEAT</div>
       <canvas id="myCanvasId"></canvas>
     </main>
@@ -80,12 +79,14 @@
       type="text/javascript"
       src="https://unpkg.com/meyda@5.5.1/dist/web/meyda.min.js"
     ></script>
-   
 
     <script type="module">
       import * as THREE from "./modules/three.module.js";
       import { OrbitControls } from "./modules/OrbitControls.js";
       import { addSmallCube } from "./geometry.js";
+
+      
+
       scene = new THREE.Scene();
       const camera = new THREE.PerspectiveCamera(
         75,
@@ -96,8 +97,8 @@
 
       const renderer = new THREE.WebGLRenderer({
         /* alpha: true, */
-        antialias: true,
-
+        /* antialias: true,
+         */
         canvas: myCanvasId,
       });
       renderer.setClearColor(0x323232);
@@ -105,12 +106,12 @@
       renderer.shadowMap.enabled = true;
       renderer.shadowMap.type = THREE.PCFSoftShadowMap; // default THREE.PCFShadowMap
 
-      const light = new THREE.AmbientLight(0xffffff, 0.3);
+      const light = new THREE.AmbientLight(0xffffff, 0.05);
 
       scene.add(light);
 
-      const pointLight = new THREE.PointLight(0x0a3e9a, 5, 1000);
-      pointLight.position.set(-5, -5, 0);
+      const pointLight = new THREE.PointLight(0xff00ff, 2, 17);
+      pointLight.position.set(-5, 5, 5);
       pointLight.castShadow = true;
 
       scene.add(pointLight);
@@ -121,8 +122,8 @@
         sphereSize
       );
 
-      const pointLight2 = new THREE.PointLight(0xff0012, 5, 1000);
-      pointLight2.position.set(5, 5, 0);
+      const pointLight2 = new THREE.PointLight(0x00ffff, 2, 17);
+      pointLight2.position.set(5, 5, 5);
       pointLight2.castShadow = true;
 
       scene.add(pointLight2);
@@ -135,14 +136,14 @@
       const pointLight3 = new THREE.PointLight(0xffffff, 0.2, 1000);
       pointLight3.position.set(0, 0, 10);
       pointLight3.castShadow = true;
-      scene.add(pointLight3);
+      /*   scene.add(pointLight3); */
 
       const pointLightHelper3 = new THREE.PointLightHelper(pointLight3, 2);
 
-      /*  scene.add(pointLightHelper);
+      scene.add(pointLightHelper);
       scene.add(pointLightHelper2);
       scene.add(pointLightHelper3);
- */
+
       function removeEntity(object) {
         var selectedObject = scene.getObjectByName(object.name);
         scene.remove(selectedObject);
@@ -163,7 +164,7 @@
 scene.add( helper ); */
       var geo = new THREE.PlaneBufferGeometry(10, 10, 8, 8);
       var mat = new THREE.MeshStandardMaterial({
-        color: 0x00ff,
+        color: 0xffffff,
         side: THREE.DoubleSide,
       });
 
@@ -173,14 +174,35 @@ scene.add( helper ); */
       scene.add(plane);
       plane.receiveShadow = true;
 
-
-
-
+      let chromaArrayBalls = [];
+      function chromaBallsSpawn() {
+        for (let index = 0; index < 12; index++) {
+          const sphereGeometr = new THREE.SphereGeometry(0.3, 15, 15);
+          const sphere = new THREE.Mesh(sphereGeometr, material);
+          sphere.position.x = -6 + index;
+          sphere.position.y = 3;
+          sphere.position.z = -5;
+          scene.add(sphere);
+          chromaArrayBalls.push(sphere);
+        }
+      }
+      chromaBallsSpawn();
 
       function animate() {
         requestAnimationFrame(animate);
+
         control.update();
-        arrayOfSmallObject.forEach((object) => {
+        if (audioFeatures.chroma.length > 0) {
+          chromaArrayBalls.forEach((ball, index) => {
+            ball.position.y = audioFeatures.chroma[index] + 3;
+
+            ball.scale.x = audioFeatures.chroma[index];
+            ball.scale.y = audioFeatures.chroma[index];
+            ball.scale.z = audioFeatures.chroma[index];
+          });
+        }
+
+        /*  arrayOfSmallObject.forEach((object) => {
        
           object.position.y -= 0.03;
           object.scale.x = (audioFeatures["loudness"] / 200) * 3;
@@ -189,7 +211,7 @@ scene.add( helper ); */
           if (object.position.y < -3) {
             scene.remove(object);
           }
-        });
+        }); */
         if (audioFeatures.beatSwitch) {
           cube.rotation.x += audioFeatures.rms / 5;
           cube.rotation.y += audioFeatures.energy / 160;
@@ -202,6 +224,7 @@ scene.add( helper ); */
         cube.scale.y = 1 + (audioFeatures["loudness"] / 100) * 3;
         cube.scale.z = 1 + (audioFeatures["loudness"] / 100) * 3;
         renderer.render(scene, camera);
+        
       }
 
       animate();

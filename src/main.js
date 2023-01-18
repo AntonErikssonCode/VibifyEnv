@@ -66,7 +66,7 @@ function initMeyda(file) {
           if (beatUsed == false) {
             audioFeatures["beatSwitch"] = !audioFeatures["beatSwitch"];
             beatUsed = true;
-            arrayOfSmallObject.push(addSmallCube(scene));
+           /*  arrayOfSmallObject.push(addSmallCube(scene)); */
             
             console.dir(arrayOfSmallObject);
             
@@ -156,7 +156,9 @@ dropArea.addEventListener("drop", (e) => {
   uploadedFile = e.dataTransfer.files[0];
  
 
-  processFileUpload(files);
+/* processFileUpload(files); */
+  initMeyda(uploadedFile);
+
 });
 dropArea.addEventListener("click", () => {
   dropInput.click();
@@ -294,7 +296,6 @@ function collectPredictions() {
       audioFeatures["predictions"] = allPredictions;
       inferenceResultPromises = []; // clear array
       fetchLabeledData();
-      initMeyda(uploadedFile);
     });
   }
 }
