@@ -44,7 +44,7 @@
         <audio id="audioTag" controls autoplay>aa</audio>
         <div class="features">
           <div class="features-div">
-            <h2>Affect Estimation <br />(Essentia)</h2>
+            <h2>Affect Estimation (Essentia)</h2>
             <h3 id="sadTag">Sad:<br /></h3>
             <h3 id="relaxTag">Relax:<br /></h3>
             <h3 id="happyTag">Happy:<br /></h3>
@@ -52,13 +52,13 @@
             <h3 id="danceTag">Dance:<br /></h3>
           </div>
           <div class="features-div">
-            <h2>Lables <br />(Essentia)</h2>
+            <h2>Lables (Essentia)</h2>
             <h3 id="bpmTag">Bpm:<br /></h3>
             <h3 id="keyTag">Key:<br /></h3>
             <h3 id="scaleTag">Scale:<br /></h3>
           </div>
           <div class="features-div">
-            <h2>Real Time Extraction <br />(Meyda)</h2>
+            <h2>Real Time Extraction (Meyda)</h2>
             <h3 id="loudnessTag">Loudness:<br /></h3>
             <h3 id="energyTag">Energy:<br /></h3>
             <h3 id="rmsTag">RMS:<br /></h3>
@@ -69,6 +69,10 @@
       </div>
 
       <div id="beatContainer">BEAT</div>
+      <div  id="emotionModel-container">
+      <div id="emotionModel-marker" ></div>
+      <img id="emotionModel" src="./assets/emotion_model.png"/>
+    </div>
       <canvas id="myCanvasId"></canvas>
     </main>
 
@@ -89,20 +93,22 @@
 
       scene = new THREE.Scene();
       const camera = new THREE.PerspectiveCamera(
-        75,
-        window.innerWidth / window.innerHeight,
+        90,
+        window.innerWidth /* *0.7 */ / window.innerHeight,
         0.1,
         1000
       );
+     /*  const camera = new THREE.OrthographicCamera(window.innerWidth / - 2, window.innerWidth / 2,  window.innerHeight / 2,  window.innerHeight / - 2, 1, 1000
+      ); */
 
       const renderer = new THREE.WebGLRenderer({
         /* alpha: true, */
-        /* antialias: true,
-         */
+        antialias: true,
+        
         canvas: myCanvasId,
       });
       renderer.setClearColor(0x323232);
-      renderer.setSize(window.innerWidth * 0.7, window.innerHeight);
+      renderer.setSize(window.innerWidth/*  *0.7 */, window.innerHeight);
       renderer.shadowMap.enabled = true;
       renderer.shadowMap.type = THREE.PCFSoftShadowMap; // default THREE.PCFShadowMap
 
@@ -140,10 +146,10 @@
 
       const pointLightHelper3 = new THREE.PointLightHelper(pointLight3, 2);
 
-      scene.add(pointLightHelper);
+      /* scene.add(pointLightHelper);
       scene.add(pointLightHelper2);
       scene.add(pointLightHelper3);
-
+ */
       function removeEntity(object) {
         var selectedObject = scene.getObjectByName(object.name);
         scene.remove(selectedObject);
@@ -152,12 +158,13 @@
       const geometry = new THREE.BoxGeometry(1, 1, 1);
 
       const material = new THREE.MeshLambertMaterial({ color: 0xffffff });
+      const materialShiny = new THREE.MeshStandardMaterial({color: 0xffffff, roughness:0.0, metalness: 0.2});
       const cube = new THREE.Mesh(geometry, material);
       cube.castShadow = true;
       cube.rotation.x = 0.8;
       cube.rotation.y = 0.8;
-      scene.add(cube);
-      camera.position.z = 5;
+/*       scene.add(cube);
+ */      camera.position.z = 5;
 
       const control = new OrbitControls(camera, renderer.domElement);
       /*      const helper = new THREE.CameraHelper( pointLight2.shadow.camera );
@@ -174,6 +181,12 @@ scene.add( helper ); */
       scene.add(plane);
       plane.receiveShadow = true;
 
+      var docaGeo = new THREE.DodecahedronGeometry(1, 0);
+      var doca = new THREE.Mesh(docaGeo, materialShiny);
+
+      scene.add(doca)
+      
+
       let chromaArrayBalls = [];
       function chromaBallsSpawn() {
         for (let index = 0; index < 12; index++) {
@@ -188,6 +201,10 @@ scene.add( helper ); */
       }
       chromaBallsSpawn();
 
+
+
+
+      // ANIMATE
       function animate() {
         requestAnimationFrame(animate);
 
@@ -213,16 +230,19 @@ scene.add( helper ); */
           }
         }); */
         if (audioFeatures.beatSwitch) {
-          cube.rotation.x += audioFeatures.rms / 5;
-          cube.rotation.y += audioFeatures.energy / 160;
+          doca.rotation.x += audioFeatures.rms / 5;
+          doca.rotation.y += audioFeatures.energy / 160;
         } else {
-          cube.rotation.x -= audioFeatures.rms / 5;
-          cube.rotation.y -= audioFeatures.energy / 160;
+          doca.rotation.x -= audioFeatures.rms / 5;
+          doca.rotation.y -= audioFeatures.energy / 160;
         }
 
-        cube.scale.x = 1 + (audioFeatures["loudness"] / 100) * 3;
-        cube.scale.y = 1 + (audioFeatures["loudness"] / 100) * 3;
-        cube.scale.z = 1 + (audioFeatures["loudness"] / 100) * 3;
+        doca.scale.x = 1 + (audioFeatures["loudness"] / 100) * 3;
+        doca.scale.y = 1 + (audioFeatures["loudness"] / 100) * 3;
+        doca.scale.z = 1 + (audioFeatures["loudness"] / 100) * 3;
+       
+       
+       
         renderer.render(scene, camera);
         
       }

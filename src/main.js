@@ -1,5 +1,5 @@
 import { preprocess, shortenAudio } from "./audioUtils.js";
-import { fetchLabeledData, fetchBpmAndKey } from "./updateState.js";
+import { fetchLabeledData, fetchBpmAndKey, emotionalModelUpdate } from "./updateState.js";
 import { addSmallCube } from "../geometry.js";
 const loudnessHTML = document.querySelector("#loudnessTag");
 const chromaHTML = document.querySelector("#chromaTag");
@@ -19,8 +19,7 @@ const aggressive = document.querySelector("#aggressiveTag");
 const dance = document.querySelector("#danceTag");
 
 const beatContainer = document.querySelector("#beatContainer");
-/* console.dir(beatContainer);
- */
+
 const keys = ["C", "C♯", "D", "D♯", "E", "F", "F♯", "G", "G♯", "A", "A♯", "B"];
 function initMeyda(file) {
   const meydaContext = new AudioContext();
@@ -111,12 +110,13 @@ function initMeyda(file) {
         audioFeatures["chroma"] = features.chroma;
         audioFeatures["rms"] = features.rms;
         audioFeatures["spectralCentroid"] = features.spectralCentroid;
+        audioFeatures["complexSpectrum"] = features.complexSpectrum;
 
-        loudnessHTML.innerHTML = "Loudness: " + audioFeatures["loudness"];
+        loudnessHTML.innerHTML = "Loudness: " + audioFeatures["loudness"].toFixed(2);
         spectralCentroidHTML.innerHTML =
-          "Spectral Centroid: " + audioFeatures["spectralCentroid"];
-        energyHTML.innerHTML = "Energy: " + audioFeatures["energy"];
-        rmsHTML.innerHTML = "RMS: " + audioFeatures["rms"];
+          "Spectral Centroid: " + audioFeatures["spectralCentroid"].toFixed(2);
+        energyHTML.innerHTML = "Energy: " + audioFeatures["energy"].toFixed(2);
+        rmsHTML.innerHTML = "RMS: " + audioFeatures["rms"].toFixed(2);
         var result = audioFeatures["chroma"].indexOf(
           Math.max(...audioFeatures["chroma"])
         );
@@ -156,8 +156,8 @@ dropArea.addEventListener("drop", (e) => {
   uploadedFile = e.dataTransfer.files[0];
  
 
-/* processFileUpload(files); */
-  initMeyda(uploadedFile);
+processFileUpload(files);
+ 
 
 });
 dropArea.addEventListener("click", () => {
@@ -296,6 +296,9 @@ function collectPredictions() {
       audioFeatures["predictions"] = allPredictions;
       inferenceResultPromises = []; // clear array
       fetchLabeledData();
+      initMeyda(uploadedFile);
+      emotionalModelUpdate();
+    
     });
   }
 }
