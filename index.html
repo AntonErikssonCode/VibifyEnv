@@ -69,10 +69,10 @@
       </div>
 
       <div id="beatContainer">BEAT</div>
-      <div  id="emotionModel-container">
-      <div id="emotionModel-marker" ></div>
-      <img id="emotionModel" src="./assets/emotion_model.png"/>
-    </div>
+      <div id="emotionModel-container">
+        <div id="emotionModel-marker"></div>
+        <img id="emotionModel" src="./assets/emotion_model.png" />
+      </div>
       <canvas id="myCanvasId"></canvas>
     </main>
 
@@ -89,8 +89,6 @@
       import { OrbitControls } from "./modules/OrbitControls.js";
       import { addSmallCube } from "./geometry.js";
 
-      
-
       scene = new THREE.Scene();
       const camera = new THREE.PerspectiveCamera(
         90,
@@ -98,17 +96,17 @@
         0.1,
         1000
       );
-     /*  const camera = new THREE.OrthographicCamera(window.innerWidth / - 2, window.innerWidth / 2,  window.innerHeight / 2,  window.innerHeight / - 2, 1, 1000
+      /*  const camera = new THREE.OrthographicCamera(window.innerWidth / - 2, window.innerWidth / 2,  window.innerHeight / 2,  window.innerHeight / - 2, 1, 1000
       ); */
 
       const renderer = new THREE.WebGLRenderer({
         /* alpha: true, */
         antialias: true,
-        
+
         canvas: myCanvasId,
       });
       renderer.setClearColor(0x323232);
-      renderer.setSize(window.innerWidth/*  *0.7 */, window.innerHeight);
+      renderer.setSize(window.innerWidth /*  *0.7 */, window.innerHeight);
       renderer.shadowMap.enabled = true;
       renderer.shadowMap.type = THREE.PCFSoftShadowMap; // default THREE.PCFShadowMap
 
@@ -158,13 +156,17 @@
       const geometry = new THREE.BoxGeometry(1, 1, 1);
 
       const material = new THREE.MeshLambertMaterial({ color: 0xffffff });
-      const materialShiny = new THREE.MeshStandardMaterial({color: 0xffffff, roughness:0.0, metalness: 0.2});
+      const materialShiny = new THREE.MeshStandardMaterial({
+        color: 0xffffff,
+        roughness: 0.0,
+        metalness: 0.2,
+      });
       const cube = new THREE.Mesh(geometry, material);
       cube.castShadow = true;
       cube.rotation.x = 0.8;
       cube.rotation.y = 0.8;
-/*       scene.add(cube);
- */      camera.position.z = 5;
+      /*       scene.add(cube);
+       */ camera.position.z = 5;
 
       const control = new OrbitControls(camera, renderer.domElement);
       /*      const helper = new THREE.CameraHelper( pointLight2.shadow.camera );
@@ -184,8 +186,7 @@ scene.add( helper ); */
       var docaGeo = new THREE.DodecahedronGeometry(1, 0);
       var doca = new THREE.Mesh(docaGeo, materialShiny);
 
-      scene.add(doca)
-      
+      /* scene.add(doca); */
 
       let chromaArrayBalls = [];
       function chromaBallsSpawn() {
@@ -201,8 +202,24 @@ scene.add( helper ); */
       }
       chromaBallsSpawn();
 
-
-
+      class Electron {
+        constructor() {
+          this.mesh = new THREE.Mesh(
+            new THREE.SphereGeometry(0.1, 16, 16),
+            new THREE.MeshStandardMaterial({ color: 0xff0000 })
+          );
+          this.mesh.position.set(0, 0, 0);
+        }
+        addToScene(scene) {
+          scene.add(this.mesh);
+        }
+      }
+      var electronList = [];
+      for (let index = 0; index < 5; index++) {
+        const electron = new Electron();
+        electron.addToScene(scene);
+        electronList.push(electron);
+      }
 
       // ANIMATE
       function animate() {
@@ -219,6 +236,29 @@ scene.add( helper ); */
           });
         }
 
+        var time = Date.now() * 0.001;
+        electronList.forEach((electron, index) => {
+          const muliplication = index;
+          const timeAddition = index /2;
+
+          electron.mesh.position.x =
+          Math.sin((Date.now() / 1000) + (index * Math.PI)) * 3;
+          electron.mesh.position.y =
+          Math.cos((Date.now() / 1000) + (index * Math.PI)) * 3;
+      /*     electron.mesh.position.z =
+            muliplication * Math.sin(time * 2 + timeAddition); */
+        });
+
+        /*   electron1.mesh.position.x = 1.5 * Math.cos(time * 2);
+        electron1.mesh.position.y = 1.5 * Math.sin(time * 2);
+        electron1.mesh.position.z = 1.5 * Math.sin(time * 2);
+        electron2.mesh.position.x = 0 * Math.cos(time * 2 + 0.5);
+        electron2.mesh.position.y = 3 * Math.sin(time * 2 + 0.5);
+        electron2.mesh.position.z = 2 * Math.cos(time * 2 + 0.5);
+        electron3.mesh.position.x = 2.5 * Math.sin(time * 2 + 1);
+        electron3.mesh.position.y = 2.5 * Math.cos(time * 2 + 1);
+        electron3.mesh.position.z = 2.5 * Math.sin(time * 2 + 1);
+ */
         /*  arrayOfSmallObject.forEach((object) => {
        
           object.position.y -= 0.03;
@@ -240,11 +280,8 @@ scene.add( helper ); */
         doca.scale.x = 1 + (audioFeatures["loudness"] / 100) * 3;
         doca.scale.y = 1 + (audioFeatures["loudness"] / 100) * 3;
         doca.scale.z = 1 + (audioFeatures["loudness"] / 100) * 3;
-       
-       
-       
+
         renderer.render(scene, camera);
-        
       }
 
       animate();
