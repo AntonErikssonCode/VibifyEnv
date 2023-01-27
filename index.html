@@ -215,12 +215,24 @@ scene.add( helper ); */
         }
       }
       var electronList = [];
-      for (let index = 0; index < 5; index++) {
+      for (let index = 0; index < 2; index++) {
         const electron = new Electron();
         electron.addToScene(scene);
         electronList.push(electron);
       }
 
+
+      const electronGeometry = new THREE.SphereGeometry(0.2, 32, 32);
+const electronMaterial = new THREE.MeshStandardMaterial({color: 0x0000ff});
+const electronGroup = new THREE.Group();
+
+for(let i = 0; i < 30; i++) {
+  const electronMesh = new THREE.Mesh(electronGeometry, electronMaterial);
+  // Set the initial position of the electron
+  electronMesh.position.set(i, 0, 0);
+  electronGroup.add(electronMesh);
+}
+scene.add(electronGroup);
       // ANIMATE
       function animate() {
         requestAnimationFrame(animate);
@@ -235,19 +247,38 @@ scene.add( helper ); */
             ball.scale.z = audioFeatures.chroma[index];
           });
         }
+        for(let i = 0; i < electronGroup.children.length; i++) {
+    // Update the position of the electron
+    electronGroup.children[i].position.x = Math.sin((Date.now() / 1000) + (i * (Math.PI / 2))) * (i+1);
+    electronGroup.children[i].position.y = Math.cos((Date.now() / 1000) + (i * (Math.PI / 3))) * (i+1);
+    electronGroup.children[i].position.z = Math.tan((Date.now() / 1000) + (i * (Math.PI / 4))) * (i+1);
+    // Rotate the individual electron around the center
+    electronGroup.children[i].rotation.y += 0.01;
 
-        var time = Date.now() * 0.001;
+  /*   electronGroup.children[i].position.x = Math.sin((Date.now() / 1000) + (i * (Math.PI / 2))) * 3;
+    electronGroup.children[i].position.y = Math.cos((Date.now() / 1000) + (i * (Math.PI / 2))) * 3;
+ */
+
+    /* electronGroup.children[i].position.x = Math.sin((Date.now() / 1000) + (i * (Math.PI / 2))) * 3;
+    electronGroup.children[i].position.y = Math.cos((Date.now() / 1000) + (i * (Math.PI / 3))) * 3;
+    electronGroup.children[i].position.z = Math.tan((Date.now() / 1000) + (i * (Math.PI / 4))) * 3; */
+    /*  electronGroup.rotation.y += 0.01; */
+  }
+  // Rotate the entire group of electrons
+   // this will rotate the group in y-axis by 0.01 radians per frame
+
+       /*  var time = Date.now() * 0.001;
         electronList.forEach((electron, index) => {
           const muliplication = index;
           const timeAddition = index /2;
 
           electron.mesh.position.x =
-          Math.sin((Date.now() / 1000) + (index * Math.PI)) * 3;
+          Math.sin((Date.now() / 1000) + (index * (Math.PI / 4))) * 3;
           electron.mesh.position.y =
-          Math.cos((Date.now() / 1000) + (index * Math.PI)) * 3;
-      /*     electron.mesh.position.z =
-            muliplication * Math.sin(time * 2 + timeAddition); */
-        });
+          Math.cos((Date.now() / 1000) + (index * (Math.PI / 4))) * 3;
+         electron.mesh.position.z =
+            muliplication * Math.sin(time * 2 + timeAddition); 
+        }); */
 
         /*   electron1.mesh.position.x = 1.5 * Math.cos(time * 2);
         electron1.mesh.position.y = 1.5 * Math.sin(time * 2);
