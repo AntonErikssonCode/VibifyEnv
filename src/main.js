@@ -67,8 +67,8 @@ function initMeyda(file) {
             beatUsed = true;
            /*  arrayOfSmallObject.push(addSmallCube(scene)); */
             
-            console.dir(arrayOfSmallObject);
-            
+/*             console.dir(arrayOfSmallObject);
+ */            
           }
         } else {
           beatContainer.style.background = "blue";
@@ -82,7 +82,7 @@ function initMeyda(file) {
     const analyzer = Meyda.createMeydaAnalyzer({
       audioContext: meydaContext,
       source: source,
-      bufferSize: 256,
+      bufferSize: 512,
       featureExtractors: [
         "rms",
         "zcr",
@@ -111,6 +111,7 @@ function initMeyda(file) {
         audioFeatures["rms"] = features.rms;
         audioFeatures["spectralCentroid"] = features.spectralCentroid;
         audioFeatures["complexSpectrum"] = features.complexSpectrum;
+        audioFeatures["amplitudeSpectrum"] = features.amplitudeSpectrum;
 
         loudnessHTML.innerHTML = "Loudness: " + audioFeatures["loudness"].toFixed(2);
         spectralCentroidHTML.innerHTML =
@@ -121,8 +122,8 @@ function initMeyda(file) {
           Math.max(...audioFeatures["chroma"])
         );
         chromaHTML.innerHTML = "Chroma: " + keys[result];
-        console.dir(features)
-       
+/*         console.dir(features)
+ */       
       },
     });
     analyzer.start();

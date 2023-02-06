@@ -73,10 +73,10 @@
       </div>
 
       <div id="beatContainer">BEAT</div>
-      <div id="emotionModel-container">
+      <!-- <div id="emotionModel-container">
         <div id="emotionModel-marker"></div>
         <img id="emotionModel" src="./assets/emotion_model.png" />
-      </div>
+      </div> -->
       <canvas id="myCanvasId"></canvas>
     </main>
 
@@ -109,7 +109,7 @@
 
         canvas: myCanvasId,
       });
-      renderer.setClearColor(0x323232);
+      renderer.setClearColor(0x030303);
       renderer.setSize(window.innerWidth /*  *0.7 */, window.innerHeight);
       renderer.shadowMap.enabled = true;
       renderer.shadowMap.type = THREE.PCFSoftShadowMap; // default THREE.PCFShadowMap
@@ -184,21 +184,21 @@ scene.add( helper ); */
       var plane = new THREE.Mesh(geo, mat);
       plane.rotation.x = 3.1415 / 2;
       plane.position.y = -3;
-      scene.add(plane);
-      plane.receiveShadow = true;
+/*       scene.add(plane);
+ */      plane.receiveShadow = true;
 
       var docaGeo = new THREE.DodecahedronGeometry(1, 0);
       var doca = new THREE.Mesh(docaGeo, materialShiny);
 
-      /* scene.add(doca); */
+      scene.add(doca);
 
       let chromaArrayBalls = [];
       function chromaBallsSpawn() {
-        for (let index = 0; index < 12; index++) {
-          const sphereGeometr = new THREE.SphereGeometry(0.3, 15, 15);
+        for (let index = 0; index < 256 / 4; index++) {
+          const sphereGeometr = new THREE.SphereGeometry(0.1, 15, 15);
           const sphere = new THREE.Mesh(sphereGeometr, material);
-          sphere.position.x = -6 + index;
-          sphere.position.y = 3;
+          sphere.position.x = -6 + index / 5;
+          sphere.position.y = 4;
           sphere.position.z = -5;
           scene.add(sphere);
           chromaArrayBalls.push(sphere);
@@ -225,53 +225,61 @@ scene.add( helper ); */
         electronList.push(electron);
       }
 
-
       const electronGeometry = new THREE.SphereGeometry(0.2, 32, 32);
-const electronMaterial = new THREE.MeshStandardMaterial({color: 0x0000ff});
-const electronGroup = new THREE.Group();
+      const electronMaterial = new THREE.MeshStandardMaterial({
+        color: 0x0000ff,
+      });
+      const electronGroup = new THREE.Group();
 
-for(let i = 0; i < 30; i++) {
+      /* for(let i = 0; i < 30; i++) {
   const electronMesh = new THREE.Mesh(electronGeometry, electronMaterial);
   // Set the initial position of the electron
   electronMesh.position.set(i, 0, 0);
   electronGroup.add(electronMesh);
-}
-scene.add(electronGroup);
+} */
+      scene.add(electronGroup);
       // ANIMATE
       function animate() {
         requestAnimationFrame(animate);
 
         control.update();
         if (audioFeatures.chroma.length > 0) {
+          const minValue = Math.min(...audioFeatures.amplitudeSpectrum);
+            const maxValue = Math.max(...audioFeatures.amplitudeSpectrum);
           chromaArrayBalls.forEach((ball, index) => {
-            ball.position.y = audioFeatures.chroma[index] + 3;
+            const amp = audioFeatures.amplitudeSpectrum[index];
 
-            ball.scale.x = audioFeatures.chroma[index];
+           
+
+            const normalizedValue = amp - minValue / maxValue - minValue;
+            
+            ball.position.y = 4+  normalizedValue/10*0.4;
+
+            /*  ball.scale.x = audioFeatures.chroma[index];
             ball.scale.y = audioFeatures.chroma[index];
-            ball.scale.z = audioFeatures.chroma[index];
+            ball.scale.z = audioFeatures.chroma[index]; */
           });
         }
-        for(let i = 0; i < electronGroup.children.length; i++) {
-    // Update the position of the electron
-    electronGroup.children[i].position.x = Math.sin((Date.now() / 1000) + (i * (Math.PI / 2))) * (i+1);
+        for (let i = 0; i < electronGroup.children.length; i++) {
+          // Update the position of the electron
+          /*    electronGroup.children[i].position.x = Math.sin((Date.now() / 1000) + (i * (Math.PI / 2))) * (i+1);
     electronGroup.children[i].position.y = Math.cos((Date.now() / 1000) + (i * (Math.PI / 3))) * (i+1);
-    electronGroup.children[i].position.z = Math.tan((Date.now() / 1000) + (i * (Math.PI / 4))) * (i+1);
-    // Rotate the individual electron around the center
-    electronGroup.children[i].rotation.y += 0.01;
-
-  /*   electronGroup.children[i].position.x = Math.sin((Date.now() / 1000) + (i * (Math.PI / 2))) * 3;
+    electronGroup.children[i].position.z = Math.tan((Date.now() / 1000) + (i * (Math.PI / 4))) * (i+1); */
+          // Rotate the individual electron around the center
+          /*     electronGroup.children[i].rotation.y += 0.01;
+           */
+          /*   electronGroup.children[i].position.x = Math.sin((Date.now() / 1000) + (i * (Math.PI / 2))) * 3;
     electronGroup.children[i].position.y = Math.cos((Date.now() / 1000) + (i * (Math.PI / 2))) * 3;
  */
-
-    /* electronGroup.children[i].position.x = Math.sin((Date.now() / 1000) + (i * (Math.PI / 2))) * 3;
+          /* electronGroup.children[i].position.x = Math.sin((Date.now() / 1000) + (i * (Math.PI / 2))) * 3;
     electronGroup.children[i].position.y = Math.cos((Date.now() / 1000) + (i * (Math.PI / 3))) * 3;
     electronGroup.children[i].position.z = Math.tan((Date.now() / 1000) + (i * (Math.PI / 4))) * 3; */
-    /*  electronGroup.rotation.y += 0.01; */
-  }
-  // Rotate the entire group of electrons
-   // this will rotate the group in y-axis by 0.01 radians per frame
+          /*  electronGroup.rotation.y += 0.01; */
+        }
+        // Rotate the entire group of electrons
+        // this will rotate the group in y-axis by 0.01 radians per frame
 
-       /*  var time = Date.now() * 0.001;
+        /*  var time = Date.now() * 0.001;
         electronList.forEach((electron, index) => {
           const muliplication = index;
           const timeAddition = index /2;

@@ -25,8 +25,8 @@ function fetchBpmAndKey() {
 }
 
 function emotionalModelUpdate() {
-  const marker = document.querySelector("#emotionModel-marker");
-  /*   let arousal =   audioFeatures.predictions["mood_aggressive"] - audioFeatures.predictions["mood_relaxed"];
+/*   const marker = document.querySelector("#emotionModel-marker");
+ */  /*   let arousal =   audioFeatures.predictions["mood_aggressive"] - audioFeatures.predictions["mood_relaxed"];
   let valens = audioFeatures.predictions["mood_happy"] - audioFeatures.predictions["mood_sad"] * 500;
  */
   const valensTag = document.querySelector("#valensTag");
@@ -45,7 +45,7 @@ function emotionalModelUpdate() {
    
     valensTag.innerHTML += " " + audioFeatures["valens"];
     arousalTag.innerHTML += " " + audioFeatures["arousal"];
-  marker.style.transform = `translate( ${valens}%,  ${arousal}%)`;
-}
+/*   marker.style.transform = `translate( ${valens}%,  ${arousal}%)`;
+ */}
 
 export { fetchLabeledData, fetchBpmAndKey, emotionalModelUpdate };
