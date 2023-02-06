@@ -28,6 +28,7 @@
         bpm: 0,
         scale: 0,
         beatSwitch: false,
+        amplitudeSpectrum: [],
       };
       let scene;
       let arrayOfSmallObject = [];
@@ -184,8 +185,8 @@ scene.add( helper ); */
       var plane = new THREE.Mesh(geo, mat);
       plane.rotation.x = 3.1415 / 2;
       plane.position.y = -3;
-/*       scene.add(plane);
- */      plane.receiveShadow = true;
+      /*       scene.add(plane);
+       */ plane.receiveShadow = true;
 
       var docaGeo = new THREE.DodecahedronGeometry(1, 0);
       var doca = new THREE.Mesh(docaGeo, materialShiny);
@@ -243,39 +244,56 @@ scene.add( helper ); */
         requestAnimationFrame(animate);
 
         control.update();
-        if (audioFeatures.chroma.length > 0) {
+        function normalize(min, max) {
+          var delta = max - min;
+          return function (val) {
+            return (val - min) / delta;
+          };
+        }
+
+        if (audioFeatures.amplitudeSpectrum.length > 0) {
           const minValue = Math.min(...audioFeatures.amplitudeSpectrum);
-            const maxValue = Math.max(...audioFeatures.amplitudeSpectrum);
+          const maxValue = Math.max(...audioFeatures.amplitudeSpectrum);
+         /*  console.log("ampSpec: " + audioFeatures.amplitudeSpectrum);
+          console.log(
+            "Normal ampSpec : " + audioFeatures.amplitudeSpectrum.map(normalize(minValue, maxValue))
+          ); */
+          audioFeatures["amplitudeSpectrum"] = audioFeatures.amplitudeSpectrum.map(normalize(minValue, maxValue));
+         
+          
           chromaArrayBalls.forEach((ball, index) => {
             const amp = audioFeatures.amplitudeSpectrum[index];
+            /*       console.dir("Min value: " + minValue)
+            console.dir("Max value: " + maxValue) */
 
-           
+        /*     const normalizedValue = amp - minValue / maxValue - minValue; */
+            /*            console.dir("Amp: " + amp);
+            console.dir("Normalized: " + normalizedValue); */
 
-            const normalizedValue = amp - minValue / maxValue - minValue;
-            
-            ball.position.y = 4+  normalizedValue/10*0.4;
+            ball.position.y = 4 + amp*3;
 
             /*  ball.scale.x = audioFeatures.chroma[index];
             ball.scale.y = audioFeatures.chroma[index];
             ball.scale.z = audioFeatures.chroma[index]; */
           });
         }
-        for (let i = 0; i < electronGroup.children.length; i++) {
-          // Update the position of the electron
-          /*    electronGroup.children[i].position.x = Math.sin((Date.now() / 1000) + (i * (Math.PI / 2))) * (i+1);
+
+        /*         for (let i = 0; i < electronGroup.children.length; i++) {
+         */ // Update the position of the electron
+        /*    electronGroup.children[i].position.x = Math.sin((Date.now() / 1000) + (i * (Math.PI / 2))) * (i+1);
     electronGroup.children[i].position.y = Math.cos((Date.now() / 1000) + (i * (Math.PI / 3))) * (i+1);
     electronGroup.children[i].position.z = Math.tan((Date.now() / 1000) + (i * (Math.PI / 4))) * (i+1); */
-          // Rotate the individual electron around the center
-          /*     electronGroup.children[i].rotation.y += 0.01;
-           */
-          /*   electronGroup.children[i].position.x = Math.sin((Date.now() / 1000) + (i * (Math.PI / 2))) * 3;
+        // Rotate the individual electron around the center
+        /*     electronGroup.children[i].rotation.y += 0.01;
+         */
+        /*   electronGroup.children[i].position.x = Math.sin((Date.now() / 1000) + (i * (Math.PI / 2))) * 3;
     electronGroup.children[i].position.y = Math.cos((Date.now() / 1000) + (i * (Math.PI / 2))) * 3;
  */
-          /* electronGroup.children[i].position.x = Math.sin((Date.now() / 1000) + (i * (Math.PI / 2))) * 3;
+        /* electronGroup.children[i].position.x = Math.sin((Date.now() / 1000) + (i * (Math.PI / 2))) * 3;
     electronGroup.children[i].position.y = Math.cos((Date.now() / 1000) + (i * (Math.PI / 3))) * 3;
     electronGroup.children[i].position.z = Math.tan((Date.now() / 1000) + (i * (Math.PI / 4))) * 3; */
-          /*  electronGroup.rotation.y += 0.01; */
-        }
+        /*  electronGroup.rotation.y += 0.01; */
+        /*     } */
         // Rotate the entire group of electrons
         // this will rotate the group in y-axis by 0.01 radians per frame
 
