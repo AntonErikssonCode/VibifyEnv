@@ -258,7 +258,7 @@ scene.add( helper ); */
           console.log(
             "Normal ampSpec : " + audioFeatures.amplitudeSpectrum.map(normalize(minValue, maxValue))
           ); */
-          audioFeatures["amplitudeSpectrum"] = audioFeatures.amplitudeSpectrum.map(normalize(minValue, maxValue));
+          audioFeatures["amplitudeSpectrum"] = audioFeatures.amplitudeSpectrum.map(normalize(0, 128));
          
           
           chromaArrayBalls.forEach((ball, index) => {
@@ -270,7 +270,7 @@ scene.add( helper ); */
             /*            console.dir("Amp: " + amp);
             console.dir("Normalized: " + normalizedValue); */
 
-            ball.position.y = 4 + amp*3;
+            ball.position.y = 4 + amp*10;
 
             /*  ball.scale.x = audioFeatures.chroma[index];
             ball.scale.y = audioFeatures.chroma[index];
