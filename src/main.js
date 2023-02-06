@@ -287,7 +287,6 @@ function createInferenceWorkers() {
     };
   });
 }
-
 function collectPredictions() {
   if (inferenceResultPromises.length == modelNames.length) {
     Promise.all(inferenceResultPromises).then((predictions) => {
