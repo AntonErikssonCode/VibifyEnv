@@ -44,32 +44,14 @@ h2 {
   margin-top: 0rem;
 }
 
-#emotionModel-container{
+#testColor{
+  height: 100px;
+  width: 100px;
+  background-color: aqua;
   position: absolute;
-  z-index: 1;
   right: 0;
   top: 0;
-  width: 20%;
- 
-}
-
-
-#emotionModel{
- 
-  width: 100%;
-  height: 100%;
-}
-
-#emotionModel-marker{
-  width: 16px;
-  height: 16px;
-  background-color: red;
-  border-radius: 50%;
-  position: absolute;
-  top: 47%;
-  left: 48%;
- transition: all 1s ease-out;
-
+  z-index: 1;
 }
 /* FILE UPLOAD AREA */
 
