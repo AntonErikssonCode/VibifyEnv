@@ -1,5 +1,5 @@
 import { preprocess, shortenAudio } from "./audioUtils.js";
-import { fetchLabeledData, fetchBpmAndKey, emotionalModelUpdate } from "./updateState.js";
+import { fetchLabeledData, fetchBpmAndKey, emotionalModelUpdate, getColors } from "./updateState.js";
 import { addSmallCube } from "../geometry.js";
 const loudnessHTML = document.querySelector("#loudnessTag");
 const chromaHTML = document.querySelector("#chromaTag");
@@ -298,6 +298,7 @@ function collectPredictions() {
       fetchLabeledData();
       initMeyda(uploadedFile);
       emotionalModelUpdate();
+      getColors();
     
     });
   }
