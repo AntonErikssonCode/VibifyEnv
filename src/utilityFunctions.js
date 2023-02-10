@@ -5,7 +5,7 @@ function normalize(min, max) {
   };
 }
 
-function hslToHex(h, s, l) {
+function hslToHex(h, s, l, regularFormat = true ) {
   l /= 100;
   const a = (s * Math.min(l, 1 - l)) / 100;
   const f = (n) => {
@@ -15,7 +15,16 @@ function hslToHex(h, s, l) {
       .toString(16)
       .padStart(2, "0"); // convert to Hex and prefix "0" if needed
   };
-  return `#${f(0)}${f(8)}${f(4)}`;
+  if(regularFormat){
+    return `#${f(0)}${f(8)}${f(4)}`;
+
+
+  }
+  else{
+    return `0x${f(0)}${f(8)}${f(4)}`;
+
+
+  }
 }
 
 export { normalize, hslToHex };

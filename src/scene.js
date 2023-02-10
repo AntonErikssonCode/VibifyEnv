@@ -35,12 +35,12 @@ const control = new OrbitControls(camera, renderer.domElement);
 const light = new THREE.AmbientLight(0xffffff, 0.05);
 scene.add(light);
 
-const pointLight = new THREE.PointLight(0xff00ff, 2, 17);
+const pointLight = new THREE.PointLight(0xffffff, 2, 17);
 pointLight.position.set(-5, 5, 5);
 pointLight.castShadow = true;
 scene.add(pointLight);
 
-const pointLight2 = new THREE.PointLight(0x00ffff, 2, 17);
+const pointLight2 = new THREE.PointLight(0xffffff, 2, 17);
 pointLight2.position.set(5, 5, 5);
 pointLight2.castShadow = true;
 scene.add(pointLight2);
@@ -81,8 +81,10 @@ chromaBallsSpawn();
 function animate() {
   requestAnimationFrame(animate);
   control.update();
+
  
-    
+  pointLight.color.setHex(audioFeatures.mainColor);
+  pointLight2.color.setHex(audioFeatures.secondaryColor);
    
 
   

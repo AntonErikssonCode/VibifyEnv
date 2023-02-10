@@ -96,6 +96,11 @@ function getColors() {
 
   const secondaryColor = hslToHex(secondaryAngle, 100, 50);
   testColorDiv2.style.background = secondaryColor;
+  audioFeatures["mainColor"] = hslToHex(mainAngle, 100, 50, false);
+  audioFeatures["secondaryColor"] = hslToHex(secondaryAngle, 100, 50, false);
+  console.dir(audioFeatures.mainColor)
+  
+
 }
 
 export { fetchLabeledData, fetchBpmAndKey, emotionalModelUpdate, getColors };
