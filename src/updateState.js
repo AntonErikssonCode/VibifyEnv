@@ -99,7 +99,15 @@ function getColors() {
   audioFeatures["mainColor"] = hslToHex(mainAngle, 100, 50, false);
   audioFeatures["secondaryColor"] = hslToHex(secondaryAngle, 100, 50, false);
   console.dir(audioFeatures.mainColor)
-  
+/*   audioFeatures["colorDifference"] = mainValens + mainArousal/secondaryValens + secondaryArousal;
+ */  
+  let mainValues = mainValens + mainArousal;
+  let secondaryValues = secondaryValens + secondaryArousal;
+  audioFeatures["colorDifference"] = Math.abs(mainValues/secondaryValues);
+  console.dir(mainValues);
+  console.dir(secondaryValues);
+  console.dir(audioFeatures.colorDifference);
+/*   console.dir("ColorDif: " + audioFeatures.colorDifference) */
 
 }
 

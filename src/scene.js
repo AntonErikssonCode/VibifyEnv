@@ -10,7 +10,7 @@ function removeEntity(object) {
 }
 
 // Camera
-scene = new THREE.Scene();
+let scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(
   90,
   window.innerWidth /* *0.7 */ / window.innerHeight,
