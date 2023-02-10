@@ -44,15 +44,24 @@ h2 {
   margin-top: 0rem;
 }
 
-#testColor{
+.testColor{
   height: 100px;
   width: 100px;
   background-color: aqua;
+  
+  z-index: 1;
+}
+#testColor1{
   position: absolute;
   right: 0;
   top: 0;
-  z-index: 1;
 }
+#testColor2{
+  position: absolute;
+  right: 100px;
+  top: 0;
+}
+
 /* FILE UPLOAD AREA */
 
 .features {

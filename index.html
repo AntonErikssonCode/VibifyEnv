@@ -29,6 +29,16 @@
         scale: 0,
         beatSwitch: false,
         amplitudeSpectrum: [],
+        predictions: {
+          mood_aggressive: 0.0,
+          mood_relaxed: 0.0,
+          mood_happy: 0.0,
+          mood_sad: 0.0,
+        },
+        /*   mood_aggressive: 0.13,
+        mood_relaxed: 0.74,
+        mood_happy: 0.29,
+        mood_sad: 0.98, */
       };
       let scene;
       let arrayOfSmallObject = [];
@@ -74,7 +84,8 @@
       </div>
 
       <div id="beatContainer">BEAT</div>
-      <div id="testColor"></div>
+      <div id="testColor1" class="testColor"></div>
+      <div id="testColor2" class="testColor"></div>
       <canvas id="myCanvasId"></canvas>
     </main>
 
@@ -110,17 +121,6 @@
         };
         return `#${f(0)}${f(8)}${f(4)}`;
       }
-      const testColorDiv = document.querySelector("#testColor");
-   
-      /* const x = -1;
-      const y = -1;
-      let angle = (Math.atan2(x, y) * 180) / Math.PI;
-      if (angle < 0) {
-        angle += 360;
-      }
-      const testColor = hslToHex(angle, 100, 50);
-        testColorDiv.style.background = testColor;
-         */
 
       function removeEntity(object) {
         var selectedObject = scene.getObjectByName(object.name);
@@ -196,23 +196,122 @@
       }
       chromaBallsSpawn();
 
+      /* const testColorDiv1 = document.querySelector("#testColor1");
+      const testColorDiv2 = document.querySelector("#testColor2");
+
+      const mainArousal =
+        audioFeatures.mood_aggressive > audioFeatures.mood_relaxed
+          ? audioFeatures.mood_aggressive
+          : audioFeatures.mood_relaxed - audioFeatures.mood_relaxed * 2;
+      const secondaryArousal =
+        audioFeatures.mood_aggressive < audioFeatures.mood_relaxed
+          ? audioFeatures.mood_aggressive
+          : audioFeatures.mood_relaxed - audioFeatures.mood_relaxed * 2;
+
+          
+      const mainValens =
+        audioFeatures.mood_happy > audioFeatures.mood_sad
+          ? audioFeatures.mood_happy
+          : audioFeatures.mood_sad - audioFeatures.mood_sad * 2;
+      const secondaryValens =
+        audioFeatures.mood_happy < audioFeatures.mood_sad
+          ? audioFeatures.mood_happy
+          : audioFeatures.mood_sad - audioFeatures.mood_sad * 2;
+
+
+      console.dir(mainArousal);
+      console.dir(secondaryArousal);
+      console.dir(mainValens);
+      console.dir(secondaryValens);
+
+  
+      let mainAngle = (Math.atan2(mainValens, mainArousal) * 180) / Math.PI;
+      if (mainAngle < 0) {
+        mainAngle += 360;
+      }
+      let secondaryAngle = (Math.atan2(secondaryValens, secondaryArousal) * 180) / Math.PI;
+      if (secondaryAngle < 0) {
+        secondaryAngle += 360;
+      }
+      const mainColor = hslToHex(mainAngle, 100, 50);
+      testColorDiv1.style.background = mainColor;
+      
+      const secondaryColor = hslToHex(secondaryAngle, 100, 50);
+      testColorDiv2.style.background = secondaryColor;
+
+
+ */
+      const testColorDiv1 = document.querySelector("#testColor1");
+      const testColorDiv2 = document.querySelector("#testColor2");
+
       // ANIMATE
       function animate() {
         requestAnimationFrame(animate);
 
         control.update();
 
-      
-
         if (audioFeatures.amplitudeSpectrum.length > 0) {
-          let colorAngle =
-          (Math.atan2(audioFeatures["valens"], audioFeatures["arousal"]) *
-            180) /
-          Math.PI;
+          /* let colorAngle =
+            (Math.atan2(audioFeatures["valens"], audioFeatures["arousal"]) *
+              180) /
+            Math.PI;
 
-        const testColor = hslToHex(colorAngle, 100, 50);
-        testColorDiv.style.background = testColor;
-        
+          const testColor = hslToHex(colorAngle, 100, 50);
+          testColorDiv.style.background = testColor; */
+
+          const mainArousal =
+            audioFeatures.predictions.mood_aggressive >
+            audioFeatures.predictions.mood_relaxed
+              ? audioFeatures.predictions.mood_aggressive
+              : audioFeatures.predictions.mood_relaxed -
+                audioFeatures.predictions.mood_relaxed * 2;
+                
+          const secondaryArousal =
+            audioFeatures.predictions.mood_aggressive <
+            audioFeatures.predictions.mood_relaxed
+              ? audioFeatures.predictions.mood_aggressive
+              : audioFeatures.predictions.mood_relaxed -
+                audioFeatures.predictions.mood_relaxed * 2;
+
+          const mainValens =
+            audioFeatures.predictions.mood_happy >
+            audioFeatures.predictions.mood_sad
+              ? audioFeatures.predictions.mood_happy
+              : audioFeatures.predictions.mood_sad -
+                audioFeatures.predictions.mood_sad * 2;
+
+          const secondaryValens =
+            audioFeatures.predictions.mood_happy <
+            audioFeatures.predictions.mood_sad
+              ? audioFeatures.predictions.mood_happy
+              : audioFeatures.predictions.mood_sad -
+                audioFeatures.predictions.mood_sad * 2;
+
+          console.dir(audioFeatures);
+          console.dir(" ");
+          console.dir("mainArousal: " + mainArousal);
+          console.dir("secondaryArousal: " + secondaryArousal);
+          console.dir("mainValens: " + mainValens);
+          console.dir("secondaryValens: " + secondaryValens);
+          console.dir(" ");
+
+          /*     const x = -0.98;
+      const y = -0.74; */
+          let mainAngle = (Math.atan2(mainValens, mainArousal) * 180) / Math.PI;
+          if (mainAngle < 0) {
+            mainAngle += 360;
+          }
+          let secondaryAngle =
+            (Math.atan2(secondaryValens, secondaryArousal) * 180) / Math.PI;
+          if (secondaryAngle < 0) {
+            secondaryAngle += 360;
+          }
+          const mainColor = hslToHex(mainAngle, 100, 50);
+          testColorDiv1.style.background = mainColor;
+
+          const secondaryColor = hslToHex(secondaryAngle, 100, 50);
+          testColorDiv2.style.background = secondaryColor;
+
           const minValue = Math.min(...audioFeatures.amplitudeSpectrum);
           const maxValue = Math.max(...audioFeatures.amplitudeSpectrum);
           audioFeatures["amplitudeSpectrum"] =
