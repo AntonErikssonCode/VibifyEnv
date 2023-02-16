@@ -1,4 +1,4 @@
-import { hslToHex} from "./utilityFunctions.js"
+import { hslToHex } from "./utilityFunctions.js";
 
 function fetchLabeledData() {
   const sad = document.querySelector("#sadTag");
@@ -40,7 +40,6 @@ function emotionalModelUpdate() {
 
   valensTag.innerHTML += " " + audioFeatures["valens"];
   arousalTag.innerHTML += " " + audioFeatures["arousal"];
-
 }
 
 function getColors() {
@@ -72,16 +71,14 @@ function getColors() {
       : audioFeatures.predictions.mood_sad -
         audioFeatures.predictions.mood_sad * 2;
 
-  console.dir(audioFeatures);
+/*   console.dir(audioFeatures);
   console.dir(" ");
   console.dir("mainArousal: " + mainArousal);
   console.dir("secondaryArousal: " + secondaryArousal);
   console.dir("mainValens: " + mainValens);
   console.dir("secondaryValens: " + secondaryValens);
   console.dir(" ");
-
-  /*     const x = -0.98;
-      const y = -0.74; */
+ */
   let mainAngle = (Math.atan2(mainValens, mainArousal) * 180) / Math.PI;
   if (mainAngle < 0) {
     mainAngle += 360;
@@ -93,22 +90,13 @@ function getColors() {
   }
   const mainColor = hslToHex(mainAngle, 100, 50);
   testColorDiv1.style.background = mainColor;
-
   const secondaryColor = hslToHex(secondaryAngle, 100, 50);
   testColorDiv2.style.background = secondaryColor;
   audioFeatures["mainColor"] = hslToHex(mainAngle, 100, 50, false);
   audioFeatures["secondaryColor"] = hslToHex(secondaryAngle, 100, 50, false);
-  console.dir(audioFeatures.mainColor)
-/*   audioFeatures["colorDifference"] = mainValens + mainArousal/secondaryValens + secondaryArousal;
- */  
   let mainValues = mainValens + mainArousal;
   let secondaryValues = secondaryValens + secondaryArousal;
-  audioFeatures["colorDifference"] = Math.abs(mainValues/secondaryValues);
-  console.dir(mainValues);
-  console.dir(secondaryValues);
-  console.dir(audioFeatures.colorDifference);
-/*   console.dir("ColorDif: " + audioFeatures.colorDifference) */
-
+  audioFeatures["colorDifference"] = Math.abs(mainValues / secondaryValues);
 }
 
 export { fetchLabeledData, fetchBpmAndKey, emotionalModelUpdate, getColors };
