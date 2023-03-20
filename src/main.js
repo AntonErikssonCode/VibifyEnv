@@ -1,6 +1,13 @@
 import { preprocess, shortenAudio } from "./audioUtils.js";
-import { fetchLabeledData, fetchBpmAndKey, emotionalModelUpdate, getColors } from "./updateState.js";
+import {
+  fetchLabeledData,
+  fetchBpmAndKey,
+  emotionalModelUpdate,
+  getColorsOld,
+} from "./updateState.js";
 import { addSmallCube } from "../geometry.js";
+import { getColors } from "./getColors.js";
+
 const loudnessHTML = document.querySelector("#loudnessTag");
 const chromaHTML = document.querySelector("#chromaTag");
 const rmsHTML = document.querySelector("#rmsTag");
@@ -59,21 +66,20 @@ function initMeyda(file) {
       featureExtractors: ["energy"],
       callback: (features) => {
         if (features.energy > 15) {
-       
-/*           console.dir("beat");
- */          beatContainer.style.background = "red";
+          /*           console.dir("beat");
+           */ beatContainer.style.background = "red";
           if (beatUsed == false) {
             audioFeatures["beatSwitch"] = !audioFeatures["beatSwitch"];
             beatUsed = true;
-           /*  arrayOfSmallObject.push(addSmallCube(scene)); */
-            
-/*             console.dir(arrayOfSmallObject);
- */            
+            /*  arrayOfSmallObject.push(addSmallCube(scene)); */
+
+            /*             console.dir(arrayOfSmallObject);
+             */
           }
         } else {
           beatContainer.style.background = "blue";
-/*           console.dir("not beat");
- */          beatUsed = false;
+          /*           console.dir("not beat");
+           */ beatUsed = false;
         }
       },
     });
@@ -113,7 +119,8 @@ function initMeyda(file) {
         audioFeatures["complexSpectrum"] = features.complexSpectrum;
         audioFeatures["amplitudeSpectrum"] = features.amplitudeSpectrum;
 
-        loudnessHTML.innerHTML = "Loudness: " + audioFeatures["loudness"].toFixed(2);
+        loudnessHTML.innerHTML =
+          "Loudness: " + audioFeatures["loudness"].toFixed(2);
         spectralCentroidHTML.innerHTML =
           "Spectral Centroid: " + audioFeatures["spectralCentroid"].toFixed(2);
         energyHTML.innerHTML = "Energy: " + audioFeatures["energy"].toFixed(2);
@@ -122,8 +129,8 @@ function initMeyda(file) {
           Math.max(...audioFeatures["chroma"])
         );
         chromaHTML.innerHTML = "Chroma: " + keys[result];
-/*         console.dir(features)
- */       
+        /*         console.dir(features)
+         */
       },
     });
     analyzer.start();
@@ -144,8 +151,6 @@ const modelNames = [
   "danceability",
 ];
 let inferenceResultPromises = [];
-let wavesurfer;
-let controls;
 
 let uploadedFile;
 dropArea.addEventListener("dragover", (e) => {
@@ -155,15 +160,21 @@ dropArea.addEventListener("drop", (e) => {
   e.preventDefault();
   const files = e.dataTransfer.files;
   uploadedFile = e.dataTransfer.files[0];
- 
 
-processFileUpload(files);
- 
-
+  /*   emotionalModelUpdate();
+  getColorsOld(); */
+ /*  getColors();
+  fetchLabeledData(); */
+  initMeyda(uploadedFile);
+  /* processFileUpload(files); */
 });
 dropArea.addEventListener("click", () => {
   dropInput.click();
 });
+
+/// TEST
+getColors();
+fetchLabeledData();
 
 function processFileUpload(files) {
   if (files.length > 1) {
@@ -188,8 +199,8 @@ function decodeFile(arrayBuffer) {
 
         if (essentia) {
           essentiaAnalysis = computeKeyBPM(prepocessedAudio);
-/*           console.dir(essentiaAnalysis);
- */          audioFeatures["bpm"] = essentiaAnalysis.bpm;
+          /*           console.dir(essentiaAnalysis);
+           */ audioFeatures["bpm"] = essentiaAnalysis.bpm;
           audioFeatures["key"] = essentiaAnalysis.keyData.key;
           audioFeatures["scale"] = essentiaAnalysis.keyData.scale;
           fetchBpmAndKey();
@@ -288,6 +299,7 @@ function createInferenceWorkers() {
     };
   });
 }
+
 function collectPredictions() {
   if (inferenceResultPromises.length == modelNames.length) {
     Promise.all(inferenceResultPromises).then((predictions) => {
@@ -299,7 +311,6 @@ function collectPredictions() {
       initMeyda(uploadedFile);
       emotionalModelUpdate();
       getColors();
-    
     });
   }
 }

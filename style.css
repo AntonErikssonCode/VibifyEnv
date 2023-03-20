@@ -45,22 +45,24 @@ h2 {
 }
 
 .testColor{
-  height: 100px;
-  width: 100px;
+  height: 50px;
+  width: 50px;
   background-color: #ffffff;
   
   z-index: 1;
 }
-#testColor1{
+#colors{
   position: absolute;
-  right: 0;
   top: 0;
+  left: 40%;
+  display: flex;
+  gap: 1rem;
 }
-#testColor2{
-  position: absolute;
-  right: 100px;
-  top: 0;
-}
+
+
+
+
+
 
 /* FILE UPLOAD AREA */
 

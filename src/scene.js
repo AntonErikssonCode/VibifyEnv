@@ -3,7 +3,6 @@ import { OrbitControls } from "../modules/OrbitControls.js";
 import { addSmallCube } from "../geometry.js";
 import { normalize, hslToHex } from "./utilityFunctions.js";
 
-
 function removeEntity(object) {
   var selectedObject = scene.getObjectByName(object.name);
   scene.remove(selectedObject);
@@ -11,6 +10,8 @@ function removeEntity(object) {
 
 // Camera
 let scene = new THREE.Scene();
+scene.fog = new THREE.Fog(0x050505, 1, 45);
+
 const camera = new THREE.PerspectiveCamera(
   90,
   window.innerWidth /* *0.7 */ / window.innerHeight,
@@ -61,7 +62,7 @@ var docaGeo = new THREE.DodecahedronGeometry(1, 0);
 var doca = new THREE.Mesh(docaGeo, materialShiny);
 scene.add(doca);
 
-let chromaArrayBalls = [];
+/* let chromaArrayBalls = [];
 function chromaBallsSpawn() {
   for (let index = 0; index < 256 / 4; index++) {
     const sphereGeometr = new THREE.SphereGeometry(0.1, 15, 15);
@@ -73,32 +74,64 @@ function chromaBallsSpawn() {
     chromaArrayBalls.push(sphere);
   }
 }
-chromaBallsSpawn();
+chromaBallsSpawn(); */
+function getRndInteger(min, max) {
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+const groupTravelParticle = new THREE.Group();
 
+var geoParticle = new THREE.PlaneBufferGeometry(0.12, 0.1, 1, 1);
+var matParticle = new THREE.MeshStandardMaterial({
+  color: 0xffffff,
+  emissive:  0xffffff,
+/*   side: THREE.DoubleSide, */
+});
+
+/* var travelParticle = new THREE.Mesh(geoParticle, matParticle);
+ */
+/* groupTravelParticle.add(travelParticle); */
+
+
+function spawnParticle() {
+  var travelParticle = new THREE.Mesh(geoParticle, matParticle);
+  var particleXPos = getRndInteger(-50, 50);
+  var particleYPos = getRndInteger(-20, 20);
+  var particleRotation = getRndInteger(0, 45);
+  travelParticle.position.set(particleXPos, particleYPos, 2);
+  travelParticle.rotateZ(particleRotation);
+  groupTravelParticle.add(travelParticle);
+  console.dir("SPAWN");
+}
+
+//create a group and add the two cubes
+//These cubes can now be rotated / scaled etc as a group
+const intervalID = setInterval(spawnParticle(), 500);
+
+scene.add(groupTravelParticle);
+
+let last = 0;
+let num = 0;
+let speed = 0.2;
 
 
 // ANIMATE
-function animate() {
+function animate(timeStamp) {
   requestAnimationFrame(animate);
   control.update();
 
- 
+  let timeInSecond = timeStamp / 1000;
+
+  if (timeInSecond - last >= speed) {
+    last = timeInSecond;
+    console.log(++num);
+    spawnParticle()
+  }
+
   pointLight.color.setHex(audioFeatures.mainColor);
   pointLight2.color.setHex(audioFeatures.secondaryColor);
-   
 
-  
+  /*   if (audioFeatures.amplitudeSpectrum.length > 0) {
 
-  if (audioFeatures.amplitudeSpectrum.length > 0) {
-    /* let colorAngle =
-            (Math.atan2(audioFeatures["valens"], audioFeatures["arousal"]) *
-              180) /
-            Math.PI;
-
-          const testColor = hslToHex(colorAngle, 100, 50);
-          testColorDiv.style.background = testColor; */
-
-    
 
     const minValue = Math.min(...audioFeatures.amplitudeSpectrum);
     const maxValue = Math.max(...audioFeatures.amplitudeSpectrum);
@@ -111,7 +144,14 @@ function animate() {
 
       ball.position.y = 4 + amp * 10;
     });
-  }
+  } */
+
+  groupTravelParticle.children.forEach((particle) => {
+    particle.position.z -= 0.02+audioFeatures.tempo/1000;
+    if (particle.position.z < -50) {
+      groupTravelParticle.remove(particle);
+    }
+  });
 
   if (audioFeatures.beatSwitch) {
     doca.rotation.x += audioFeatures.rms / 5;

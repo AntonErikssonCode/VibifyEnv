@@ -42,7 +42,7 @@ function emotionalModelUpdate() {
   arousalTag.innerHTML += " " + audioFeatures["arousal"];
 }
 
-function getColors() {
+function getColorsOld() {
   const testColorDiv1 = document.querySelector("#testColor1");
   const testColorDiv2 = document.querySelector("#testColor2");
   const mainArousal =
@@ -99,4 +99,4 @@ function getColors() {
   audioFeatures["colorDifference"] = Math.abs(mainValues / secondaryValues);
 }
 
-export { fetchLabeledData, fetchBpmAndKey, emotionalModelUpdate, getColors };
+export { fetchLabeledData, fetchBpmAndKey, emotionalModelUpdate, getColorsOld };
