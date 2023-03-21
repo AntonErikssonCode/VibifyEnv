@@ -32,9 +32,8 @@ let audioFeatures = {
   energy: 0,
   spectralCentroid: 0,
   chroma: [],
-  bpm: 150,
+  bpm: 145,
   scale: 0,
-   tempo:150,
   beatSwitch: false,
   amplitudeSpectrum: [],
   predictions: {

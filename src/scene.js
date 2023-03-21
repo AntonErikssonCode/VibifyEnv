@@ -7,6 +7,9 @@ import { EffectComposer } from "https://cdn.jsdelivr.net/npm/three@0.125/example
 import { RenderPass } from "https://cdn.jsdelivr.net/npm/three@0.125/examples/jsm/postprocessing/RenderPass.js";
 import { UnrealBloomPass } from "https://cdn.jsdelivr.net/npm/three@0.125/examples/jsm/postprocessing/UnrealBloomPass.js";
 import { AfterimagePass } from "https://cdn.jsdelivr.net/npm/three@0.125/examples/jsm/postprocessing/AfterimagePass.js";
+import { ShaderPass } from "https://cdn.jsdelivr.net/npm/three@0.125/examples/jsm/postprocessing/ShaderPass.js";
+import { VignetteShader } from "https://cdn.jsdelivr.net/npm/three@0.125/examples/jsm/shaders/VignetteShader.js";
+
 function removeEntity(object) {
   var selectedObject = scene.getObjectByName(object.name);
   scene.remove(selectedObject);
@@ -32,9 +35,15 @@ const composer = new EffectComposer(renderer);
 const bloomPass = new UnrealBloomPass(new THREE.Vector2(w, h), 0.05, 0.1, 0.5);
 
 const afterImagePass = new AfterimagePass();
-afterImagePass.uniforms["damp"].value = 0.945;
+afterImagePass.uniforms["damp"].value = 0.7;
+
+
+const effectVignette = new ShaderPass(VignetteShader )
+effectVignette.uniforms[ "offset" ].value = audioFeatures.predictions.mood_sad/2+0.5;
+effectVignette.uniforms[ "darkness" ].value = 5;
 
 composer.addPass(renderScene);
+composer.addPass(effectVignette)
 composer.addPass(bloomPass);
 composer.addPass(afterImagePass);
 
@@ -124,15 +133,25 @@ scene.add(groupTravelParticle);
 
 function setRenderColor() {
   const darknessBias = 0;
-  const positiveBias =
-    audioFeatures.predictions.mood_happy  +
-    audioFeatures.predictions.mood_relaxed;
+  const positiveBias = audioFeatures.predictions.mood_happy; /*  +
+    audioFeatures.predictions.mood_relaxed; */
   const negativeBias = audioFeatures.predictions.mood_sad;
+
+  let modifier;
+
+  if(positiveBias>=negativeBias){
+    modifier = positiveBias;
+  }
+  else{
+    modifier = -negativeBias;
+  }
+
+console.dir("modifier: " + modifier)
   console.dir(positiveBias);
   console.dir(negativeBias);
   var color = shade(
     audioFeatures.color[0],
-    darknessBias + positiveBias - negativeBias
+    darknessBias + modifier/2 /* positiveBias - negativeBias */
   );
 
   scene.background = new THREE.Color(color);
@@ -205,40 +224,19 @@ function animate(timeStamp) {
       spawnParticle();
     }
   }
+  if(audioFeatures.color.length> 1){
+    pointLight.color.setHex(colorToHexColor( audioFeatures.color[0]));
+    pointLight2.color.setHex(colorToHexColor( audioFeatures.color[1]));
+  }
 
-  pointLight.color.setHex(audioFeatures.mainColor);
-  pointLight2.color.setHex(audioFeatures.secondaryColor);
-
-  /*   if (audioFeatures.amplitudeSpectrum.length > 0) {
-
-
-    const minValue = Math.min(...audioFeatures.amplitudeSpectrum);
-    const maxValue = Math.max(...audioFeatures.amplitudeSpectrum);
-    audioFeatures["amplitudeSpectrum"] = audioFeatures.amplitudeSpectrum.map(
-      normalize(0, 128)
-    );
-
-    chromaArrayBalls.forEach((ball, index) => {
-      const amp = audioFeatures.amplitudeSpectrum[index];
-
-      ball.position.y = 4 + amp * 10;
-    });
-  } */
   delta = clock.getDelta();
-  /*   doca.position.x
-   */
-  /* doca.position.x += 0.01;
-  doca.position.y = Math.sin(doca.position.x) */
-  /*   sphereRadiation.position.x+= 0.05;
-  sphereRadiation.position.y = 0.3* Math.sin(2*sphereRadiation.position.x) ;
 
- */
 
   if (audioFeatures.loudness > 30) {
     firework();
   }
   groupTravelParticle.children.forEach((particle) => {
-    particle.position.z -= 0.02 + audioFeatures.bpm / 1000;
+    particle.position.z -= 0.01+ audioFeatures.bpm / 1500;
     if (particle.position.z < -50) {
       groupTravelParticle.remove(particle);
     }
@@ -249,7 +247,7 @@ function animate(timeStamp) {
 
     mesh.position.x += 0.05;
     mesh.position.z -= 0.01;
-    mesh.position.y = 2 * Math.sin(1 * mesh.position.x) +0.2;
+    mesh.position.y = 2 * Math.sin(1 * mesh.position.x) + 0.2;
     if (mesh.position.x > 20) {
       radiationCollection.remove(radiationGroup);
     }
