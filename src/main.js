@@ -177,6 +177,7 @@ function initThree(){
   getColors();
   fetchLabeledData();
   setRenderColor();
+  console.dir(audioFeatures)
 }
 
 initThree();

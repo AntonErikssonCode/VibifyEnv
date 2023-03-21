@@ -1,7 +1,7 @@
 import * as THREE from "../modules/three.module.js";
 import { OrbitControls } from "../modules/OrbitControls.js";
 import { addSmallCube } from "../geometry.js";
-import { normalize, hslToHex } from "./utilityFunctions.js";
+import { normalize, hslToHex, shade } from "./utilityFunctions.js";
 
 function removeEntity(object) {
   var selectedObject = scene.getObjectByName(object.name);
@@ -108,7 +108,6 @@ function spawnParticle() {
   );
 }
 
-
 scene.add(groupTravelParticle);
 
 let last = 0;
@@ -117,12 +116,20 @@ let speed = 0.2;
 
 var clock = new THREE.Clock();
 var delta = 0;
-function setRenderColor() {
-/*   var color = colorToHexColor(audioFeatures.color[0]);
-  console.dir(color)
-  renderer.setClearColor(color, 1);
-  renderer.setClearColor (0xff0000, 1); */
 
+function setRenderColor() {
+  const darknessBias = -0.5;
+  const positiveBias = audioFeatures.predictions.mood_happy /2 + audioFeatures.predictions.mood_relaxed;
+  const negativeBias = audioFeatures.predictions.mood_sad ;
+  console.dir(positiveBias)
+   console.dir(negativeBias)
+  var color = shade(
+    audioFeatures.color[0],
+    darknessBias + positiveBias - negativeBias
+      
+  );
+
+  scene.background = new THREE.Color(color);
 }
 
 // ANIMATE
@@ -134,8 +141,8 @@ function animate(timeStamp) {
   if (audioFeatures.color.length >= 2) {
     if (timeInSecond - last >= speed) {
       last = timeInSecond;
-/*       console.log(++num);
- */      spawnParticle();
+      /*       console.log(++num);
+       */ spawnParticle();
     }
   }
 
@@ -158,9 +165,9 @@ function animate(timeStamp) {
     });
   } */
   delta = clock.getDelta();
-/*   doca.position.x 
- */  
-/* doca.position.x += 0.01;
+  /*   doca.position.x
+   */
+  /* doca.position.x += 0.01;
   doca.position.y = Math.sin(doca.position.x) */
 
   groupTravelParticle.children.forEach((particle) => {
