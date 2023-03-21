@@ -60,7 +60,7 @@ const materialShiny = new THREE.MeshStandardMaterial({
 
 var docaGeo = new THREE.DodecahedronGeometry(1, 0);
 var doca = new THREE.Mesh(docaGeo, materialShiny);
-scene.add(doca);
+/* scene.add(doca); */
 
 /* let chromaArrayBalls = [];
 function chromaBallsSpawn() {
@@ -137,11 +137,25 @@ var sphereRadiationMat = new THREE.MeshStandardMaterial({
   color: 0xff00ff 
 });
 var sphereRadiation = new THREE.Mesh(sphereRadiationGeo, sphereRadiationMat);
-sphereRadiation.position.x = -5;
+const groupRadiation = new THREE.Group();
+
+function spawnRadiation(){
+  var spawnedGroupRadiation = groupRadiation.clone();
+  var spawnedSphereRadiation = sphereRadiation.clone();
+/*   spawnedGroupRadiation.position.set(0,0,0);
+  spawnedGroupRadiation.position.set(0,0,0); */
+
+  spawnedGroupRadiation.rotateZ(0);
+  spawnedGroupRadiation.add(spawnedSphereRadiation)
+  scene.add(spawnedGroupRadiation)
+
+}
+
+spawnRadiation();
 
 
 
-scene.add(sphereRadiation)
+
 
 
 
@@ -205,13 +219,13 @@ function animate(timeStamp) {
    */
   /* doca.position.x += 0.01;
   doca.position.y = Math.sin(doca.position.x) */
-  sphereRadiation.position.x+= 0.05;
+/*   sphereRadiation.position.x+= 0.05;
   sphereRadiation.position.y = 0.3* Math.sin(2*sphereRadiation.position.x) ;
-  
 
+ */
 
   groupTravelParticle.children.forEach((particle) => {
-    particle.position.z -= 0.02 + audioFeatures.tempo / 1000;
+    particle.position.z -= 0.02 + audioFeatures.bpm / 1000;
     if (particle.position.z < -50) {
       groupTravelParticle.remove(particle);
     }
