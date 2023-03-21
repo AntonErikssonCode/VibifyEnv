@@ -135,6 +135,6 @@ let audioFeatures = {
   mainColor: "0xffffff",
   secondaryColor: "0xffffff",
   colorDifference: 0,
-  colors : [],
+  color : ["#ffffff"],
   
 };

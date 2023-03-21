@@ -83,29 +83,38 @@ const groupTravelParticle = new THREE.Group();
 var geoParticle = new THREE.PlaneBufferGeometry(0.12, 0.1, 1, 1);
 var matParticle = new THREE.MeshStandardMaterial({
   color: 0xffffff,
-  emissive:  0xffffff,
-/*   side: THREE.DoubleSide, */
+/*   emissive:  0xffffff,
+ *//*   side: THREE.DoubleSide, */
 });
 
-/* var travelParticle = new THREE.Mesh(geoParticle, matParticle);
- */
-/* groupTravelParticle.add(travelParticle); */
 
+
+
+function colorToHexColor(color){
+  let withoutHash = color.substring(1);
+  return "0x" + withoutHash;
+}
 
 function spawnParticle() {
   var travelParticle = new THREE.Mesh(geoParticle, matParticle);
   var particleXPos = getRndInteger(-50, 50);
   var particleYPos = getRndInteger(-20, 20);
   var particleRotation = getRndInteger(0, 45);
+  var randomColor = getRndInteger(0, 8);
+
   travelParticle.position.set(particleXPos, particleYPos, 2);
   travelParticle.rotateZ(particleRotation);
   groupTravelParticle.add(travelParticle);
   console.dir("SPAWN");
+  travelParticle.material.emissive.setHex( colorToHexColor(audioFeatures.color[randomColor]));
+  
+
 }
+
 
 //create a group and add the two cubes
 //These cubes can now be rotated / scaled etc as a group
-const intervalID = setInterval(spawnParticle(), 500);
+
 
 scene.add(groupTravelParticle);
 
@@ -120,12 +129,15 @@ function animate(timeStamp) {
   control.update();
 
   let timeInSecond = timeStamp / 1000;
+  if(audioFeatures.color.length >= 2){
+    if (timeInSecond - last >= speed) {
+      last = timeInSecond;
+      console.log(++num);
+      spawnParticle()
+    }
 
-  if (timeInSecond - last >= speed) {
-    last = timeInSecond;
-    console.log(++num);
-    spawnParticle()
   }
+  
 
   pointLight.color.setHex(audioFeatures.mainColor);
   pointLight2.color.setHex(audioFeatures.secondaryColor);
