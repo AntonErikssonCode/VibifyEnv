@@ -7,7 +7,7 @@ import {
 } from "./updateState.js";
 import { addSmallCube } from "../geometry.js";
 import { getColors } from "./getColors.js";
-import { setRenderColor } from "./scene.js";
+import { firework, setRenderColor } from "./scene.js";
 const loudnessHTML = document.querySelector("#loudnessTag");
 const chromaHTML = document.querySelector("#chromaTag");
 const rmsHTML = document.querySelector("#rmsTag");
@@ -178,6 +178,7 @@ function initThree(){
   fetchLabeledData();
   setRenderColor();
   console.dir(audioFeatures)
+  firework();
 }
 
 initThree();

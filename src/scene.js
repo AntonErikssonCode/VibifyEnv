@@ -1,23 +1,24 @@
-import * as THREE from "../modules/three.module.js";
+/* import * as THREE from "../modules/three.module.js"; */
+import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.125/build/three.module.js";
 import { OrbitControls } from "../modules/OrbitControls.js";
 import { addSmallCube } from "../geometry.js";
 import { normalize, hslToHex, shade } from "./utilityFunctions.js";
-
+import { EffectComposer } from "https://cdn.jsdelivr.net/npm/three@0.125/examples/jsm/postprocessing/EffectComposer.js";
+import { RenderPass } from "https://cdn.jsdelivr.net/npm/three@0.125/examples/jsm/postprocessing/RenderPass.js";
+import { UnrealBloomPass } from "https://cdn.jsdelivr.net/npm/three@0.125/examples/jsm/postprocessing/UnrealBloomPass.js";
+import { AfterimagePass } from "https://cdn.jsdelivr.net/npm/three@0.125/examples/jsm/postprocessing/AfterimagePass.js";
 function removeEntity(object) {
   var selectedObject = scene.getObjectByName(object.name);
   scene.remove(selectedObject);
 }
 
+let w = window.innerWidth;
+let h = window.innerHeight;
 // Camera
 let scene = new THREE.Scene();
 scene.fog = new THREE.Fog(0x050505, 1, 45);
 
-const camera = new THREE.PerspectiveCamera(
-  90,
-  window.innerWidth /* *0.7 */ / window.innerHeight,
-  0.1,
-  1000
-);
+const camera = new THREE.PerspectiveCamera(90, w /* *0.7 */ / h, 0.1, 1000);
 camera.position.z = 5;
 
 // Renderer
@@ -25,11 +26,22 @@ const renderer = new THREE.WebGLRenderer({
   antialias: true,
   canvas: myCanvasId,
 });
+renderer.setSize(w, h);
+const renderScene = new RenderPass(scene, camera);
+const composer = new EffectComposer(renderer);
+const bloomPass = new UnrealBloomPass(new THREE.Vector2(w, h), 0.1, 0, 0);
 
-renderer.setClearColor(0x030303);
-renderer.setSize(window.innerWidth, window.innerHeight);
-renderer.shadowMap.enabled = true;
-renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+const afterImagePass = new AfterimagePass();
+/* afterImagePass.uniforms["damp"].value = 0.8; */
+
+composer.addPass(renderScene);
+composer.addPass(bloomPass);
+composer.addPass(afterImagePass)
+
+/* renderer.setClearColor(0x030303); */
+
+/* renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap; */
 const control = new OrbitControls(camera, renderer.domElement);
 
 // LIGHT
@@ -60,7 +72,7 @@ const materialShiny = new THREE.MeshStandardMaterial({
 
 var docaGeo = new THREE.DodecahedronGeometry(1, 0);
 var doca = new THREE.Mesh(docaGeo, materialShiny);
-/* scene.add(doca); */
+scene.add(doca);
 
 /* let chromaArrayBalls = [];
 function chromaBallsSpawn() {
@@ -110,8 +122,6 @@ function spawnParticle() {
 
 scene.add(groupTravelParticle);
 
-
-
 function setRenderColor() {
   const darknessBias = -0.5;
   const positiveBias =
@@ -128,50 +138,49 @@ function setRenderColor() {
   scene.background = new THREE.Color(color);
 }
 
-
-
-
-
-var sphereRadiationGeo = new THREE.SphereGeometry(0.2, 20, 20);
+var sphereRadiationGeo = new THREE.SphereGeometry(0.07, 5, 5);
 var sphereRadiationMat = new THREE.MeshStandardMaterial({
-  color: 0xff00ff 
+  color: "red",
 });
 var sphereRadiation = new THREE.Mesh(sphereRadiationGeo, sphereRadiationMat);
 const groupRadiation = new THREE.Group();
+const radiationCollection = new THREE.Group();
 
-function spawnRadiation(){
+function spawnRadiation(angle) {
+  var randomColor = getRndInteger(0, 8);
+  var randomAngle = getRndInteger(0, 225);
   var spawnedGroupRadiation = groupRadiation.clone();
   var spawnedSphereRadiation = sphereRadiation.clone();
-/*   spawnedGroupRadiation.position.set(0,0,0);
-  spawnedGroupRadiation.position.set(0,0,0); */
-
-  spawnedGroupRadiation.rotateZ(0);
-  spawnedGroupRadiation.add(spawnedSphereRadiation)
-  scene.add(spawnedGroupRadiation)
-
+  console.dir("reandom color:" + audioFeatures.color[randomColor]);
+  spawnedSphereRadiation.material.emissive.setHex(
+    colorToHexColor(audioFeatures.color[randomColor])
+  );
+  spawnedGroupRadiation.rotateZ(angle);
+  spawnedGroupRadiation.add(spawnedSphereRadiation);
+  radiationCollection.add(spawnedGroupRadiation);
+  scene.add(radiationCollection);
 }
 
-spawnRadiation();
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+function firework() {
+  spawnRadiation(0);
+  spawnRadiation(45);
+  spawnRadiation(90);
+  spawnRadiation(135);
+  spawnRadiation(180);
+  spawnRadiation(225);
+  spawnRadiation(0);
+  spawnRadiation(15);
+  spawnRadiation(30);
+  spawnRadiation(60);
+  spawnRadiation(75);
+  spawnRadiation(105);
+  spawnRadiation(120);
+  spawnRadiation(150);
+  spawnRadiation(165);
+  spawnRadiation(195);
+  spawnRadiation(210);
+  spawnRadiation(240);
+}
 
 let last = 0;
 let num = 0;
@@ -180,19 +189,18 @@ let speed = 0.05;
 var clock = new THREE.Clock();
 var delta = 0;
 
-
-
 // ANIMATE
 function animate(timeStamp) {
   requestAnimationFrame(animate);
   control.update();
 
   let timeInSecond = timeStamp / 1000;
-  if (audioFeatures.color.length >= 2) {
+  if (audioFeatures.color.length >= 1) {
     if (timeInSecond - last >= speed) {
       last = timeInSecond;
       /*       console.log(++num);
-       */ spawnParticle();
+       */
+      spawnParticle();
     }
   }
 
@@ -219,7 +227,7 @@ function animate(timeStamp) {
    */
   /* doca.position.x += 0.01;
   doca.position.y = Math.sin(doca.position.x) */
-/*   sphereRadiation.position.x+= 0.05;
+  /*   sphereRadiation.position.x+= 0.05;
   sphereRadiation.position.y = 0.3* Math.sin(2*sphereRadiation.position.x) ;
 
  */
@@ -228,6 +236,17 @@ function animate(timeStamp) {
     particle.position.z -= 0.02 + audioFeatures.bpm / 1000;
     if (particle.position.z < -50) {
       groupTravelParticle.remove(particle);
+    }
+  });
+
+  radiationCollection.children.forEach((radiationGroup) => {
+    var mesh = radiationGroup.children[0];
+
+    mesh.position.x += 0.05;
+    mesh.position.z -= 0.01;
+    mesh.position.y = 0.3 * Math.sin(2 * mesh.position.x);
+    if (mesh.position.x > 20) {
+      radiationCollection.remove(radiationGroup);
     }
   });
 
@@ -243,9 +262,18 @@ function animate(timeStamp) {
   doca.scale.y = 1 + (audioFeatures["loudness"] / 100) * 3;
   doca.scale.z = 1 + (audioFeatures["loudness"] / 100) * 3;
 
-  renderer.render(scene, camera);
+  composer.render(scene, camera);
 }
 
 animate();
 
-export { setRenderColor };
+/* function handleWindowResize () {
+  w = window.innerWidth;
+  h = window.innerHeight;
+  camera.aspect = w / h;
+  camera.updateProjectionMatrix();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+}
+window.addEventListener('resize', handleWindowResize, false); */
+
+export { setRenderColor, firework };
