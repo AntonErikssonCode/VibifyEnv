@@ -104,33 +104,69 @@ function spawnParticle() {
   groupTravelParticle.add(travelParticle);
   /* console.dir("SPAWN"); */
   travelParticle.material.emissive.setHex(
-    colorToHexColor(audioFeatures.color[randomColor])
+    colorToHexColor(shade(audioFeatures.color[randomColor], 0.1))
   );
 }
 
 scene.add(groupTravelParticle);
 
-let last = 0;
-let num = 0;
-let speed = 0.2;
 
-var clock = new THREE.Clock();
-var delta = 0;
 
 function setRenderColor() {
   const darknessBias = -0.5;
-  const positiveBias = audioFeatures.predictions.mood_happy /2 + audioFeatures.predictions.mood_relaxed;
-  const negativeBias = audioFeatures.predictions.mood_sad ;
-  console.dir(positiveBias)
-   console.dir(negativeBias)
+  const positiveBias =
+    audioFeatures.predictions.mood_happy / 2 +
+    audioFeatures.predictions.mood_relaxed;
+  const negativeBias = audioFeatures.predictions.mood_sad;
+  console.dir(positiveBias);
+  console.dir(negativeBias);
   var color = shade(
     audioFeatures.color[0],
     darknessBias + positiveBias - negativeBias
-      
   );
 
   scene.background = new THREE.Color(color);
 }
+
+
+
+
+
+var sphereRadiationGeo = new THREE.SphereGeometry(0.2, 20, 20);
+var sphereRadiationMat = new THREE.MeshStandardMaterial({
+  color: 0xff00ff 
+});
+var sphereRadiation = new THREE.Mesh(sphereRadiationGeo, sphereRadiationMat);
+sphereRadiation.position.x = -5;
+
+
+
+scene.add(sphereRadiation)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+let last = 0;
+let num = 0;
+let speed = 0.05;
+
+var clock = new THREE.Clock();
+var delta = 0;
+
+
 
 // ANIMATE
 function animate(timeStamp) {
@@ -169,6 +205,10 @@ function animate(timeStamp) {
    */
   /* doca.position.x += 0.01;
   doca.position.y = Math.sin(doca.position.x) */
+  sphereRadiation.position.x+= 0.05;
+  sphereRadiation.position.y = 0.3* Math.sin(2*sphereRadiation.position.x) ;
+  
+
 
   groupTravelParticle.children.forEach((particle) => {
     particle.position.z -= 0.02 + audioFeatures.tempo / 1000;

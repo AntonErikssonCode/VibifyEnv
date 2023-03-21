@@ -34,7 +34,7 @@ let audioFeatures = {
   chroma: [],
   bpm: 0,
   scale: 0,
-   tempo:72,
+   tempo:150,
   beatSwitch: false,
   amplitudeSpectrum: [],
   predictions: {
