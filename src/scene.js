@@ -82,15 +82,12 @@ const groupTravelParticle = new THREE.Group();
 
 var geoParticle = new THREE.PlaneBufferGeometry(0.12, 0.1, 1, 1);
 var matParticle = new THREE.MeshStandardMaterial({
-  color: 0xffffff,
-/*   emissive:  0xffffff,
- *//*   side: THREE.DoubleSide, */
+  color: 0xffffff /*   side: THREE.DoubleSide, */,
+  /*   emissive:  0xffffff,
+   */
 });
 
-
-
-
-function colorToHexColor(color){
+function colorToHexColor(color) {
   let withoutHash = color.substring(1);
   return "0x" + withoutHash;
 }
@@ -105,15 +102,11 @@ function spawnParticle() {
   travelParticle.position.set(particleXPos, particleYPos, 2);
   travelParticle.rotateZ(particleRotation);
   groupTravelParticle.add(travelParticle);
-  console.dir("SPAWN");
-  travelParticle.material.emissive.setHex( colorToHexColor(audioFeatures.color[randomColor]));
-  
-
+  /* console.dir("SPAWN"); */
+  travelParticle.material.emissive.setHex(
+    colorToHexColor(audioFeatures.color[randomColor])
+  );
 }
-
-
-//create a group and add the two cubes
-//These cubes can now be rotated / scaled etc as a group
 
 
 scene.add(groupTravelParticle);
@@ -122,6 +115,15 @@ let last = 0;
 let num = 0;
 let speed = 0.2;
 
+var clock = new THREE.Clock();
+var delta = 0;
+function setRenderColor() {
+/*   var color = colorToHexColor(audioFeatures.color[0]);
+  console.dir(color)
+  renderer.setClearColor(color, 1);
+  renderer.setClearColor (0xff0000, 1); */
+
+}
 
 // ANIMATE
 function animate(timeStamp) {
@@ -129,15 +131,13 @@ function animate(timeStamp) {
   control.update();
 
   let timeInSecond = timeStamp / 1000;
-  if(audioFeatures.color.length >= 2){
+  if (audioFeatures.color.length >= 2) {
     if (timeInSecond - last >= speed) {
       last = timeInSecond;
-      console.log(++num);
-      spawnParticle()
+/*       console.log(++num);
+ */      spawnParticle();
     }
-
   }
-  
 
   pointLight.color.setHex(audioFeatures.mainColor);
   pointLight2.color.setHex(audioFeatures.secondaryColor);
@@ -157,9 +157,14 @@ function animate(timeStamp) {
       ball.position.y = 4 + amp * 10;
     });
   } */
+  delta = clock.getDelta();
+/*   doca.position.x 
+ */  
+/* doca.position.x += 0.01;
+  doca.position.y = Math.sin(doca.position.x) */
 
   groupTravelParticle.children.forEach((particle) => {
-    particle.position.z -= 0.02+audioFeatures.tempo/1000;
+    particle.position.z -= 0.02 + audioFeatures.tempo / 1000;
     if (particle.position.z < -50) {
       groupTravelParticle.remove(particle);
     }
@@ -181,3 +186,5 @@ function animate(timeStamp) {
 }
 
 animate();
+
+export { setRenderColor };
