@@ -25,7 +25,7 @@
  */
 
 // Hurt
-
+/* 
 let audioFeatures = {
   rms: 0,
   loudness: 1,
@@ -52,12 +52,12 @@ let audioFeatures = {
   colorDifference: 0,
   color : [],
   
-};
+}; */
 
 
 // happy song
 
-/* 
+
 let audioFeatures = {
   rms: 0,
   loudness: 1,
@@ -84,9 +84,9 @@ let audioFeatures = {
   colorDifference: 0,
   color : [],
   
-}; */
+};
 
-// random
+// GIFT OF GUILT
 /* 
 let audioFeatures = {
   rms: 0,
@@ -100,11 +100,11 @@ let audioFeatures = {
   beatSwitch: false,
   amplitudeSpectrum: [],
   predictions: {
-    mood_aggressive: 0.9,
-    mood_relaxed:  0.1,
-    mood_happy: 0.1,
-    mood_sad: 0.8,
-    danceability: 0.13219948802143336,
+    mood_aggressive: 0.89,
+    mood_relaxed:  0.45,
+    mood_happy: 0.22,
+    mood_sad: 0.33,
+    danceability: 0.69,
   },
   arousal: -0.60135, 
   valence: -0.66736522,

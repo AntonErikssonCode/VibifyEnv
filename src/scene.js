@@ -32,11 +32,11 @@ const composer = new EffectComposer(renderer);
 const bloomPass = new UnrealBloomPass(new THREE.Vector2(w, h), 0.05, 0.1, 0.5);
 
 const afterImagePass = new AfterimagePass();
-afterImagePass.uniforms["damp"].value = 0.45;
+afterImagePass.uniforms["damp"].value = 0.945;
 
 composer.addPass(renderScene);
 composer.addPass(bloomPass);
-composer.addPass(afterImagePass)
+composer.addPass(afterImagePass);
 
 /* renderer.setClearColor(0x030303); */
 
@@ -123,9 +123,9 @@ function spawnParticle() {
 scene.add(groupTravelParticle);
 
 function setRenderColor() {
-  const darknessBias = -0.5;
+  const darknessBias = 0;
   const positiveBias =
-    audioFeatures.predictions.mood_happy / 2 +
+    audioFeatures.predictions.mood_happy  +
     audioFeatures.predictions.mood_relaxed;
   const negativeBias = audioFeatures.predictions.mood_sad;
   console.dir(positiveBias);
@@ -139,9 +139,7 @@ function setRenderColor() {
 }
 
 var sphereRadiationGeo = new THREE.SphereGeometry(0.07, 5, 5);
-var sphereRadiationMat = new THREE.MeshStandardMaterial({
-  color: "red",
-});
+var sphereRadiationMat = new THREE.MeshStandardMaterial({});
 var sphereRadiation = new THREE.Mesh(sphereRadiationGeo, sphereRadiationMat);
 const groupRadiation = new THREE.Group();
 const radiationCollection = new THREE.Group();
@@ -152,6 +150,9 @@ function spawnRadiation(angle) {
   var spawnedGroupRadiation = groupRadiation.clone();
   var spawnedSphereRadiation = sphereRadiation.clone();
   console.dir("reandom color:" + audioFeatures.color[randomColor]);
+  spawnedSphereRadiation.material.color.setHex(
+    colorToHexColor(audioFeatures.color[randomColor])
+  );
   spawnedSphereRadiation.material.emissive.setHex(
     colorToHexColor(audioFeatures.color[randomColor])
   );
@@ -189,6 +190,7 @@ let speed = 0.05;
 var clock = new THREE.Clock();
 var delta = 0;
 
+/* var interval = setInterval(firework, 1000) */
 // ANIMATE
 function animate(timeStamp) {
   requestAnimationFrame(animate);
@@ -232,6 +234,9 @@ function animate(timeStamp) {
 
  */
 
+  if (audioFeatures.loudness > 30) {
+    firework();
+  }
   groupTravelParticle.children.forEach((particle) => {
     particle.position.z -= 0.02 + audioFeatures.bpm / 1000;
     if (particle.position.z < -50) {
@@ -244,7 +249,7 @@ function animate(timeStamp) {
 
     mesh.position.x += 0.05;
     mesh.position.z -= 0.01;
-    mesh.position.y = 0.3 * Math.sin(2 * mesh.position.x);
+    mesh.position.y = 2 * Math.sin(1 * mesh.position.x) +0.2;
     if (mesh.position.x > 20) {
       radiationCollection.remove(radiationGroup);
     }
