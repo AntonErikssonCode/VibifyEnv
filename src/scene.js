@@ -29,10 +29,10 @@ const renderer = new THREE.WebGLRenderer({
 renderer.setSize(w, h);
 const renderScene = new RenderPass(scene, camera);
 const composer = new EffectComposer(renderer);
-const bloomPass = new UnrealBloomPass(new THREE.Vector2(w, h), 0.1, 0, 0);
+const bloomPass = new UnrealBloomPass(new THREE.Vector2(w, h), 0.05, 0.1, 0.5);
 
 const afterImagePass = new AfterimagePass();
-/* afterImagePass.uniforms["damp"].value = 0.8; */
+afterImagePass.uniforms["damp"].value = 0.45;
 
 composer.addPass(renderScene);
 composer.addPass(bloomPass);
