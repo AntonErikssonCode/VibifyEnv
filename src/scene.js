@@ -181,9 +181,9 @@ function setRenderColor() {
     modifier = -negativeBias;
   }
 
-  console.dir("modifier: " + modifier);
+/*   console.dir("modifier: " + modifier);
   console.dir(positiveBias);
-  console.dir(negativeBias);
+  console.dir(negativeBias); */
   var color = shade(audioFeatures.color[0], darknessBias + modifier / 2);
 
   scene.background = new THREE.Color(color);
@@ -250,7 +250,9 @@ function calculateAverageOfArray(array) {
 }
 /* var interval = setInterval(firework, 1000) */
 // ANIMATE
-let energyT  = audioFeatures.energy;
+let morphTime  = 0 ;
+let morphTimeAmplifier = audioFeatures.predictions.mood_aggressive - audioFeatures.predictions.mood_relaxed;
+console.dir(morphTime)
 function animate(timeStamp) {
   requestAnimationFrame(animate);
   control.update();
@@ -315,13 +317,13 @@ function animate(timeStamp) {
   console.dir("treble: " + calculateAverageOfArray(treble)); */
 
 
-  energyT += audioFeatures.rms;
-  console.dir(energyT)
+  morphTime += audioFeatures.rms * morphTimeAmplifier;
+  console.dir(morphTime)
   // ESSENCE SHAPE
   let t = clock.getElapsedTime();
 /*   console.dir(t)
  */  g.userData.nPos.forEach((p, idx) => {
-    let ns = noise(p.x, p.y, p.z, energyT);
+    let ns = noise(p.x , p.y, p.z, morphTime);
     v3.copy(p).multiplyScalar(radius).addScaledVector(p, ns);
     pos.setXYZ(idx, v3.x, v3.y, v3.z);
   });
