@@ -25,9 +25,9 @@
  */
 
 // Hurt
-
+/* 
 let audioFeatures = {
-  rms: 0,
+  rms: 0.01,
   loudness: 1,
   energy: 0,
   spectralCentroid: 0,
@@ -51,7 +51,7 @@ let audioFeatures = {
   colorDifference: 0,
   color : [],
   
-};
+}; */
 
 
 // happy song
@@ -86,7 +86,7 @@ let audioFeatures = {
 }; */
 
 // GIFT OF GUILT
-/* 
+
 let audioFeatures = {
   rms: 0,
   loudness: 1,
@@ -113,7 +113,7 @@ let audioFeatures = {
   colorDifference: 0,
   color : ["#ffffff"],
   
-}; */
+};
 
 
 // random

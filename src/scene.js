@@ -113,7 +113,7 @@ var doca = new THREE.Mesh(docaGeo, materialShiny);
 scene.add(doca); */
 
 let radius = 1;
-let g = new THREE.IcosahedronGeometry(radius, 20);
+let g = new THREE.IcosahedronGeometry(radius, 1);
 let nPos = [];
 let v3 = new THREE.Vector3();
 let pos = g.attributes.position;
