@@ -1,4 +1,5 @@
-/* import * as THREE from "../modules/three.module.js"; */
+/* import * as THREE from "../modules/three.module.js";
+ */
 import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.125/build/three.module.js";
 import { OrbitControls } from "../modules/OrbitControls.js";
 import { addSmallCube } from "../geometry.js";
@@ -40,7 +41,7 @@ afterImagePass.uniforms["damp"].value = 0.7;
 
 const effectVignette = new ShaderPass(VignetteShader);
 effectVignette.uniforms["offset"].value =
-  audioFeatures.predictions.mood_sad / 2 + 0.5;
+  audioFeatures.predictions.mood_sad/3  + 0.2;
 effectVignette.uniforms["darkness"].value = 5;
 
 composer.addPass(renderScene);
@@ -114,14 +115,13 @@ var doca = new THREE.Mesh(docaGeo, materialShiny);
 scene.add(doca); */
 
 // ESSENCE SHAPE
-const resolutionShape =
-  Math.floor(
-    (audioFeatures.predictions.mood_happy +
-      audioFeatures.predictions.mood_sad +
-      audioFeatures.predictions.mood_relaxed -
-      (audioFeatures.predictions.mood_aggressive * 2) / 4) *
-      10
-  ) - 3;
+const resolutionShape = Math.floor(
+  (audioFeatures.predictions.mood_happy +
+    audioFeatures.predictions.mood_sad +
+    audioFeatures.predictions.mood_relaxed -
+    (audioFeatures.predictions.mood_aggressive * 2) / 4) *
+    10 -3
+);
 
 console.dir("Resolution Shape: " + resolutionShape);
 let radius = 1;
@@ -177,7 +177,11 @@ function spawnParticle() {
   groupTravelParticle.add(travelParticle);
 
   travelParticle.material.emissive.setHex(
-    colorToHexColor(shade(audioFeatures.color[randomColor], 0.1))
+    colorToHexColor(
+      /* audioFeatures.color[
+        randomColor
+      ] */ shade(audioFeatures.color[randomColor], 0.1)
+    )
   );
 }
 
@@ -272,7 +276,7 @@ function animate(timeStamp) {
   requestAnimationFrame(animate);
   control.update();
 
-  let timeInSecond = timeStamp / 1000;
+  let timeInSecond = timeStamp / 100;
   if (audioFeatures.color.length >= 1) {
     if (timeInSecond - last >= speed) {
       last = timeInSecond;

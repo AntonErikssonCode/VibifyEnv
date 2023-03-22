@@ -60,8 +60,27 @@
       </div>
 
       <div id="beatContainer">BEAT</div>
-      
 
+      <script>
+        function selectHurt() {
+          audiofeatures.predicition = {
+            mood_aggressive: 0.13433771124109625,
+            mood_relaxed: 0.7356889307498932,
+            mood_happy: 0.3067434541764669,
+            mood_sad: 0.9741086781024932,
+            danceability: 0.13,
+          };
+        }
+        function selectGift() {
+          audiofeatures.predicition = {
+            mood_aggressive: 0.89,
+            mood_relaxed: 0.45,
+            mood_happy: 0.22,
+            mood_sad: 0.33,
+            danceability: 0.69,
+          };
+        }
+      </script>
       <div id="colors">
         <div id="testColor1" class="testColor"></div>
         <div id="testColor2" class="testColor"></div>
@@ -75,9 +94,10 @@
         <div id="testColor10" class="testColor"></div>
         <div id="testColor11" class="testColor"></div>
         <div id="testColor12" class="testColor"></div>
+        <button class="selectButton" onclick="selectHurt">HURT</button>
+        <button class="selectButton" onclick="selectGift">Gift</button>
       </div>
       <canvas id="myCanvasId"></canvas>
-      
     </main>
 
     <script src="https://cdn.jsdelivr.net/npm/essentia.js@0.1.0/dist/essentia-wasm.web.js"></script>
@@ -87,7 +107,8 @@
       type="text/javascript"
       src="https://unpkg.com/meyda@5.5.1/dist/web/meyda.min.js"
     ></script>
-    <script src="https://unpkg.com/perlin-noise-3d"></script>
+    <!--     <script src="https://unpkg.com/perlin-noise-3d"></script>
+ -->
     <script type="module" src="src/scene.js"></script>
     <script src="src/main.js" type="module" async defer></script>
   </body>
