@@ -62,24 +62,19 @@ function initMeyda(file) {
     const lowPassAnalyzer = Meyda.createMeydaAnalyzer({
       audioContext: meydaContext,
       source: filter,
-      bufferSize: 256,
+      bufferSize: 512,
       featureExtractors: ["energy"],
       callback: (features) => {
-        if (features.energy > 15) {
-          /*           console.dir("beat");
-           */ beatContainer.style.background = "red";
+        if (features.energy > 30) {
+          beatContainer.style.background = "red";
           if (beatUsed == false) {
             audioFeatures["beatSwitch"] = !audioFeatures["beatSwitch"];
             beatUsed = true;
-            /*  arrayOfSmallObject.push(addSmallCube(scene)); */
-
-            /*             console.dir(arrayOfSmallObject);
-             */
+            console.dir(audioFeatures)
           }
         } else {
           beatContainer.style.background = "blue";
-          /*           console.dir("not beat");
-           */ beatUsed = false;
+           beatUsed = false;
         }
       },
     });
@@ -161,27 +156,24 @@ dropArea.addEventListener("drop", (e) => {
   const files = e.dataTransfer.files;
   uploadedFile = e.dataTransfer.files[0];
 
-
- initMeyda(uploadedFile); 
-
-/*   processFileUpload(files); */
+  initMeyda(uploadedFile);
+  console.dir(audioFeatures)
+  /*   processFileUpload(files); */
 });
 dropArea.addEventListener("click", () => {
   dropInput.click();
 });
 
 /// TEST
-function initThree(){
+function initThree() {
   fetchLabeledData();
-      initMeyda(uploadedFile);
-      emotionalModelUpdate();
-      getColors();
-      setRenderColor();
-
+  initMeyda(uploadedFile);
+  emotionalModelUpdate();
+  getColors();
+  setRenderColor();
+  console.dir(audioFeatures)
 }
 initThree();
-
-
 
 function processFileUpload(files) {
   if (files.length > 1) {

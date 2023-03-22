@@ -25,7 +25,7 @@
  */
 
 // Hurt
-/* 
+
 let audioFeatures = {
   rms: 0,
   loudness: 1,
@@ -51,12 +51,12 @@ let audioFeatures = {
   colorDifference: 0,
   color : [],
   
-}; */
+};
 
 
 // happy song
 
-
+/* 
 let audioFeatures = {
   rms: 0,
   loudness: 1,
@@ -83,7 +83,7 @@ let audioFeatures = {
   colorDifference: 0,
   color : [],
   
-};
+}; */
 
 // GIFT OF GUILT
 /* 
