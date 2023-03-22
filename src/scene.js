@@ -251,8 +251,8 @@ function calculateAverageOfArray(array) {
 /* var interval = setInterval(firework, 1000) */
 // ANIMATE
 let morphTime  = 0 ;
-let morphTimeAmplifier = audioFeatures.predictions.mood_aggressive - audioFeatures.predictions.mood_relaxed;
-console.dir(morphTime)
+let morphTimeAmplifier = audioFeatures.predictions.mood_aggressive;
+console.dir("morphtime Amplifier: " + morphTimeAmplifier)
 function animate(timeStamp) {
   requestAnimationFrame(animate);
   control.update();
