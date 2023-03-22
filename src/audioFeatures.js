@@ -27,7 +27,7 @@
 // Hurt
 /* 
 let audioFeatures = {
-  rms: 0.01,
+  rms: 0,
   loudness: 1,
   energy: 0,
   spectralCentroid: 0,
@@ -41,7 +41,7 @@ let audioFeatures = {
     mood_relaxed: 0.7356889307498932,
     mood_happy: 0.3067434541764669,
     mood_sad: 0.9741086781024932,
-  danceability: 0.13219948802143336,
+  danceability: 0.13,
   },
   arousal: -0.60135, 
   valence: -0.66736522,
@@ -55,8 +55,8 @@ let audioFeatures = {
 
 
 // happy song
-
 /* 
+
 let audioFeatures = {
   rms: 0,
   loudness: 1,
