@@ -26,7 +26,7 @@
 
 // Hurt
 
-let audioFeatures3= {
+let audioFeatures5 = {
   rms: 0,
   loudness: 1,
   energy: 0,
@@ -49,7 +49,7 @@ let audioFeatures3= {
   mainColor: "0xffffff",
   secondaryColor: "0xffffff",
   colorDifference: 0,
-  color : [],
+  color : ["#ffffff", "#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff"],
   
 };
 
@@ -81,7 +81,7 @@ let audioFeatures4 = {
   mainColor: "0xffffff",
   secondaryColor: "0xffffff",
   colorDifference: 0,
-  color : [],
+  color : ["#ffffff", "#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff"],
   
 };
 
@@ -111,7 +111,7 @@ let audioFeatures = {
   mainColor: "0xffffff",
   secondaryColor: "0xffffff",
   colorDifference: 0,
-  color : ["#ffffff"],
+  color : ["#ffffff", "#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff"],
   
 };
 
