@@ -34,7 +34,7 @@ const renderer = new THREE.WebGLRenderer({
 renderer.setSize(w, h);
 const renderScene = new RenderPass(scene, camera);
 const composer = new EffectComposer(renderer);
-const bloomPass = new UnrealBloomPass(new THREE.Vector2(w, h), 0.05, 0.1, 0.5);
+const bloomPass = new UnrealBloomPass(new THREE.Vector2(w, h), 0.2, 0.1, 0.6);
 
 const afterImagePass = new AfterimagePass();
 afterImagePass.uniforms["damp"].value = 0.7;
@@ -59,12 +59,12 @@ const control = new OrbitControls(camera, renderer.domElement);
 const light = new THREE.AmbientLight(0xffffff, 0.1);
 scene.add(light);
 
-const pointLight = new THREE.PointLight(0xffffff, 2, 17);
+const pointLight = new THREE.PointLight(0xffffff, 1.6, 17);
 pointLight.position.set(-5, 5, 5);
 pointLight.castShadow = true;
 scene.add(pointLight);
 
-const pointLight2 = new THREE.PointLight(0xffffff, 2, 17);
+const pointLight2 = new THREE.PointLight(0xffffff, 1.6, 17);
 pointLight2.position.set(5, 5, 5);
 pointLight2.castShadow = true;
 scene.add(pointLight2);
@@ -188,10 +188,10 @@ function spawnParticle() {
 scene.add(groupTravelParticle);
 
 function setRenderColor() {
-  const darknessBias = 0;
+  const darknessBias = -0.7;
   const positiveBias = audioFeatures.predictions.mood_happy;
   const negativeBias = audioFeatures.predictions.mood_sad;
-
+ 
   let modifier;
 
   if (positiveBias >= negativeBias) {
@@ -200,10 +200,8 @@ function setRenderColor() {
     modifier = -negativeBias;
   }
 
-  /*   console.dir("modifier: " + modifier);
-  console.dir(positiveBias);
-  console.dir(negativeBias); */
-  var color = shade(audioFeatures.color[0], darknessBias + modifier / 2);
+
+  var color = shade(audioFeatures.color[0], darknessBias + modifier/3 );
 
   scene.background = new THREE.Color(color);
 }
