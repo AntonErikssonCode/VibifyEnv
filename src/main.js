@@ -155,8 +155,9 @@ dropArea.addEventListener("drop", (e) => {
   e.preventDefault();
   const files = e.dataTransfer.files;
   uploadedFile = e.dataTransfer.files[0];
-
   initMeyda(uploadedFile);
+  initThree();
+ /*  initMeyda(uploadedFile); */
   console.dir(audioFeatures)
   /*   processFileUpload(files); */
 });
@@ -167,7 +168,7 @@ dropArea.addEventListener("click", () => {
 /// TEST
 function initThree() {
   fetchLabeledData();
-  initMeyda(uploadedFile);
+
   emotionalModelUpdate();
   getColors();
   setRenderColor();

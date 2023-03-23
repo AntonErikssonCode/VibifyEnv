@@ -87,7 +87,7 @@ let audioFeatures4 = {
 
 // GIFT OF GUILT
 
-let audioFeatures2 = {
+let audioFeatures = {
   rms: 0,
   loudness: 1,
   energy: 0,
@@ -119,13 +119,13 @@ let audioFeatures2 = {
 // random
   
 
-let audioFeatures = {
+let audioFeatures1 = {
   rms: 0,
   loudness: 1,
   energy: 0,
   spectralCentroid: 0,
   chroma: [],
-  bpm: 72,
+  bpm: 200,
   scale: 0,
   tempo:200,
   beatSwitch: false,

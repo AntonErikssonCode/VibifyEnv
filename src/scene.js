@@ -341,7 +341,8 @@ function animate(timeStamp) {
   });
   geoEssenceShape.computeVertexNormals();
   pos.needsUpdate = true;
-
+  essenceShape.rotation.x += 0.001;
+  essenceShape.rotation.y += 0.003;
   composer.render(scene, camera);
 }
 
