@@ -77,6 +77,67 @@ scene.add(pointLight2);
 const sphereSize = 1;
 const pointLightHelper = new THREE.PointLightHelper(pointLight, sphereSize);
 
+const material1 = new THREE.MeshStandardMaterial({
+  color: audioFeatures.color[0],
+  emissive: audioFeatures.color[0],
+});
+const material2 = new THREE.MeshStandardMaterial({
+  color: audioFeatures.color[1],
+  emissive: audioFeatures.color[1],
+});
+const material3 = new THREE.MeshStandardMaterial({
+  color: audioFeatures.color[2],
+  emissive: audioFeatures.color[2],
+});
+const material4 = new THREE.MeshStandardMaterial({
+  color: audioFeatures.color[3],
+});
+const material5 = new THREE.MeshStandardMaterial({
+  color: audioFeatures.color[5],
+});
+const material6 = new THREE.MeshStandardMaterial({
+  color: audioFeatures.color[6],
+});
+const material7 = new THREE.MeshStandardMaterial({
+  color: audioFeatures.color[7],
+});
+const material8 = new THREE.MeshStandardMaterial({
+  color: audioFeatures.color[8],
+});
+const material9 = new THREE.MeshStandardMaterial({
+  color: audioFeatures.color[9],
+});
+const material10 = new THREE.MeshStandardMaterial({
+  color: audioFeatures.color[10],
+});
+const material11 = new THREE.MeshStandardMaterial({
+  color: audioFeatures.color[11],
+});
+const material12 = new THREE.MeshStandardMaterial({
+  color: audioFeatures.color[0],
+});
+
+
+const colorMaterial = [
+  material1,
+  material2,
+  material3,
+  material4,
+  material5,
+  material6,
+  material7,
+  material8,
+  material9,
+  material10,
+  material11,
+  material12,
+];
+function updateColor() {
+  colorMaterial.forEach((material, index)=>{
+    material.color.setHex(colorToHexColor(audioFeatures.color[index]));
+    material.emissive.setHex(colorToHexColor(audioFeatures.color[index]));
+  })
+}
 // Geometry
 const geometry = new THREE.BoxGeometry(1, 1, 1);
 const material = new THREE.MeshLambertMaterial({ color: 0xffffff });
@@ -174,15 +235,15 @@ function setRenderColor() {
 }
 
 // RADIATION
-var geoSphereRadiation = new THREE.SphereGeometry(0.2, 10, 10);
+var geoSphereRadiation = new THREE.SphereGeometry(0.05, 10, 10);
 var matSphereRadiation = new THREE.MeshStandardMaterial({});
 var sphereRadiation = new THREE.Mesh(geoSphereRadiation, matSphereRadiation);
 const groupRadiation = new THREE.Group();
 const radiationCollection = new THREE.Group();
 
-function spawnRadiation(angle) {
+function spawnRadiation(angle, material) {
   let selectedAngle;
-  if (arguments.length == 0) {
+  if (angle === undefined) {
     selectedAngle = getRndInteger(0, 225);
   } else {
     selectedAngle = angle;
@@ -191,14 +252,14 @@ function spawnRadiation(angle) {
   var randomColor = getRndInteger(0, 8);
 
   var spawnedGroupRadiation = groupRadiation.clone();
-  var spawnedSphereRadiation = sphereRadiation.clone();
+  var spawnedSphereRadiation = new THREE.Mesh(geoSphereRadiation, material);
   console.dir("reandom color:" + audioFeatures.color[randomColor]);
-  spawnedSphereRadiation.material.color.setHex(
+  /* spawnedSphereRadiation.material.color.setHex(
     colorToHexColor(audioFeatures.color[randomColor])
-  );
-  spawnedSphereRadiation.material.emissive.setHex(
+  ); */
+  /*   spawnedSphereRadiation.material.emissive.setHex(
     colorToHexColor(audioFeatures.color[randomColor])
-  );
+  ); */
   spawnedGroupRadiation.rotateZ(selectedAngle);
   spawnedGroupRadiation.add(spawnedSphereRadiation);
   radiationCollection.add(spawnedGroupRadiation);
@@ -242,11 +303,21 @@ function calculateAverageOfArray(array) {
 }
 var interval = setInterval(firework, 1000);
 
-// ANIMATE
+function sliceIntoChunks(arr, chunkSize) {
+  const res = [];
+  for (let i = 0; i < arr.length; i += chunkSize) {
+    const chunk = arr.slice(i, i + chunkSize);
+    res.push(chunk);
+  }
+  return res;
+}
+
 let morphTime = 0;
 let morphTimeAmplifier = audioFeatures.predictions.mood_aggressive;
 console.dir("morphtime Amplifier: " + morphTimeAmplifier);
 
+var allMeanFrequency = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+// ANIMATE
 function animate(timeStamp) {
   requestAnimationFrame(animate);
   control.update();
@@ -257,12 +328,17 @@ function animate(timeStamp) {
       last = timeInSecond;
 
       spawnParticle();
+      /* spawnRadiation(); */
     }
   }
   if (audioFeatures.color.length > 1) {
     pointLight.color.setHex(colorToHexColor(audioFeatures.color[0]));
     pointLight2.color.setHex(colorToHexColor(audioFeatures.color[1]));
+
+
   }
+
+ 
 
   delta = clock.getDelta();
 
@@ -273,9 +349,30 @@ function animate(timeStamp) {
     }
   });
 
+  var splicedFrequencyList = sliceIntoChunks(
+    audioFeatures.amplitudeSpectrum,
+    23
+  );
+  var meanSplicedFrequencyList = [];
+  splicedFrequencyList.forEach((frequencySegment, index) => {
+    meanSplicedFrequencyList.push(calculateAverageOfArray(frequencySegment));
+    allMeanFrequency[index] =
+      (meanSplicedFrequencyList[index] + allMeanFrequency[index]) / 2;
+    if (allMeanFrequency[index] * 1.3 < meanSplicedFrequencyList[index]) {
+      console.dir(index + " make beat");
+      spawnRadiation(19 * index, colorMaterial[index]);
+    }
+  });
+
+  console.dir("meanSplicedFrequencyList");
+  console.dir(meanSplicedFrequencyList);
+  console.dir("allMeanFrequency");
+  console.dir(allMeanFrequency);
+
+  console.dir(meanSplicedFrequencyList);
+
   radiationCollection.children.forEach((radiationGroup) => {
     var mesh = radiationGroup.children[0];
-
     mesh.position.x += audioFeatures.bpm / 10000;
 
     // SINE WAVE
@@ -288,38 +385,15 @@ function animate(timeStamp) {
     // TRIANGLE WAVE
     /* mesh.position.x += 0.02; */
     mesh.position.x += audioFeatures.bpm / 2000;
-    mesh.position.y = Math.abs((mesh.position.x % 6) - 1);
+    mesh.position.y = Math.abs((mesh.position.x % 2) - 1);
 
     if (mesh.position.x > 20) {
       radiationCollection.remove(radiationGroup);
     }
   });
 
-  audioFeatures.amplitudeSpectrum.forEach((freq, index) => {
-    if (index <= 99) {
-      bass.push(freq);
-    }
-    if (index >= 100 && index <= 199) {
-      mid.push(freq);
-    }
-    if (index >= 200 && index <= 255) {
-      treble.push(freq);
-    }
-  });
-  bassMean = calculateAverageOfArray(bass);
-  midMean = calculateAverageOfArray(mid);
-  trebleMean = calculateAverageOfArray(treble);
-  /*  var testarray=[1,2,3];
-  console.dir( "dasdasdasddddddddddddddddddddddd")
-  console.dir(calculateAverageOfArray(testarray))
-
-  console.dir("bass: " + calculateAverageOfArray(bass));
-  console.dir("mid: " + calculateAverageOfArray(mid));
-  console.dir("treble: " + calculateAverageOfArray(treble)); */
-
   morphTime += audioFeatures.rms * morphTimeAmplifier;
 
-  console.dir(audioFeatures.rms);
   // ESSENCE SHAPE
   let t = clock.getElapsedTime();
   /*   console.dir(t)
@@ -348,4 +422,4 @@ animate();
 }
 window.addEventListener('resize', handleWindowResize, false); */
 
-export { setRenderColor, firework };
+export { setRenderColor, firework, updateColor };
