@@ -26,7 +26,7 @@
 
 // Hurt
 
-let audioFeatures5 = {
+let audioFeatures2 = {
   rms: 0,
   loudness: 1,
   energy: 0,

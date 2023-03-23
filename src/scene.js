@@ -117,7 +117,6 @@ const material12 = new THREE.MeshStandardMaterial({
   color: audioFeatures.color[0],
 });
 
-
 const colorMaterial = [
   material1,
   material2,
@@ -133,10 +132,10 @@ const colorMaterial = [
   material12,
 ];
 function updateColor() {
-  colorMaterial.forEach((material, index)=>{
+  colorMaterial.forEach((material, index) => {
     material.color.setHex(colorToHexColor(audioFeatures.color[index]));
     material.emissive.setHex(colorToHexColor(audioFeatures.color[index]));
-  })
+  });
 }
 // Geometry
 const geometry = new THREE.BoxGeometry(1, 1, 1);
@@ -253,19 +252,27 @@ function spawnRadiation(angle, material) {
 
   var spawnedGroupRadiation = groupRadiation.clone();
   var spawnedSphereRadiation = new THREE.Mesh(geoSphereRadiation, material);
-  console.dir("reandom color:" + audioFeatures.color[randomColor]);
-  /* spawnedSphereRadiation.material.color.setHex(
-    colorToHexColor(audioFeatures.color[randomColor])
-  ); */
-  /*   spawnedSphereRadiation.material.emissive.setHex(
-    colorToHexColor(audioFeatures.color[randomColor])
-  ); */
   spawnedGroupRadiation.rotateZ(selectedAngle);
   spawnedGroupRadiation.add(spawnedSphereRadiation);
   radiationCollection.add(spawnedGroupRadiation);
   scene.add(radiationCollection);
 }
 
+function spawnRadiationWave(index, material) {
+  var spawnedGroupRadiation = groupRadiation.clone();
+  var spawnedSphereRadiation = new THREE.Mesh(geoSphereRadiation, material);
+
+
+  var scale = meanSplicedFrequencyList[index]/ allMeanFrequency[index];
+  spawnedSphereRadiation.scale.x =  scale;
+  spawnedSphereRadiation.scale.y =  scale;
+  spawnedSphereRadiation.scale.z =  scale;
+  console.log(spawnedSphereRadiation.scale.y )
+  spawnedGroupRadiation.position.set(index /allMeanFrequency.length*20-10, -4, 1);
+  spawnedGroupRadiation.add(spawnedSphereRadiation);
+  radiationCollection.add(spawnedGroupRadiation);
+  scene.add(radiationCollection);
+}
 function firework() {
   /* spawnRadiation(0);
   spawnRadiation(45);
@@ -315,8 +322,8 @@ function sliceIntoChunks(arr, chunkSize) {
 let morphTime = 0;
 let morphTimeAmplifier = audioFeatures.predictions.mood_aggressive;
 console.dir("morphtime Amplifier: " + morphTimeAmplifier);
-
-var allMeanFrequency = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+var meanSplicedFrequencyList = [];
+var allMeanFrequency = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0,0, 0, 0, 0, 0, 0, 0, 0, 0, 0,0, 0, 0, 0, 0, 0, 0, 0, 0, 0,0, 0, 0, 0, 0, 0, 0, 0, 0, 0,0, 0, 0, 0, 0, 0, 0, 0, 0, 0,0,0];
 // ANIMATE
 function animate(timeStamp) {
   requestAnimationFrame(animate);
@@ -334,11 +341,7 @@ function animate(timeStamp) {
   if (audioFeatures.color.length > 1) {
     pointLight.color.setHex(colorToHexColor(audioFeatures.color[0]));
     pointLight2.color.setHex(colorToHexColor(audioFeatures.color[1]));
-
-
   }
-
- 
 
   delta = clock.getDelta();
 
@@ -351,19 +354,28 @@ function animate(timeStamp) {
 
   var splicedFrequencyList = sliceIntoChunks(
     audioFeatures.amplitudeSpectrum,
-    23
+    5
   );
-  var meanSplicedFrequencyList = [];
+  meanSplicedFrequencyList = [];
   splicedFrequencyList.forEach((frequencySegment, index) => {
     meanSplicedFrequencyList.push(calculateAverageOfArray(frequencySegment));
     allMeanFrequency[index] =
       (meanSplicedFrequencyList[index] + allMeanFrequency[index]) / 2;
-    if (allMeanFrequency[index] * 1.3 < meanSplicedFrequencyList[index]) {
-      console.dir(index + " make beat");
-      spawnRadiation(19 * index, colorMaterial[index]);
-    }
+      if (allMeanFrequency[index] * 1.6 < meanSplicedFrequencyList[index]) {
+        console.dir(index + " make beat");
+  
+        spawnRadiationWave(index, colorMaterial[0]);
+      }
+    
   });
+ /*  for (let index = 0; index < 9; index++) {
+    if (allMeanFrequency[index] * 1.6 < meanSplicedFrequencyList[index]) {
+      console.dir(index + " make beat");
 
+      spawnRadiationWave(index, "#ffffff");
+    }
+    
+  } */
   console.dir("meanSplicedFrequencyList");
   console.dir(meanSplicedFrequencyList);
   console.dir("allMeanFrequency");
@@ -384,10 +396,13 @@ function animate(timeStamp) {
 
     // TRIANGLE WAVE
     /* mesh.position.x += 0.02; */
-    mesh.position.x += audioFeatures.bpm / 2000;
-    mesh.position.y = Math.abs((mesh.position.x % 2) - 1);
+    /* mesh.position.x += audioFeatures.bpm / 2000;
+    mesh.position.y = Math.abs((mesh.position.x % 2) - 1); */
 
-    if (mesh.position.x > 20) {
+    mesh.position.z -= audioFeatures.bpm / 2000;
+    /* mesh.position.y = Math.abs((mesh.position.z % 4) - 1)-2; */
+    /* spawnedGroupRadiation.position.set(index-6, 0, 2); */
+    if (mesh.position.x > 20 ||mesh.position.z < -50 ) {
       radiationCollection.remove(radiationGroup);
     }
   });
