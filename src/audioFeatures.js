@@ -26,7 +26,9 @@
 
 // Hurt
 
-let audioFeatures2 = {
+let audioFeatures = {
+  ready: false,
+  essenceShapeReady: false, 
   rms: 0,
   loudness: 1,
   energy: 0,
@@ -87,7 +89,7 @@ let audioFeatures4 = {
 
 // GIFT OF GUILT
 
-let audioFeatures = {
+let audioFeatures6 = {
   ready: false,
   essenceShapeReady: false, 
   rms: 0,

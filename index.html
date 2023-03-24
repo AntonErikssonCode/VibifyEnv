@@ -19,10 +19,12 @@
       crossorigin="anonymous"
     ></script>
     <script src="./src/audioFeatures.js"></script>
+    <script src="src/inteface.js"></script>
   </head>
   <body>
     <main id="main">
-      <div class="audio-container">
+      
+      <div class="audio-container hiddable">
         <div id="file-select-area">
           <div id="file-drop-area">
             <span>Drop file here or click to upload</span>
@@ -59,28 +61,9 @@
         </div>
       </div>
 
-      <div id="beatContainer">BEAT</div>
+      <div id="beatContainer" class="hiddable">BEAT</div>
 
-      <script>
-        function selectHurt() {
-          audiofeatures.predicition = {
-            mood_aggressive: 0.13433771124109625,
-            mood_relaxed: 0.7356889307498932,
-            mood_happy: 0.3067434541764669,
-            mood_sad: 0.9741086781024932,
-            danceability: 0.13,
-          };
-        }
-        function selectGift() {
-          audiofeatures.predicition = {
-            mood_aggressive: 0.89,
-            mood_relaxed: 0.45,
-            mood_happy: 0.22,
-            mood_sad: 0.33,
-            danceability: 0.69,
-          };
-        }
-      </script>
+    
       <div id="colors" class="hiddable">
         <div id="testColor1" class="testColor"></div>
         <div id="testColor2" class="testColor"></div>
@@ -94,9 +77,11 @@
         <div id="testColor10" class="testColor"></div>
         <div id="testColor11" class="testColor"></div>
         <div id="testColor12" class="testColor"></div>
-        <button class="selectButton" onclick="selectHurt">HURT</button>
-        <button class="selectButton" onclick="selectGift">Gift</button>
+   
+      
+
       </div>
+      <button class="hideButton" id="hideButton" onclick="hideShowDisplay()">Hide</button>
       <canvas id="myCanvasId"></canvas>
     </main>
 

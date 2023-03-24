@@ -62,6 +62,13 @@ h2 {
 .selectButton{
   z-index: 5;
 }
+.hideButton{
+  z-index: 5;
+position: absolute;
+top: 0;
+right: 0;
+
+}
 
 
 
@@ -127,3 +134,6 @@ canvas {
 }
 
 
+.is-hidden {
+  display: none;
+}

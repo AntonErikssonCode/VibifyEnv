@@ -34,7 +34,7 @@ const renderer = new THREE.WebGLRenderer({
 renderer.setSize(w, h);
 const renderScene = new RenderPass(scene, camera);
 const composer = new EffectComposer(renderer);
-const bloomPass = new UnrealBloomPass(new THREE.Vector2(w, h), 0.2, 0.1, 0.6);
+const bloomPass = new UnrealBloomPass(new THREE.Vector2(w, h), 0.5, 0.1, 0.6);
 
 const afterImagePass = new AfterimagePass();
 afterImagePass.uniforms["damp"].value = 0.75;
@@ -61,15 +61,15 @@ function colorToHexColor(color) {
   }
 }
 // LIGHT
-const light = new THREE.AmbientLight(0xffffff, 0.1);
+const light = new THREE.AmbientLight(0xffffff, 0.05);
 scene.add(light);
 
-const pointLight = new THREE.PointLight(0xffffff, 1.6, 17);
+const pointLight = new THREE.PointLight(0xffffff,5, 17);
 pointLight.position.set(-5, 5, 5);
 pointLight.castShadow = true;
 scene.add(pointLight);
 
-const pointLight2 = new THREE.PointLight(0xffffff, 1.6, 17);
+const pointLight2 = new THREE.PointLight(0xffffff, 2, 17);
 pointLight2.position.set(5, 5, 5);
 pointLight2.castShadow = true;
 scene.add(pointLight2);
@@ -77,6 +77,7 @@ scene.add(pointLight2);
 const sphereSize = 1;
 const pointLightHelper = new THREE.PointLightHelper(pointLight, sphereSize);
 
+scene.add(pointLightHelper)
 const material1 = new THREE.MeshStandardMaterial({
   color: audioFeatures.color[0],
   emissive: audioFeatures.color[0],
@@ -137,7 +138,12 @@ function updateColor() {
     material.emissive.setHex(colorToHexColor(audioFeatures.color[index]));
   });
 }
-// Geometry
+
+
+
+
+
+// Geometrty
 const geometry = new THREE.BoxGeometry(1, 1, 1);
 const material = new THREE.MeshLambertMaterial({ color: 0xffffff });
 const materialShiny = new THREE.MeshStandardMaterial({
@@ -145,6 +151,10 @@ const materialShiny = new THREE.MeshStandardMaterial({
   roughness: 0.0,
   metalness: 0.2,
 });
+// BASE OBJECT
+const geoBaseObject = new THREE.SphereGeometry(0.1, 20, 20);
+const baseObject = new THREE.Mesh(geoBaseObject, material);
+scene.add(baseObject);
 
 // ESSENCE SHAPE
 
@@ -157,8 +167,9 @@ let v3 = new THREE.Vector3();
 let radius = 1;
 let nPos = [];
 let pos;
-function createEssenceShape() {
-  const resolutionShape = Math.floor(
+let resolutionShape;
+function createEssenceShape(/* material */) {
+  resolutionShape = Math.floor(
     (audioFeatures.predictions.mood_happy +
       audioFeatures.predictions.mood_sad +
       audioFeatures.predictions.mood_relaxed -
@@ -218,12 +229,12 @@ function spawnParticle() {
 
   travelParticle.material.emissive.setHex(
     colorToHexColor(
-      /* audioFeatures.color[
-        randomColor
-      ] */ shade(audioFeatures.color[randomColor], 0.1)
+     shade(audioFeatures.color[randomColor], 0.1)
     )
   );
 }
+
+
 
 scene.add(groupTravelParticle);
 
@@ -260,11 +271,14 @@ function spawnRadiation(angle, material) {
     selectedAngle = angle;
   }
 
-  var randomColor = getRndInteger(0, 8);
+  var randomColor = getRndInteger(0, 11);
 
   var spawnedGroupRadiation = groupRadiation.clone();
-  var spawnedSphereRadiation = new THREE.Mesh(geoSphereRadiation, material);
-  spawnedGroupRadiation.rotateZ(selectedAngle);
+  var geoSphereRadiation = new THREE.SphereGeometry(0.03, resolutionShape, resolutionShape);
+  var spawnedSphereRadiation = new THREE.Mesh(geoSphereRadiation, colorMaterial[randomColor]);
+  spawnedGroupRadiation.rotateX(getRndInteger(0, 360));
+  spawnedGroupRadiation.rotateY(getRndInteger(0, 360));
+  spawnedGroupRadiation.rotateZ(getRndInteger(0, 360));
   spawnedGroupRadiation.add(spawnedSphereRadiation);
   radiationCollection.add(spawnedGroupRadiation);
   scene.add(radiationCollection);
@@ -288,6 +302,8 @@ function spawnRadiationWave(index, material) {
   radiationCollection.add(spawnedGroupRadiation);
   scene.add(radiationCollection);
 }
+
+
 function firework() {
   /* spawnRadiation(0);
   spawnRadiation(45);
@@ -372,15 +388,17 @@ function animate(timeStamp) {
 
   var splicedFrequencyList = sliceIntoChunks(
     audioFeatures.amplitudeSpectrum,
-    5
+    22
   );
+  console.log(splicedFrequencyList)
   meanSplicedFrequencyList = [];
+
   splicedFrequencyList.forEach((frequencySegment, index) => {
     meanSplicedFrequencyList.push(calculateAverageOfArray(frequencySegment));
     allMeanFrequency[index] =
       (meanSplicedFrequencyList[index] + allMeanFrequency[index]) / 2;
-    if (allMeanFrequency[index] * 1.6 < meanSplicedFrequencyList[index]) {
-      /*  spawnRadiationWave(index, colorMaterial[0]); */
+    if (allMeanFrequency[index] * 1.9 < meanSplicedFrequencyList[index]) {
+       spawnRadiation(undefined, colorMaterial[index]);
     }
   });
   /*  for (let index = 0; index < 9; index++) {
@@ -400,8 +418,7 @@ function animate(timeStamp) {
 
   radiationCollection.children.forEach((radiationGroup) => {
     var mesh = radiationGroup.children[0];
-    mesh.position.x += audioFeatures.bpm / 10000;
-
+    
     // SINE WAVE
     /* 
     mesh.position.x += audioFeatures.bpm / 10000;
@@ -410,11 +427,11 @@ function animate(timeStamp) {
     */
 
     // TRIANGLE WAVE
-    /* mesh.position.x += 0.02; */
-    /* mesh.position.x += audioFeatures.bpm / 2000;
-    mesh.position.y = Math.abs((mesh.position.x % 2) - 1); */
-
-    mesh.position.z -= audioFeatures.bpm / 2000;
+ 
+    mesh.position.x += audioFeatures.bpm / 10000;
+    /* mesh.position.y = 1- Math.abs((mesh.position.x % 2) - 1); */
+    mesh.position.y = 1 * Math.sin(1 * mesh.position.x);
+    /* mesh.position.z -= audioFeatures.bpm / 2000; */
     /* mesh.position.y = Math.abs((mesh.position.z % 4) - 1)-2; */
     /* spawnedGroupRadiation.position.set(index-6, 0, 2); */
     if (mesh.position.x > 20 || mesh.position.z < -50) {
@@ -422,6 +439,7 @@ function animate(timeStamp) {
     }
   });
 
+  
   morphTime += audioFeatures.rms * morphTimeAmplifier;
 
   // ESSENCE SHAPE
@@ -429,7 +447,7 @@ function animate(timeStamp) {
   /*   console.dir(t)
    */
   if(audioFeatures.ready){
-    createEssenceShape();
+    createEssenceShape(/* colorMaterial[0] */);
     audioFeatures["essenceShapeReady"] = true;
     audioFeatures["ready"] = false;
 
@@ -442,6 +460,7 @@ function animate(timeStamp) {
         .multiplyScalar(radius + audioFeatures.rms)
         .addScaledVector(p, ns);
       pos.setXYZ(idx, v3.x, v3.y, v3.z);
+     
     });
     geoEssenceShape.computeVertexNormals();
     pos.needsUpdate = true;

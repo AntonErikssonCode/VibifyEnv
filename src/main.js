@@ -159,7 +159,7 @@ dropArea.addEventListener("drop", (e) => {
   uploadedFile = e.dataTransfer.files[0];
  /*  initMeyda(uploadedFile);
   initThree(); */
-  initThree();
+/*   initThree(); */
   initMeyda(uploadedFile);
   console.dir(audioFeatures)
   /*   processFileUpload(files); */
@@ -179,6 +179,7 @@ function initThree() {
   updateColor();
   audioFeatures["ready"] = true;
 }
+initThree();
 
 function initThreeWithAffect() {
   fetchLabeledData();
