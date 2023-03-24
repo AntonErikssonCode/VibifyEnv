@@ -88,6 +88,8 @@ let audioFeatures4 = {
 // GIFT OF GUILT
 
 let audioFeatures = {
+  ready: false,
+  essenceShapeReady: false, 
   rms: 0,
   loudness: 1,
   energy: 0,

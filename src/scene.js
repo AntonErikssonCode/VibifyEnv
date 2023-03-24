@@ -147,40 +147,52 @@ const materialShiny = new THREE.MeshStandardMaterial({
 });
 
 // ESSENCE SHAPE
-const resolutionShape = Math.floor(
-  (audioFeatures.predictions.mood_happy +
-    audioFeatures.predictions.mood_sad +
-    audioFeatures.predictions.mood_relaxed -
-    (audioFeatures.predictions.mood_aggressive * 2) / 4) *
-    10 -
-    3
-);
 
-console.dir("Resolution Shape: " + resolutionShape);
-let radius = 1;
-let geoEssenceShape = new THREE.IcosahedronGeometry(radius, resolutionShape);
-let nPos = [];
+/* console.dir("Resolution Shape: " + resolutionShape);
+ */
+let geoEssenceShape;
+let essenceShape;
+let noise;
 let v3 = new THREE.Vector3();
-let pos = geoEssenceShape.attributes.position;
-for (let i = 0; i < pos.count; i++) {
-  v3.fromBufferAttribute(pos, i).normalize();
-  nPos.push(v3.clone());
+let radius = 1;
+let nPos = [];
+let pos;
+function createEssenceShape() {
+  const resolutionShape = Math.floor(
+    (audioFeatures.predictions.mood_happy +
+      audioFeatures.predictions.mood_sad +
+      audioFeatures.predictions.mood_relaxed -
+      (audioFeatures.predictions.mood_aggressive * 2) / 4) *
+      10 -
+      3
+  );
+
+  
+  geoEssenceShape = new THREE.IcosahedronGeometry(radius, resolutionShape);
+  
+
+  pos = geoEssenceShape.attributes.position;
+  for (let i = 0; i < pos.count; i++) {
+    v3.fromBufferAttribute(pos, i).normalize();
+    nPos.push(v3.clone());
+  }
+  geoEssenceShape.userData.nPos = nPos;
+
+  let matEssenceShape = new THREE.MeshLambertMaterial({
+    wireframe: false,
+    flatShading: false,
+
+    color: 0xffffff,
+  });
+  matEssenceShape.needsUpdate = true;
+  essenceShape = new THREE.Mesh(geoEssenceShape, matEssenceShape);
+  scene.add(essenceShape);
+
+  noise = openSimplexNoise.makeNoise4D(
+    audioFeatures.predictions.danceability * 100 /* Date.now() */
+  );
 }
-geoEssenceShape.userData.nPos = nPos;
 
-let matEssenceShape = new THREE.MeshLambertMaterial({
-  wireframe: false,
-  flatShading: false,
-
-  color: 0xffffff,
-});
-matEssenceShape.needsUpdate = true;
-let essenceShape = new THREE.Mesh(geoEssenceShape, matEssenceShape);
-scene.add(essenceShape);
-
-let noise = openSimplexNoise.makeNoise4D(
-  audioFeatures.predictions.danceability * 100 /* Date.now() */
-);
 /* let clock2 = new THREE.Clock(); */
 
 function getRndInteger(min, max) {
@@ -262,13 +274,16 @@ function spawnRadiationWave(index, material) {
   var spawnedGroupRadiation = groupRadiation.clone();
   var spawnedSphereRadiation = new THREE.Mesh(geoSphereRadiation, material);
 
-
-  var scale = meanSplicedFrequencyList[index]/ allMeanFrequency[index];
-  spawnedSphereRadiation.scale.x =  scale;
-  spawnedSphereRadiation.scale.y =  scale;
-  spawnedSphereRadiation.scale.z =  scale;
-  console.log(spawnedSphereRadiation.scale.y )
-  spawnedGroupRadiation.position.set(index /allMeanFrequency.length*20-10, -4, 1);
+  var scale = meanSplicedFrequencyList[index] / allMeanFrequency[index];
+  spawnedSphereRadiation.scale.x = scale;
+  spawnedSphereRadiation.scale.y = scale;
+  spawnedSphereRadiation.scale.z = scale;
+  /*   console.log(spawnedSphereRadiation.scale.y )
+   */ spawnedGroupRadiation.position.set(
+    (index / allMeanFrequency.length) * 20 - 10,
+    -4,
+    1
+  );
   spawnedGroupRadiation.add(spawnedSphereRadiation);
   radiationCollection.add(spawnedGroupRadiation);
   scene.add(radiationCollection);
@@ -323,7 +338,10 @@ let morphTime = 0;
 let morphTimeAmplifier = audioFeatures.predictions.mood_aggressive;
 console.dir("morphtime Amplifier: " + morphTimeAmplifier);
 var meanSplicedFrequencyList = [];
-var allMeanFrequency = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0,0, 0, 0, 0, 0, 0, 0, 0, 0, 0,0, 0, 0, 0, 0, 0, 0, 0, 0, 0,0, 0, 0, 0, 0, 0, 0, 0, 0, 0,0, 0, 0, 0, 0, 0, 0, 0, 0, 0,0,0];
+var allMeanFrequency = [
+  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+];
 // ANIMATE
 function animate(timeStamp) {
   requestAnimationFrame(animate);
@@ -361,14 +379,11 @@ function animate(timeStamp) {
     meanSplicedFrequencyList.push(calculateAverageOfArray(frequencySegment));
     allMeanFrequency[index] =
       (meanSplicedFrequencyList[index] + allMeanFrequency[index]) / 2;
-      if (allMeanFrequency[index] * 1.6 < meanSplicedFrequencyList[index]) {
-        console.dir(index + " make beat");
-  
-        spawnRadiationWave(index, colorMaterial[0]);
-      }
-    
+    if (allMeanFrequency[index] * 1.6 < meanSplicedFrequencyList[index]) {
+      /*  spawnRadiationWave(index, colorMaterial[0]); */
+    }
   });
- /*  for (let index = 0; index < 9; index++) {
+  /*  for (let index = 0; index < 9; index++) {
     if (allMeanFrequency[index] * 1.6 < meanSplicedFrequencyList[index]) {
       console.dir(index + " make beat");
 
@@ -376,12 +391,12 @@ function animate(timeStamp) {
     }
     
   } */
-  console.dir("meanSplicedFrequencyList");
+  /*  console.dir("meanSplicedFrequencyList");
   console.dir(meanSplicedFrequencyList);
   console.dir("allMeanFrequency");
   console.dir(allMeanFrequency);
 
-  console.dir(meanSplicedFrequencyList);
+  console.dir(meanSplicedFrequencyList); */
 
   radiationCollection.children.forEach((radiationGroup) => {
     var mesh = radiationGroup.children[0];
@@ -402,7 +417,7 @@ function animate(timeStamp) {
     mesh.position.z -= audioFeatures.bpm / 2000;
     /* mesh.position.y = Math.abs((mesh.position.z % 4) - 1)-2; */
     /* spawnedGroupRadiation.position.set(index-6, 0, 2); */
-    if (mesh.position.x > 20 ||mesh.position.z < -50 ) {
+    if (mesh.position.x > 20 || mesh.position.z < -50) {
       radiationCollection.remove(radiationGroup);
     }
   });
@@ -412,29 +427,46 @@ function animate(timeStamp) {
   // ESSENCE SHAPE
   let t = clock.getElapsedTime();
   /*   console.dir(t)
-   */ geoEssenceShape.userData.nPos.forEach((p, idx) => {
-    let ns = noise(p.x, p.y, p.z, morphTime);
-    v3.copy(p)
-      .multiplyScalar(radius + audioFeatures.rms)
-      .addScaledVector(p, ns);
-    pos.setXYZ(idx, v3.x, v3.y, v3.z);
-  });
-  geoEssenceShape.computeVertexNormals();
-  pos.needsUpdate = true;
-  essenceShape.rotation.x += 0.001;
-  essenceShape.rotation.y += 0.003;
+   */
+  if(audioFeatures.ready){
+    createEssenceShape();
+    audioFeatures["essenceShapeReady"] = true;
+    audioFeatures["ready"] = false;
+
+  }
+  if(audioFeatures.essenceShapeReady){
+    
+    geoEssenceShape.userData.nPos.forEach((p, idx) => {
+      let ns = noise(p.x, p.y, p.z, morphTime);
+      v3.copy(p)
+        .multiplyScalar(radius + audioFeatures.rms)
+        .addScaledVector(p, ns);
+      pos.setXYZ(idx, v3.x, v3.y, v3.z);
+    });
+    geoEssenceShape.computeVertexNormals();
+    pos.needsUpdate = true;
+    essenceShape.rotation.x += 0.001;
+    essenceShape.rotation.y += 0.003;
+
+  }
+
+
+
+
+
   composer.render(scene, camera);
 }
 
 animate();
 
-/* function handleWindowResize () {
-  w = window.innerWidth;
-  h = window.innerHeight;
-  camera.aspect = w / h;
+// Resize Window
+function onWindowResize() {
+  camera.aspect = window.innerWidth / window.innerHeight;
   camera.updateProjectionMatrix();
+
   renderer.setSize(window.innerWidth, window.innerHeight);
 }
-window.addEventListener('resize', handleWindowResize, false); */
+window.addEventListener("resize", onWindowResize, false);
 
+//Export funktions
 export { setRenderColor, firework, updateColor };

@@ -113,6 +113,8 @@ function initMeyda(file) {
         audioFeatures["spectralCentroid"] = features.spectralCentroid;
         audioFeatures["complexSpectrum"] = features.complexSpectrum;
         audioFeatures["amplitudeSpectrum"] = features.amplitudeSpectrum;
+        audioFeatures["mfcc"] = features.mfcc;
+
 
         loudnessHTML.innerHTML =
           "Loudness: " + audioFeatures["loudness"].toFixed(2);
@@ -155,9 +157,10 @@ dropArea.addEventListener("drop", (e) => {
   e.preventDefault();
   const files = e.dataTransfer.files;
   uploadedFile = e.dataTransfer.files[0];
-  initMeyda(uploadedFile);
+ /*  initMeyda(uploadedFile);
+  initThree(); */
   initThree();
- /*  initMeyda(uploadedFile); */
+  initMeyda(uploadedFile);
   console.dir(audioFeatures)
   /*   processFileUpload(files); */
 });
@@ -174,8 +177,19 @@ function initThree() {
   setRenderColor();
   console.dir(audioFeatures)
   updateColor();
+  audioFeatures["ready"] = true;
 }
-initThree();
+
+function initThreeWithAffect() {
+  fetchLabeledData();
+   initMeyda(uploadedFile);
+  emotionalModelUpdate();
+  getColors();
+  setRenderColor();
+  console.dir(audioFeatures)
+  updateColor();
+}
+/* initThree(); */
 
 function processFileUpload(files) {
   if (files.length > 1) {
@@ -308,7 +322,8 @@ function collectPredictions() {
       Object.assign(allPredictions, ...predictions);
       audioFeatures["predictions"] = allPredictions;
       inferenceResultPromises = []; // clear array
-      initThree();
+      audioFeatures["ready"] = true;
+      initThreeWithAffect();
     });
   }
 }
