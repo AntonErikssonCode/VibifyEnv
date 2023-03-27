@@ -7,7 +7,7 @@ import {
 } from "./updateState.js";
 import { addSmallCube } from "../geometry.js";
 import { getColors } from "./getColors.js";
-import { firework, setRenderColor, updateColor } from "./scene.js";
+import { createColorSpectrumMaterials, firework, setRenderColor, updateColor } from "./scene.js";
 const loudnessHTML = document.querySelector("#loudnessTag");
 const chromaHTML = document.querySelector("#chromaTag");
 const rmsHTML = document.querySelector("#rmsTag");
@@ -157,13 +157,12 @@ dropArea.addEventListener("drop", (e) => {
   e.preventDefault();
   const files = e.dataTransfer.files;
   uploadedFile = e.dataTransfer.files[0];
- /*  initMeyda(uploadedFile);
-  initThree(); */
-/*   initThree(); */
+
+  initThree();
   initMeyda(uploadedFile);
   console.dir(audioFeatures)
-  /*   processFileUpload(files); */
-});
+/*     processFileUpload(files);
+ */});
 dropArea.addEventListener("click", () => {
   dropInput.click();
 });
@@ -177,9 +176,11 @@ function initThree() {
   setRenderColor();
   console.dir(audioFeatures)
   updateColor();
+  
+  createColorSpectrumMaterials();
   audioFeatures["ready"] = true;
 }
-initThree();
+/* initThree(); */
 
 function initThreeWithAffect() {
   fetchLabeledData();

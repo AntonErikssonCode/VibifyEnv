@@ -64,7 +64,7 @@ function colorToHexColor(color) {
 const light = new THREE.AmbientLight(0xffffff, 0.05);
 scene.add(light);
 
-const pointLight = new THREE.PointLight(0xffffff,5, 17);
+const pointLight = new THREE.PointLight(0xffffff, 5, 17);
 pointLight.position.set(-5, 5, 5);
 pointLight.castShadow = true;
 scene.add(pointLight);
@@ -74,49 +74,84 @@ pointLight2.position.set(5, 5, 5);
 pointLight2.castShadow = true;
 scene.add(pointLight2);
 
-const sphereSize = 1;
+/* const sphereSize = 1;
 const pointLightHelper = new THREE.PointLightHelper(pointLight, sphereSize);
 
-scene.add(pointLightHelper)
+scene.add(pointLightHelper); */
 const material1 = new THREE.MeshStandardMaterial({
   color: audioFeatures.color[0],
   emissive: audioFeatures.color[0],
+  opacity: 0.6,
+    transparent: true, 
 });
 const material2 = new THREE.MeshStandardMaterial({
   color: audioFeatures.color[1],
   emissive: audioFeatures.color[1],
+  opacity: 0.6,
+    transparent: true, 
 });
 const material3 = new THREE.MeshStandardMaterial({
   color: audioFeatures.color[2],
   emissive: audioFeatures.color[2],
+  opacity: 0.6,
+    transparent: true, 
 });
 const material4 = new THREE.MeshStandardMaterial({
   color: audioFeatures.color[3],
 });
 const material5 = new THREE.MeshStandardMaterial({
   color: audioFeatures.color[5],
+  opacity: 0.6,
+    transparent: true, 
 });
 const material6 = new THREE.MeshStandardMaterial({
   color: audioFeatures.color[6],
+  opacity: 0.6,
+    transparent: true, 
 });
 const material7 = new THREE.MeshStandardMaterial({
   color: audioFeatures.color[7],
+  opacity: 0.6,
+    transparent: true, 
 });
 const material8 = new THREE.MeshStandardMaterial({
   color: audioFeatures.color[8],
+  opacity: 0.6,
+    transparent: true, 
 });
 const material9 = new THREE.MeshStandardMaterial({
   color: audioFeatures.color[9],
+  opacity: 0.6,
+    transparent: true, 
 });
 const material10 = new THREE.MeshStandardMaterial({
   color: audioFeatures.color[10],
+  opacity: 0.6,
+    transparent: true, 
 });
 const material11 = new THREE.MeshStandardMaterial({
   color: audioFeatures.color[11],
+  opacity: 0.6,
+    transparent: true, 
 });
 const material12 = new THREE.MeshStandardMaterial({
   color: audioFeatures.color[0],
 });
+
+let colorSpectrumMaterials = [];
+
+function createColorSpectrumMaterials() {
+  for (let index = 0; index < 128; index++) {
+    let mat = new THREE.MeshStandardMaterial({
+      /* emissive: "#ffffff", */
+      color: "#ff00ff"
+    });
+    colorSpectrumMaterials.push(mat);
+  }
+  console.dir("colorSpectrumaterial");
+  console.dir(colorSpectrumMaterials);
+  audioFeatures["colorSpectrumMaterials"] = colorSpectrumMaterials;
+}
 
 const colorMaterial = [
   material1,
@@ -138,10 +173,6 @@ function updateColor() {
     material.emissive.setHex(colorToHexColor(audioFeatures.color[index]));
   });
 }
-
-
-
-
 
 // Geometrty
 const geometry = new THREE.BoxGeometry(1, 1, 1);
@@ -178,9 +209,7 @@ function createEssenceShape(/* material */) {
       3
   );
 
-  
   geoEssenceShape = new THREE.IcosahedronGeometry(radius, resolutionShape);
-  
 
   pos = geoEssenceShape.attributes.position;
   for (let i = 0; i < pos.count; i++) {
@@ -228,42 +257,71 @@ function spawnParticle() {
   groupTravelParticle.add(travelParticle);
 
   travelParticle.material.emissive.setHex(
-    colorToHexColor(
-     shade(audioFeatures.color[randomColor], 0.1)
-    )
+    colorToHexColor(shade(audioFeatures.color[randomColor], 0.1))
   );
 }
-
-
 
 scene.add(groupTravelParticle);
 
 function setRenderColor() {
-  const darknessBias = -0.7;
-  const positiveBias = audioFeatures.predictions.mood_happy;
+  const darknessBias = -0.4;
+  const positiveBias = audioFeatures.predictions.mood_happy / 6;
   const negativeBias = audioFeatures.predictions.mood_sad;
 
-  let modifier;
-
+  let modifier = /* positiveBias */ -negativeBias;
+  /* 
   if (positiveBias >= negativeBias) {
     modifier = positiveBias;
   } else {
     modifier = -negativeBias;
   }
-
-  var color = shade(audioFeatures.color[0], darknessBias + modifier / 3);
+ */
+  var color = shade(audioFeatures.color[12], darknessBias + modifier / 3);
 
   scene.background = new THREE.Color(color);
 }
 
 // RADIATION
 var geoSphereRadiation = new THREE.SphereGeometry(0.05, 10, 10);
-var matSphereRadiation = new THREE.MeshStandardMaterial({});
-var sphereRadiation = new THREE.Mesh(geoSphereRadiation, matSphereRadiation);
+/* var matSphereRadiation = new THREE.MeshStandardMaterial({});
+ */
+/* var sphereRadiation = new THREE.Mesh(geoSphereRadiation, matSphereRadiation); */
 const groupRadiation = new THREE.Group();
 const radiationCollection = new THREE.Group();
 
-function spawnRadiation(angle, material) {
+function spawnRadiation(angle, index) {
+  let selectedAngle;
+  var randomColor = getRndInteger(0, 11);
+  var spawnedGroupRadiation = groupRadiation.clone();
+  var geoSphereRadiation = new THREE.SphereGeometry(
+    0.05,
+    resolutionShape,
+    resolutionShape
+  );
+
+  var spawnedSphereRadiation = new THREE.Mesh(
+    geoSphereRadiation,
+    colorMaterial[randomColor],
+    
+  );
+
+  console.dir( audioFeatures.colorSpectrumMaterials[index])
+  if (angle === undefined) {
+    selectedAngle = getRndInteger(0, 225);
+  } else {
+    selectedAngle = angle;
+  }
+  spawnedGroupRadiation.rotateX(getRndInteger(0, 360));
+  spawnedGroupRadiation.rotateY(getRndInteger(0, 360));
+  spawnedGroupRadiation.rotateZ(getRndInteger(0, 360));
+
+  spawnedGroupRadiation.add(spawnedSphereRadiation);
+  radiationCollection.add(spawnedGroupRadiation);
+  scene.add(radiationCollection);
+}
+
+// SPAWN CIRCLE BOOM
+function spawnBeatBoom(angle, material) {
   let selectedAngle;
   if (angle === undefined) {
     selectedAngle = getRndInteger(0, 225);
@@ -274,12 +332,21 @@ function spawnRadiation(angle, material) {
   var randomColor = getRndInteger(0, 11);
 
   var spawnedGroupRadiation = groupRadiation.clone();
-  var geoSphereRadiation = new THREE.SphereGeometry(0.03, resolutionShape, resolutionShape);
-  var spawnedSphereRadiation = new THREE.Mesh(geoSphereRadiation, colorMaterial[randomColor]);
-  spawnedGroupRadiation.rotateX(getRndInteger(0, 360));
-  spawnedGroupRadiation.rotateY(getRndInteger(0, 360));
-  spawnedGroupRadiation.rotateZ(getRndInteger(0, 360));
+  var geoSphereRadiation = new THREE.SphereGeometry(
+    0.03,
+    resolutionShape,
+    resolutionShape
+  );
+  var spawnedSphereRadiation = new THREE.Mesh(
+    geoSphereRadiation,
+    colorMaterial[randomColor]
+  );
+  /*  spawnedGroupRadiation.rotateX(getRndInteger(0, 360));
+  spawnedGroupRadiation.rotateY(getRndInteger(0, 360)); */
+  spawnedGroupRadiation.rotateZ(angle);
   spawnedGroupRadiation.add(spawnedSphereRadiation);
+  spawnedGroupRadiation.position.x = 2;
+
   radiationCollection.add(spawnedGroupRadiation);
   scene.add(radiationCollection);
 }
@@ -303,9 +370,12 @@ function spawnRadiationWave(index, material) {
   scene.add(radiationCollection);
 }
 
-
 function firework() {
-  /* spawnRadiation(0);
+  for (let index = 0; index < 30; index++) {
+    spawnBeatBoom(index);
+  }
+
+  /*  spawnRadiation(0);
   spawnRadiation(45);
   spawnRadiation(90);
   spawnRadiation(135);
@@ -339,8 +409,8 @@ function calculateAverageOfArray(array) {
   const average = array.reduce((p, c) => p + c, 0) / array.length;
   return average;
 }
-var interval = setInterval(firework, 1000);
-
+/* var interval = setInterval(firework, 1000);
+ */
 function sliceIntoChunks(arr, chunkSize) {
   const res = [];
   for (let i = 0; i < arr.length; i += chunkSize) {
@@ -369,7 +439,7 @@ function animate(timeStamp) {
       last = timeInSecond;
 
       spawnParticle();
-      /* spawnRadiation(); */
+      
     }
   }
   if (audioFeatures.color.length > 1) {
@@ -390,17 +460,17 @@ function animate(timeStamp) {
     audioFeatures.amplitudeSpectrum,
     22
   );
-  console.log(splicedFrequencyList)
+  /*  console.log(splicedFrequencyList); */
   meanSplicedFrequencyList = [];
 
-  splicedFrequencyList.forEach((frequencySegment, index) => {
-    meanSplicedFrequencyList.push(calculateAverageOfArray(frequencySegment));
-    allMeanFrequency[index] =
-      (meanSplicedFrequencyList[index] + allMeanFrequency[index]) / 2;
-    if (allMeanFrequency[index] * 1.9 < meanSplicedFrequencyList[index]) {
-       spawnRadiation(undefined, colorMaterial[index]);
-    }
+  /*   let spectralCentroidIndex = Math.floor(audioFeatures.spectralCentroid);
+  console.dir(spectralCentroidIndex)
+  const test123123 = new THREE.MeshStandardMaterial({
+    color: audioFeatures.colorSpectrum[spectralCentroidIndex+50]
+    
   });
+  spawnRadiation(undefined,test123123); */
+
   /*  for (let index = 0; index < 9; index++) {
     if (allMeanFrequency[index] * 1.6 < meanSplicedFrequencyList[index]) {
       console.dir(index + " make beat");
@@ -418,7 +488,7 @@ function animate(timeStamp) {
 
   radiationCollection.children.forEach((radiationGroup) => {
     var mesh = radiationGroup.children[0];
-    
+
     // SINE WAVE
     /* 
     mesh.position.x += audioFeatures.bpm / 10000;
@@ -427,51 +497,62 @@ function animate(timeStamp) {
     */
 
     // TRIANGLE WAVE
- 
+
     mesh.position.x += audioFeatures.bpm / 10000;
-    /* mesh.position.y = 1- Math.abs((mesh.position.x % 2) - 1); */
-    mesh.position.y = 1 * Math.sin(1 * mesh.position.x);
+    if (
+      audioFeatures.predictions.mood_aggressive > 0.6 &&
+      audioFeatures.predictions.mood_sad > audioFeatures.predictions.mood_happy
+    ) {
+      mesh.position.y = 1 - Math.abs((mesh.position.x % 2) - 1);
+    } else {
+      mesh.position.y = 2 * Math.sin(1 * mesh.position.x);
+    }
+
     /* mesh.position.z -= audioFeatures.bpm / 2000; */
     /* mesh.position.y = Math.abs((mesh.position.z % 4) - 1)-2; */
     /* spawnedGroupRadiation.position.set(index-6, 0, 2); */
+
     if (mesh.position.x > 20 || mesh.position.z < -50) {
       radiationCollection.remove(radiationGroup);
     }
   });
 
-  
   morphTime += audioFeatures.rms * morphTimeAmplifier;
 
   // ESSENCE SHAPE
   let t = clock.getElapsedTime();
   /*   console.dir(t)
    */
-  if(audioFeatures.ready){
+  if (audioFeatures.ready) {
     createEssenceShape(/* colorMaterial[0] */);
     audioFeatures["essenceShapeReady"] = true;
     audioFeatures["ready"] = false;
-
   }
-  if(audioFeatures.essenceShapeReady){
+  if (audioFeatures.essenceShapeReady) {
+
     
+
     geoEssenceShape.userData.nPos.forEach((p, idx) => {
       let ns = noise(p.x, p.y, p.z, morphTime);
       v3.copy(p)
         .multiplyScalar(radius + audioFeatures.rms)
         .addScaledVector(p, ns);
       pos.setXYZ(idx, v3.x, v3.y, v3.z);
-     
     });
     geoEssenceShape.computeVertexNormals();
     pos.needsUpdate = true;
     essenceShape.rotation.x += 0.001;
     essenceShape.rotation.y += 0.003;
 
+    splicedFrequencyList.forEach((frequencySegment, index) => {
+      meanSplicedFrequencyList.push(calculateAverageOfArray(frequencySegment));
+      allMeanFrequency[index] =
+        (meanSplicedFrequencyList[index] + allMeanFrequency[index]) / 2;
+      if (allMeanFrequency[index] * 1.6 < meanSplicedFrequencyList[index]) {
+        spawnRadiation(undefined, index);
+      }
+    });
   }
-
-
-
-
 
   composer.render(scene, camera);
 }
@@ -488,4 +569,4 @@ function onWindowResize() {
 window.addEventListener("resize", onWindowResize, false);
 
 //Export funktions
-export { setRenderColor, firework, updateColor };
+export { setRenderColor, firework, updateColor, createColorSpectrumMaterials };

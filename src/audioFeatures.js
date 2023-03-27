@@ -26,7 +26,8 @@
 
 // Hurt
 
-let audioFeatures = {
+let audioFeatures3 = {
+  colorSpectrum: [],
   ready: false,
   essenceShapeReady: false, 
   rms: 0,
@@ -56,26 +57,26 @@ let audioFeatures = {
 };
 
 
-// happy song
+// Dont stop me now song
 
 
-let audioFeatures4 = {
+let audioFeatures2= {
   rms: 0,
   loudness: 1,
   energy: 0,
   spectralCentroid: 0,
   chroma: [],
-  bpm: 150,
-  scale: 0,
-   tempo:72,
+  bpm: 78.95,
+  scale: "F",
+  colorSpectrum: [],
   beatSwitch: false,
   amplitudeSpectrum: [],
   predictions: {
-    mood_aggressive: 0.7356889307498932,
-    mood_relaxed:  0.13433771124109625,
-    mood_happy: 0.9741086781024932,
-    mood_sad: 0.3067434541764669,
-    danceability: 0.13219948802143336,
+    mood_aggressive: 0.36,
+    mood_relaxed:  0.41,
+    mood_happy: 0.65,
+    mood_sad: 0.59,
+    danceability: 0.51,
   },
   arousal: -0.60135, 
   valence: -0.66736522,
@@ -89,7 +90,7 @@ let audioFeatures4 = {
 
 // GIFT OF GUILT
 
-let audioFeatures6 = {
+let audioFeatures = {
   ready: false,
   essenceShapeReady: false, 
   rms: 0,
@@ -109,6 +110,7 @@ let audioFeatures6 = {
     mood_sad: 0.33,
     danceability: 0.69,
   },
+  colorSpectrum: [],
   arousal: -0.60135, 
   valence: -0.66736522,
   gotColors: false,
@@ -123,7 +125,7 @@ let audioFeatures6 = {
 // random
   
 
-let audioFeatures1 = {
+let audioFeatures312 = {
   rms: 0,
   loudness: 1,
   energy: 0,
@@ -141,6 +143,7 @@ let audioFeatures1 = {
     mood_sad: 0.3,
     danceability: 0.13219948802143336,
   },
+  colorSpectrum: [],
   arousal: -0.60135, 
   valence: -0.66736522,
   gotColors: false,

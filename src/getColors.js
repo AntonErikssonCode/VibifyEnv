@@ -1,5 +1,6 @@
 import { hslToHex } from "./utilityFunctions.js";
 function getColors() {
+  audioFeatures["colorSpectrum"] = [];
   const color1Div = document.querySelector("#testColor1");
   const color2Div = document.querySelector("#testColor2");
   const color3Div = document.querySelector("#testColor3");
@@ -60,7 +61,7 @@ function getColors() {
   let saturation = (mainValens / 4) * 100;
   console.dir("saturation: " + saturation);
 
-  let brightness = (mainArousal / 20) * 100 ;
+  let brightness = (mainArousal / 100) * 100 ;
   console.dir("brightness: " + brightness);
 
 
@@ -76,7 +77,10 @@ function getColors() {
   const color10 = hslToHex(secondaryAngle, 75 + saturation, 25+ brightness);
   const color11 = hslToHex(secondaryAngle-30, 75 + saturation, 25+ brightness);
   const color12 = hslToHex(secondaryAngle + 30, 75 + saturation, 25+ brightness);
+  const background = hslToHex(mainAngle, 75 + saturation, 50 + brightness);
 
+
+  
   audioFeatures.color = [
     color1,
     color2,
@@ -90,6 +94,7 @@ function getColors() {
     color10,
     color11,
     color12,
+    background
   ];
 
   color1Div.style.background = audioFeatures.color[0];
@@ -104,6 +109,17 @@ function getColors() {
   color10Div.style.background = audioFeatures.color[9];
   color11Div.style.background = audioFeatures.color[10];
   color12Div.style.background = audioFeatures.color[11];
+
+  const length = 128;
+  for (let index = 0; index < length; index++) {
+    const angle = 180;
+    const steps = 180 / length;
+    let generatedColor  = hslToHex(mainAngle - angle/2 + steps * index , 75 + saturation, 75+ brightness);
+    console.dir(generatedColor);
+    audioFeatures.colorSpectrum.push(generatedColor)
+    
+  }
+ /*  console.dir(audioFeatures.colorSpectrum) */
 }
 
 export { getColors };
