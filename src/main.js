@@ -158,11 +158,11 @@ dropArea.addEventListener("drop", (e) => {
   const files = e.dataTransfer.files;
   uploadedFile = e.dataTransfer.files[0];
 
-  initThree();
+/*   initThree();
   initMeyda(uploadedFile);
-  console.dir(audioFeatures)
-/*     processFileUpload(files);
- */});
+  console.dir(audioFeatures) */
+    processFileUpload(files);
+});
 dropArea.addEventListener("click", () => {
   dropInput.click();
 });
@@ -184,12 +184,14 @@ function initThree() {
 
 function initThreeWithAffect() {
   fetchLabeledData();
-   initMeyda(uploadedFile);
+  initMeyda(uploadedFile);
   emotionalModelUpdate();
   getColors();
   setRenderColor();
   console.dir(audioFeatures)
   updateColor();
+  createColorSpectrumMaterials();
+  audioFeatures["ready"] = true;
 }
 /* initThree(); */
 
