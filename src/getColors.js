@@ -112,8 +112,8 @@ function getColors() {
 
   const length = 128;
   for (let index = 0; index < length; index++) {
-    const angle = 180;
-    const steps = 180 / length;
+    const angle = 90;
+    const steps = 90 / length;
     let generatedColor  = hslToHex(mainAngle - angle/2 + steps * index , 75 + saturation, 75+ brightness);
     console.dir(generatedColor);
     audioFeatures.colorSpectrum.push(generatedColor)

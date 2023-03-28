@@ -26,12 +26,12 @@
 
 // Hurt
 
-let audioFeatures3 = {
+let audioFeatures1 = {
   colorSpectrum: [],
   ready: false,
   essenceShapeReady: false, 
   rms: 0,
-  loudness: 1,
+  loudness: 0,
   energy: 0,
   spectralCentroid: 0,
   chroma: [],
@@ -52,6 +52,7 @@ let audioFeatures3 = {
   mainColor: "0xffffff",
   secondaryColor: "0xffffff",
   colorDifference: 0,
+activeChromaIndex: 0,
   color : ["#ffffff", "#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff"],
   
 };
@@ -60,9 +61,9 @@ let audioFeatures3 = {
 // Dont stop me now song
 
 
-let audioFeatures2= {
+let audioFeatures3= {
   rms: 0,
-  loudness: 1,
+  loudness: 0,
   energy: 0,
   spectralCentroid: 0,
   chroma: [],
@@ -125,7 +126,7 @@ let audioFeatures = {
 // random
   
 
-let audioFeatures312 = {
+let audioFeatures333 = {
   rms: 0,
   loudness: 1,
   energy: 0,

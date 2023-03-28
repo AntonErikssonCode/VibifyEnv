@@ -7,7 +7,12 @@ import {
 } from "./updateState.js";
 import { addSmallCube } from "../geometry.js";
 import { getColors } from "./getColors.js";
-import { createColorSpectrumMaterials, firework, setRenderColor, updateColor } from "./scene.js";
+import {
+  createColorSpectrumMaterials,
+  firework,
+  setRenderColor,
+  updateColor,
+} from "./scene.js";
 const loudnessHTML = document.querySelector("#loudnessTag");
 const chromaHTML = document.querySelector("#chromaTag");
 const rmsHTML = document.querySelector("#rmsTag");
@@ -70,11 +75,11 @@ function initMeyda(file) {
           if (beatUsed == false) {
             audioFeatures["beatSwitch"] = !audioFeatures["beatSwitch"];
             beatUsed = true;
-            console.dir(audioFeatures)
+            console.dir(audioFeatures);
           }
         } else {
           beatContainer.style.background = "blue";
-           beatUsed = false;
+          beatUsed = false;
         }
       },
     });
@@ -115,17 +120,16 @@ function initMeyda(file) {
         audioFeatures["amplitudeSpectrum"] = features.amplitudeSpectrum;
         audioFeatures["mfcc"] = features.mfcc;
 
-
         loudnessHTML.innerHTML =
           "Loudness: " + audioFeatures["loudness"].toFixed(2);
         spectralCentroidHTML.innerHTML =
           "Spectral Centroid: " + audioFeatures["spectralCentroid"].toFixed(2);
         energyHTML.innerHTML = "Energy: " + audioFeatures["energy"].toFixed(2);
         rmsHTML.innerHTML = "RMS: " + audioFeatures["rms"].toFixed(2);
-        var result = audioFeatures["chroma"].indexOf(
+        audioFeatures["activeChromaIndex"] = audioFeatures["chroma"].indexOf(
           Math.max(...audioFeatures["chroma"])
         );
-        chromaHTML.innerHTML = "Chroma: " + keys[result];
+        chromaHTML.innerHTML = "Chroma: " + keys[audioFeatures.activeChromaIndex];
         /*         console.dir(features)
          */
       },
@@ -158,37 +162,42 @@ dropArea.addEventListener("drop", (e) => {
   const files = e.dataTransfer.files;
   uploadedFile = e.dataTransfer.files[0];
 
-/*   initThree();
+  // DEBUG MODE
+   
   initMeyda(uploadedFile);
-  console.dir(audioFeatures) */
-    processFileUpload(files);
+  console.dir(audioFeatures)
+
+  // UPLOAD MODE
+ /*  processFileUpload(files); */
 });
 dropArea.addEventListener("click", () => {
   dropInput.click();
 });
 
-/// TEST
+// Debug Init
 function initThree() {
   fetchLabeledData();
 
   emotionalModelUpdate();
   getColors();
   setRenderColor();
-  console.dir(audioFeatures)
-  updateColor();
-  
+  console.dir(audioFeatures);
+ 
+
   createColorSpectrumMaterials();
+  updateColor();
   audioFeatures["ready"] = true;
 }
-/* initThree(); */
+initThree();
 
+// Init
 function initThreeWithAffect() {
   fetchLabeledData();
   initMeyda(uploadedFile);
   emotionalModelUpdate();
   getColors();
   setRenderColor();
-  console.dir(audioFeatures)
+  console.dir(audioFeatures);
   updateColor();
   createColorSpectrumMaterials();
   audioFeatures["ready"] = true;
