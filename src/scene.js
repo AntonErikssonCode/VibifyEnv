@@ -358,7 +358,7 @@ function spawnBeatBoom(angle, color, size) {
 
 function firework() {
   var value = 0;
-  var size = 4 * audioFeatures.rms;
+  var size = 3 * audioFeatures.rms;
   for (let index = 0; index < 63; index++) {
     spawnBeatBoom(value, audioFeatures.activeChromaIndex, size);
     value += 0.1;
@@ -472,10 +472,10 @@ function animate(timeStamp) {
           audioFeatures.predictions.mood_happy
       ) {
         // Triangle
-        mesh.position.y = 1 - Math.abs((mesh.position.x % 2) - 1) + 1.2;
+        mesh.position.y = 1 - Math.abs((mesh.position.x % 2) - 1) + 2;
       } else {
         // Sine
-        mesh.position.y = 1 * Math.sin(1 * mesh.position.x) + 1.2;
+        mesh.position.y = 1 * Math.sin(1 * mesh.position.x) + 2;
       }
     } else {
       mesh.position.z -= 0.1;
@@ -535,12 +535,12 @@ function animate(timeStamp) {
     rmsList.push(audioFeatures.rms);
     rmsMean = calculateAverageOfArray(rmsList);
     if (audioFeatures.rms > rmsMean * 2.2) {
-      spawnRadiation(undefined, audioFeatures.activeChromaIndex);
+      /* spawnRadiation(undefined, audioFeatures.activeChromaIndex); */
     }
     if (audioFeatures.loudness > peakLoudness) {
       peakLoudness = audioFeatures.loudness;
-      /*  spawnPlanet(audioFeatures.activeChromaIndex, audioFeatures.loudness/50 ); */
-    } else {
+/*        spawnPlanet(audioFeatures.activeChromaIndex, audioFeatures.loudness/50 );
+ */    } else {
       peakLoudness -= 0.001;
     }
 

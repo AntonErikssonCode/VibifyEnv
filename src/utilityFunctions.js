@@ -83,4 +83,51 @@ function sliceIntoChunks(arr, chunkSize) {
   }
   return res;
 }
-export { normalize, hslToHex, shade, colorToHexColor, getRndInteger, calculateAverageOfArray, sliceIntoChunks};
+
+function throttle(cb, delay = 500) {
+  let shouldWait = false
+  let waitingArgs
+  const timeoutFunc = () => {
+    if (waitingArgs == null) {
+      shouldWait = false
+    } else {
+      cb(...waitingArgs)
+      waitingArgs = null
+      setTimeout(timeoutFunc, delay)
+    }
+  }
+
+  return (...args) => {
+    if (shouldWait) {
+      waitingArgs = args
+      return
+    }
+
+    cb(...args)
+    shouldWait = true
+    setTimeout(timeoutFunc, delay)
+  }
+
+}
+function debounce(func, wait, immediate) {
+  var timeout;
+
+  return function executedFunction() {
+    var context = this;
+    var args = arguments;
+	    
+    var later = function() {
+      timeout = null;
+      if (!immediate) func.apply(context, args);
+    };
+
+    var callNow = immediate && !timeout;
+	
+    clearTimeout(timeout);
+
+    timeout = setTimeout(later, wait);
+	
+    if (callNow) func.apply(context, args);
+  };
+};
+export { normalize, hslToHex, shade, colorToHexColor, getRndInteger, calculateAverageOfArray, sliceIntoChunks, throttle, debounce};

@@ -13,7 +13,11 @@ import {
   setRenderColor,
   updateColor,
 } from "./scene.js";
-import { calculateAverageOfArray } from "./utilityFunctions.js";
+import {
+  calculateAverageOfArray,
+  debounce,
+  throttle,
+} from "./utilityFunctions.js";
 const loudnessHTML = document.querySelector("#loudnessTag");
 const chromaHTML = document.querySelector("#chromaTag");
 const rmsHTML = document.querySelector("#rmsTag");
@@ -31,8 +35,34 @@ const relaxe = document.querySelector("#relaxTag");
 const aggressive = document.querySelector("#aggressiveTag");
 const dance = document.querySelector("#danceTag");
 
-const beatContainer = document.querySelector("#beatContainer");
+const beatContainer = document.querySelector("#beatContainer"); /* 
+function throttle2(cb, delay = 1200) {
+  let shouldWait = false;
+  let waitingArgs;
+  const timeoutFunc = () => {
+    if (waitingArgs == null) {
+      shouldWait = false;
+    } else {
+      cb(...waitingArgs);
+      waitingArgs = null;
+      setTimeout(timeoutFunc, delay);
+    }
+  };
 
+  return (...args) => {
+    if (shouldWait) {
+      waitingArgs = args;
+      return;
+    }
+
+    cb(...args);
+    shouldWait = true;
+    setTimeout(timeoutFunc, delay);
+  };
+} */
+const throttleFirework = throttle(() => {
+  firework();
+});
 const keys = ["C", "C♯", "D", "D♯", "E", "F", "F♯", "G", "G♯", "A", "A♯", "B"];
 var lowPassEnergy = [];
 function initMeyda(file) {
@@ -56,11 +86,11 @@ function initMeyda(file) {
 
   let filter = meydaContext.createBiquadFilter();
   filter.type = "lowpass";
-  filter.frequency.setValueAtTime(200, meydaContext.currentTime, 0);
+  filter.frequency.setValueAtTime(100, meydaContext.currentTime, 0);
 
   source.connect(filter);
   source.connect(meydaContext.destination);
-th
+  var energyPeak = 0;
   if (typeof Meyda === "undefined") {
     console.log("Meyda could not be found! Have you included it?");
   } else {
@@ -70,32 +100,21 @@ th
       audioContext: meydaContext,
       source: filter,
       bufferSize: 512,
-      featureExtractors: ["energy"],
+      featureExtractors: ["energy", "rms"],
       callback: (features) => {
-        
-        if (features.energy > 0.01) {
+        if (features.energy > 0.001) {
+          lowPassEnergy.push(features.rms);
+          var lowPassEnergyMean = calculateAverageOfArray(lowPassEnergy);
+          console.dir("Peak Energy: " + lowPassEnergyMean);
+          console.dir("Energy: " + features.rms);
 
-          
-
-
-          lowPassEnergy.push(features.energy);
-          var lowPassEnergyMean= calculateAverageOfArray(lowPassEnergy)
-          console.dir("Mean Energy: " + lowPassEnergyMean)
-          console.dir("Energy: " + features.energy)
-
-         /*  console.dir(lowPassEnergyMean) */
-          if (features.energy > lowPassEnergyMean*5) {
-            beatContainer.style.background = "red";
-            if (beatUsed == false) {
-              audioFeatures["beatSwitch"] = !audioFeatures["beatSwitch"];
-              beatUsed = true;
-              /* console.dir("bEAT"); */
-              firework();
-         
-            }
-          } else {
-            beatContainer.style.background = "blue";
-            beatUsed = false;
+          if (features.rms > energyPeak) {
+            energyPeak = features.rms;
+            throttleFirework();
+            
+          }
+          if (features.rms > energyPeak*0.6) {
+            throttleFirework();
           }
         }
       },
@@ -148,7 +167,6 @@ th
         );
         chromaHTML.innerHTML =
           "Chroma: " + keys[audioFeatures.activeChromaIndex];
-     
       },
     });
     analyzer.start();
@@ -184,7 +202,7 @@ dropArea.addEventListener("drop", (e) => {
   console.dir(audioFeatures);
 
   // UPLOAD MODE
- /*    processFileUpload(files); */
+  /*    processFileUpload(files); */
 });
 dropArea.addEventListener("click", () => {
   dropInput.click();
@@ -217,7 +235,6 @@ function initThreeWithAffect() {
   createColorSpectrumMaterials();
   audioFeatures["ready"] = true;
 }
-
 
 function processFileUpload(files) {
   if (files.length > 1) {

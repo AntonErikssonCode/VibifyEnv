@@ -26,7 +26,7 @@
 
 // Hurt
 
-let audioFeatures = {
+let audioFeaturesdddd = {
   colorSpectrum: [],
   ready: false,
   essenceShapeReady: false, 
@@ -91,7 +91,7 @@ let audioFeaturesdas= {
 
 // GIFT OF GUILT
 
-let audioFeaturesddas= {
+let audioFeatures= {
   ready: false,
   essenceShapeReady: false, 
   rms: 0,
