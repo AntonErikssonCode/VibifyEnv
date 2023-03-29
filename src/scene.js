@@ -392,25 +392,17 @@ function animate(timeStamp) {
   }
 
   // Particle Loop
-
   groupTravelParticle.children.forEach((particle) => {
     // Particle Movment
     particle.position.z -= 0.01 + audioFeatures.bpm / 1500;
-    
+
     // Remove Particle
     if (particle.position.z < -50) {
       groupTravelParticle.remove(particle);
     }
   });
 
-  var splicedFrequencyList = sliceIntoChunks(
-    audioFeatures.amplitudeSpectrum,
-    22
-  );
-  meanSplicedFrequencyList = [];
-
   // Radiation Loop
-  //
   radiationCollection.children.forEach((radiationGroup) => {
     var mesh = radiationGroup.children[0];
 
@@ -420,8 +412,10 @@ function animate(timeStamp) {
       audioFeatures.predictions.mood_aggressive > 0.6 &&
       audioFeatures.predictions.mood_sad > audioFeatures.predictions.mood_happy
     ) {
+      // Triangle Wave
       mesh.position.y = 1 - Math.abs((mesh.position.x % 2) - 1);
     } else {
+      // Sine Wave
       mesh.position.y = 2 * Math.sin(1 * mesh.position.x);
     }
 
@@ -442,6 +436,8 @@ function animate(timeStamp) {
 
   // When essence shape is initated
   if (audioFeatures.essenceShapeReady) {
+    
+    // Essence Shape Behaviour
     geoEssenceShape.userData.nPos.forEach((p, idx) => {
       let ns = noise(p.x, p.y, p.z, morphTime);
       v3.copy(p)
