@@ -61,5 +61,26 @@ function shade(col, light) {
 
   return color(r, g, b);
 }
+function colorToHexColor(color) {
+  if (arguments.length == 1) {
+    let withoutHash = color.substring(1);
+    return "0x" + withoutHash;
+  }
+}
+function getRndInteger(min, max) {
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+function calculateAverageOfArray(array) {
+  const average = array.reduce((p, c) => p + c, 0) / array.length;
+  return average;
+}
 
-export { normalize, hslToHex, shade};
+function sliceIntoChunks(arr, chunkSize) {
+  const res = [];
+  for (let i = 0; i < arr.length; i += chunkSize) {
+    const chunk = arr.slice(i, i + chunkSize);
+    res.push(chunk);
+  }
+  return res;
+}
+export { normalize, hslToHex, shade, colorToHexColor, getRndInteger, calculateAverageOfArray, sliceIntoChunks};

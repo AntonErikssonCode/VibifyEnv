@@ -3,7 +3,15 @@
 import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.125/build/three.module.js";
 import { OrbitControls } from "../modules/OrbitControls.js";
 import { addSmallCube } from "../geometry.js";
-import { normalize, hslToHex, shade } from "./utilityFunctions.js";
+import {
+  normalize,
+  hslToHex,
+  shade,
+  colorToHexColor,
+  getRndInteger,
+  calculateAverageOfArray,
+  sliceIntoChunks,
+} from "./utilityFunctions.js";
 import { EffectComposer } from "https://cdn.jsdelivr.net/npm/three@0.125/examples/jsm/postprocessing/EffectComposer.js";
 import { RenderPass } from "https://cdn.jsdelivr.net/npm/three@0.125/examples/jsm/postprocessing/RenderPass.js";
 import { UnrealBloomPass } from "https://cdn.jsdelivr.net/npm/three@0.125/examples/jsm/postprocessing/UnrealBloomPass.js";
@@ -12,13 +20,10 @@ import { ShaderPass } from "https://cdn.jsdelivr.net/npm/three@0.125/examples/js
 import { VignetteShader } from "https://cdn.jsdelivr.net/npm/three@0.125/examples/jsm/shaders/VignetteShader.js";
 import openSimplexNoise from "https://cdn.skypack.dev/open-simplex-noise";
 
-function removeEntity(object) {
-  var selectedObject = scene.getObjectByName(object.name);
-  scene.remove(selectedObject);
-}
+// Constants
+const w = window.innerWidth;
+const h = window.innerHeight;
 
-let w = window.innerWidth;
-let h = window.innerHeight;
 // Camera
 let scene = new THREE.Scene();
 scene.fog = new THREE.Fog(0x050505, 1, 45);
@@ -33,13 +38,14 @@ const renderer = new THREE.WebGLRenderer({
 });
 renderer.setSize(w, h);
 const renderScene = new RenderPass(scene, camera);
+
+// Post Processing
 const composer = new EffectComposer(renderer);
 const bloomPass = new UnrealBloomPass(new THREE.Vector2(w, h), 0.5, 0.1, 0.6);
-
 const afterImagePass = new AfterimagePass();
-afterImagePass.uniforms["damp"].value = 0.75;
-
 const effectVignette = new ShaderPass(VignetteShader);
+
+afterImagePass.uniforms["damp"].value = 0.75;
 effectVignette.uniforms["offset"].value =
   audioFeatures.predictions.mood_sad / 3 + 0.2;
 effectVignette.uniforms["darkness"].value = 5;
@@ -49,18 +55,10 @@ composer.addPass(effectVignette);
 composer.addPass(bloomPass);
 composer.addPass(afterImagePass);
 
-/* renderer.setClearColor(0x030303); */
-
-/* renderer.shadowMap.enabled = true;
-renderer.shadowMap.type = THREE.PCFSoftShadowMap; */
+// Controls
 const control = new OrbitControls(camera, renderer.domElement);
-function colorToHexColor(color) {
-  if (arguments.length == 1) {
-    let withoutHash = color.substring(1);
-    return "0x" + withoutHash;
-  }
-}
-// LIGHT
+
+// Lights
 const light = new THREE.AmbientLight(0xffffff, 0.1);
 scene.add(light);
 
@@ -74,10 +72,8 @@ pointLight2.position.set(5, 5, 5);
 pointLight2.castShadow = true;
 scene.add(pointLight2);
 
-/* const sphereSize = 1;
-const pointLightHelper = new THREE.PointLightHelper(pointLight, sphereSize);
-
-scene.add(pointLightHelper); */
+// Materials
+let colorSpectrumMaterials = [];
 const particleMaterialOpacity = 1;
 const material1 = new THREE.MeshStandardMaterial({
   color: audioFeatures.color[0],
@@ -164,7 +160,17 @@ const colorMaterial = [
   material11,
   material12,
 ];
-let colorSpectrumMaterials = [];
+
+// Color Functions
+function setRenderColor() {
+  const darknessBias = -0.4;
+  const positiveBias = audioFeatures.predictions.mood_happy / 6;
+  const negativeBias = audioFeatures.predictions.mood_sad;
+  let modifier = -negativeBias;
+  var color = shade(audioFeatures.color[12], darknessBias + modifier / 3);
+
+  scene.background = new THREE.Color(color);
+}
 
 function createColorSpectrumMaterials() {
   for (let index = 0; index < 128; index++) {
@@ -175,7 +181,6 @@ function createColorSpectrumMaterials() {
     });
     colorSpectrumMaterials.push(mat);
   }
-
   audioFeatures["colorSpectrumMaterials"] = colorSpectrumMaterials;
 }
 
@@ -185,8 +190,6 @@ function updateColor() {
     material.emissive.setHex(colorToHexColor(audioFeatures.color[index]));
   });
 
-  /*   console.dir("colorSpectrumaterial");
-  console.dir(colorSpectrumMaterials); */
   colorSpectrumMaterials.forEach((materialSpectrum, index2) => {
     materialSpectrum.color.setHex(
       colorToHexColor(audioFeatures.colorSpectrum[index2])
@@ -195,29 +198,15 @@ function updateColor() {
       colorToHexColor(audioFeatures.colorSpectrum[index2])
     );
   });
-  /*   console.dir("colorSpectrumaterial After");
-  console.dir(colorSpectrumMaterials);
-  console.dir("color");
-  console.dir(colorMaterial); */
 }
 
-// Geometrty
-const geometry = new THREE.BoxGeometry(1, 1, 1);
+// Base Object
 const material = new THREE.MeshLambertMaterial({ color: 0xffffff });
-const materialShiny = new THREE.MeshStandardMaterial({
-  color: 0xffffff,
-  roughness: 0.0,
-  metalness: 0.2,
-});
-// BASE OBJECT
 const geoBaseObject = new THREE.SphereGeometry(0.1, 20, 20);
 const baseObject = new THREE.Mesh(geoBaseObject, material);
 scene.add(baseObject);
 
-// ESSENCE SHAPE
-
-/* console.dir("Resolution Shape: " + resolutionShape);
- */
+// Essence Shape
 let geoEssenceShape;
 let essenceShape;
 let noise;
@@ -226,7 +215,8 @@ let radius = 1;
 let nPos = [];
 let pos;
 let resolutionShape;
-function createEssenceShape(/* material */) {
+
+function createEssenceShape() {
   resolutionShape = Math.floor(
     (audioFeatures.predictions.mood_happy +
       audioFeatures.predictions.mood_sad +
@@ -260,13 +250,8 @@ function createEssenceShape(/* material */) {
   );
 }
 
-/* let clock2 = new THREE.Clock(); */
-
-function getRndInteger(min, max) {
-  return Math.floor(Math.random() * (max - min + 1)) + min;
-}
+// Particles
 const groupTravelParticle = new THREE.Group();
-
 var geoParticle = new THREE.PlaneBufferGeometry(0.12, 0.1, 1, 1);
 var matParticle = new THREE.MeshStandardMaterial({
   color: 0xffffff,
@@ -278,7 +263,6 @@ function spawnParticle() {
   var particleXPos = getRndInteger(-50, 50);
   var particleYPos = getRndInteger(-20, 20);
   var particleRotation = getRndInteger(0, 45);
-  /*  var randomColor = getRndInteger(0, 8); */
 
   travelParticle.position.set(particleXPos, particleYPos, 2);
   travelParticle.rotateZ(particleRotation);
@@ -286,17 +270,7 @@ function spawnParticle() {
 }
 scene.add(groupTravelParticle);
 
-function setRenderColor() {
-  const darknessBias = -0.4;
-  const positiveBias = audioFeatures.predictions.mood_happy / 6;
-  const negativeBias = audioFeatures.predictions.mood_sad;
-  let modifier = /* positiveBias */ -negativeBias;
-  var color = shade(audioFeatures.color[12], darknessBias + modifier / 3);
-
-  scene.background = new THREE.Color(color);
-}
-
-// RADIATION
+// Radiation
 const groupRadiation = new THREE.Group();
 const radiationCollection = new THREE.Group();
 
@@ -328,7 +302,7 @@ function spawnRadiation(angle, index) {
   scene.add(radiationCollection);
 }
 
-// SPAWN CIRCLE BOOM
+// Firework Function
 function spawnBeatBoom(angle, material) {
   let selectedAngle;
   if (angle === undefined) {
@@ -349,31 +323,11 @@ function spawnBeatBoom(angle, material) {
     geoSphereRadiation,
     colorMaterial[randomColor]
   );
-  /*  spawnedGroupRadiation.rotateX(getRndInteger(0, 360));
-  spawnedGroupRadiation.rotateY(getRndInteger(0, 360)); */
+
   spawnedGroupRadiation.rotateZ(angle);
   spawnedGroupRadiation.add(spawnedSphereRadiation);
   spawnedGroupRadiation.position.x = 2;
 
-  radiationCollection.add(spawnedGroupRadiation);
-  scene.add(radiationCollection);
-}
-
-function spawnRadiationWave(index, material) {
-  var spawnedGroupRadiation = groupRadiation.clone();
-  var spawnedSphereRadiation = new THREE.Mesh(geoSphereRadiation, material);
-
-  var scale = meanSplicedFrequencyList[index] / allMeanFrequency[index];
-  spawnedSphereRadiation.scale.x = scale;
-  spawnedSphereRadiation.scale.y = scale;
-  spawnedSphereRadiation.scale.z = scale;
-  /*   console.log(spawnedSphereRadiation.scale.y )
-   */ spawnedGroupRadiation.position.set(
-    (index / allMeanFrequency.length) * 20 - 10,
-    -4,
-    1
-  );
-  spawnedGroupRadiation.add(spawnedSphereRadiation);
   radiationCollection.add(spawnedGroupRadiation);
   scene.add(radiationCollection);
 }
@@ -383,43 +337,43 @@ function firework() {
     spawnBeatBoom(index);
   }
 }
+/* var interval = setInterval(firework, 1000); */
 
-let bass = [];
-let mid = [];
-let treble = [];
-let bassMean, midMean, trebleMean;
+// Road Effect Function
+function spawnRadiationWave(index, material) {
+  var spawnedGroupRadiation = groupRadiation.clone();
+  var spawnedSphereRadiation = new THREE.Mesh(geoSphereRadiation, material);
+  var scale = meanSplicedFrequencyList[index] / allMeanFrequency[index];
+
+  spawnedSphereRadiation.scale.x = scale;
+  spawnedSphereRadiation.scale.y = scale;
+  spawnedSphereRadiation.scale.z = scale;
+  spawnedGroupRadiation.position.set(
+    (index / allMeanFrequency.length) * 20 - 10,
+    -4,
+    1
+  );
+
+  spawnedGroupRadiation.add(spawnedSphereRadiation);
+  radiationCollection.add(spawnedGroupRadiation);
+  scene.add(radiationCollection);
+}
+
+// Animate Variables
 let last = 0;
-let num = 0;
 let speed = 0.05;
-
 var clock = new THREE.Clock();
 var delta = 0;
-function calculateAverageOfArray(array) {
-  const average = array.reduce((p, c) => p + c, 0) / array.length;
-  return average;
-}
-/* var interval = setInterval(firework, 1000);
- */
-function sliceIntoChunks(arr, chunkSize) {
-  const res = [];
-  for (let i = 0; i < arr.length; i += chunkSize) {
-    const chunk = arr.slice(i, i + chunkSize);
-    res.push(chunk);
-  }
-  return res;
-}
-
 let morphTime = 0;
 let morphTimeAmplifier = audioFeatures.predictions.mood_aggressive;
-console.dir("morphtime Amplifier: " + morphTimeAmplifier);
 var meanSplicedFrequencyList = [];
 var allMeanFrequency = [
   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 ];
-
 var rmsList = [];
 var rmsMean = 0;
+
 // ANIMATE
 function animate(timeStamp) {
   requestAnimationFrame(animate);
@@ -431,12 +385,19 @@ function animate(timeStamp) {
   delta = clock.getDelta();
   morphTime += audioFeatures.rms * morphTimeAmplifier;
 
+  // Spawn Paricles
   if (timeInSecond - last >= speed) {
     last = timeInSecond;
     spawnParticle();
   }
+
+  // Particle Loop
+
   groupTravelParticle.children.forEach((particle) => {
+    // Particle Movment
     particle.position.z -= 0.01 + audioFeatures.bpm / 1500;
+    
+    // Remove Particle
     if (particle.position.z < -50) {
       groupTravelParticle.remove(particle);
     }
@@ -449,6 +410,7 @@ function animate(timeStamp) {
   meanSplicedFrequencyList = [];
 
   // Radiation Loop
+  //
   radiationCollection.children.forEach((radiationGroup) => {
     var mesh = radiationGroup.children[0];
 
