@@ -283,37 +283,20 @@ function spawnParticle() {
   travelParticle.position.set(particleXPos, particleYPos, 2);
   travelParticle.rotateZ(particleRotation);
   groupTravelParticle.add(travelParticle);
-  /* 
-  travelParticle.material.emissive.setHex(
-    colorToHexColor(shade(audioFeatures.color[randomColor], 0.1))
-  ); */
 }
-
 scene.add(groupTravelParticle);
 
 function setRenderColor() {
   const darknessBias = -0.4;
   const positiveBias = audioFeatures.predictions.mood_happy / 6;
   const negativeBias = audioFeatures.predictions.mood_sad;
-
   let modifier = /* positiveBias */ -negativeBias;
-  /* 
-  if (positiveBias >= negativeBias) {
-    modifier = positiveBias;
-  } else {
-    modifier = -negativeBias;
-  }
- */
   var color = shade(audioFeatures.color[12], darknessBias + modifier / 3);
 
   scene.background = new THREE.Color(color);
 }
 
 // RADIATION
-/* var geoSphereRadiation = new THREE.SphereGeometry(0.1, 10, 10); */
-/* var matSphereRadiation = new THREE.MeshStandardMaterial({});
- */
-/* var sphereRadiation = new THREE.Mesh(geoSphereRadiation, matSphereRadiation); */
 const groupRadiation = new THREE.Group();
 const radiationCollection = new THREE.Group();
 
@@ -332,7 +315,6 @@ function spawnRadiation(angle, index) {
     colorMaterial[index]
   );
 
-  console.dir(colorSpectrumMaterials[index]);
   if (angle === undefined) {
     selectedAngle = getRndInteger(0, 225);
   } else {
@@ -341,7 +323,6 @@ function spawnRadiation(angle, index) {
   spawnedGroupRadiation.rotateX(getRndInteger(0, 360));
   spawnedGroupRadiation.rotateY(getRndInteger(0, 360));
   spawnedGroupRadiation.rotateZ(getRndInteger(0, 360));
-
   spawnedGroupRadiation.add(spawnedSphereRadiation);
   radiationCollection.add(spawnedGroupRadiation);
   scene.add(radiationCollection);
@@ -444,21 +425,16 @@ function animate(timeStamp) {
   requestAnimationFrame(animate);
   control.update();
 
+  let t = clock.getElapsedTime();
   let timeInSecond = timeStamp / 100;
-  if (audioFeatures.color.length >= 1) {
-    if (timeInSecond - last >= speed) {
-      last = timeInSecond;
-
-      spawnParticle();
-    }
-  }
-  if (audioFeatures.color.length > 1) {
-    pointLight.color.setHex(colorToHexColor(audioFeatures.color[0]));
-    pointLight2.color.setHex(colorToHexColor(audioFeatures.color[3]));
-  }
 
   delta = clock.getDelta();
+  morphTime += audioFeatures.rms * morphTimeAmplifier;
 
+  if (timeInSecond - last >= speed) {
+    last = timeInSecond;
+    spawnParticle();
+  }
   groupTravelParticle.children.forEach((particle) => {
     particle.position.z -= 0.01 + audioFeatures.bpm / 1500;
     if (particle.position.z < -50) {
@@ -493,17 +469,16 @@ function animate(timeStamp) {
     }
   });
 
-  morphTime += audioFeatures.rms * morphTimeAmplifier;
-
-  // ESSENCE SHAPE
-  let t = clock.getElapsedTime();
-  /*   console.dir(t)
-   */
+  // When main has been initated
   if (audioFeatures.ready) {
-    createEssenceShape(/* colorMaterial[0] */);
+    createEssenceShape();
     audioFeatures["essenceShapeReady"] = true;
+    pointLight.color.setHex(colorToHexColor(audioFeatures.color[0]));
+    pointLight2.color.setHex(colorToHexColor(audioFeatures.color[3]));
     audioFeatures["ready"] = false;
   }
+
+  // When essence shape is initated
   if (audioFeatures.essenceShapeReady) {
     geoEssenceShape.userData.nPos.forEach((p, idx) => {
       let ns = noise(p.x, p.y, p.z, morphTime);
@@ -516,36 +491,25 @@ function animate(timeStamp) {
     pos.needsUpdate = true;
     essenceShape.rotation.x += 0.001;
     essenceShape.rotation.y += 0.003;
+  }
 
-    /* splicedFrequencyList.forEach((frequencySegment, index) => {
-      meanSplicedFrequencyList.push(calculateAverageOfArray(frequencySegment));
-      allMeanFrequency[index] =
-        (meanSplicedFrequencyList[index] + allMeanFrequency[index]) / 2;
-      if (allMeanFrequency[index] * 1.6 < meanSplicedFrequencyList[index]) {
-       
-      }
-    }); */
-
-    if (audioFeatures.loudness > 1) {
-      rmsList.push(audioFeatures.rms);
-      rmsMean = calculateAverageOfArray(rmsList);
-      if (audioFeatures.rms > rmsMean * 1.8) {
-        spawnRadiation(undefined, audioFeatures.activeChromaIndex);
-      }
+  // While song is playing do this
+  if (audioFeatures.loudness > 1) {
+    rmsList.push(audioFeatures.rms);
+    rmsMean = calculateAverageOfArray(rmsList);
+    if (audioFeatures.rms > rmsMean * 2.2) {
+      spawnRadiation(undefined, audioFeatures.activeChromaIndex);
     }
   }
-  console.log(audioFeatures.rms);
 
   composer.render(scene, camera);
 }
-
 animate();
 
 // Resize Window
 function onWindowResize() {
   camera.aspect = window.innerWidth / window.innerHeight;
   camera.updateProjectionMatrix();
-
   renderer.setSize(window.innerWidth, window.innerHeight);
 }
 window.addEventListener("resize", onWindowResize, false);
