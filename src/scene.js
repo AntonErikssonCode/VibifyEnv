@@ -20,13 +20,23 @@ import { ShaderPass } from "https://cdn.jsdelivr.net/npm/three@0.125/examples/js
 import { VignetteShader } from "https://cdn.jsdelivr.net/npm/three@0.125/examples/jsm/shaders/VignetteShader.js";
 import openSimplexNoise from "https://cdn.skypack.dev/open-simplex-noise";
 
+// Texture
+const loader = new THREE.TextureLoader();
+const texture = loader.load(
+  "../assets/textures/Metal/metal-with-leaks_albedo.png"
+);
+const textureNormal = loader.load(
+  "../assets/textures/Metal/metal-with-leaks_normal-ogl.png"
+);
+texture.wrapS = THREE.RepeatWrapping;
+texture.wrapT = THREE.RepeatWrapping;
+texture.repeat.set(10, 10);
 // Constants
 const w = window.innerWidth;
 const h = window.innerHeight;
 
 // Camera
 let scene = new THREE.Scene();
-scene.fog = new THREE.Fog(0x050505, 1, 45);
 
 const camera = new THREE.PerspectiveCamera(90, w /* *0.7 */ / h, 0.1, 1000);
 camera.position.z = 5;
@@ -62,12 +72,18 @@ const control = new OrbitControls(camera, renderer.domElement);
 const light = new THREE.AmbientLight(0xffffff, 0.1);
 scene.add(light);
 
-const pointLight = new THREE.PointLight(0xffffff, 5, 17);
+const dirLight = new THREE.DirectionalLight(0xffffff, 0.5);
+dirLight.position.y = 500;
+scene.add(dirLight);
+const helper = new THREE.DirectionalLightHelper(dirLight, 5);
+scene.add(helper);
+
+const pointLight = new THREE.PointLight(0xffffff, 10, 17);
 pointLight.position.set(-5, 5, 5);
 pointLight.castShadow = true;
 scene.add(pointLight);
 
-const pointLight2 = new THREE.PointLight(0xffffff, 1, 17);
+const pointLight2 = new THREE.PointLight(0xffffff, 5, 17);
 pointLight2.position.set(5, 5, 5);
 pointLight2.castShadow = true;
 scene.add(pointLight2);
@@ -161,6 +177,18 @@ const colorMaterial = [
   material12,
 ];
 
+// Create New Material
+function createMaterial(color, emissive, emissiveIntensity, opacity) {
+  const newMaterial = new THREE.MeshStandardMaterial({
+    color: color,
+    emissive: emissive,
+    emissiveIntensity: emissiveIntensity,
+    opacity: opacity,
+    transparent: true,
+  });
+  return newMaterial;
+}
+
 // Color Functions
 function setRenderColor() {
   const darknessBias = -0.4;
@@ -191,12 +219,8 @@ function updateColor() {
   });
 
   colorSpectrumMaterials.forEach((materialSpectrum, index2) => {
-    materialSpectrum.color.setHex(
-      colorToHexColor(audioFeatures.colorSpectrum[index2])
-    );
-    materialSpectrum.emissive.setHex(
-      colorToHexColor(audioFeatures.colorSpectrum[index2])
-    );
+    materialSpectrum.color.setHex(audioFeatures.colorSpectrum[index2]);
+    materialSpectrum.emissive.setHex(audioFeatures.colorSpectrum[index2]);
   });
 }
 
@@ -235,12 +259,19 @@ function createEssenceShape() {
   }
   geoEssenceShape.userData.nPos = nPos;
 
-  let matEssenceShape = new THREE.MeshLambertMaterial({
+  let matEssenceShape = new THREE.MeshStandardMaterial({
     wireframe: false,
     flatShading: false,
-
-    color: 0xffffff,
+    roughness:
+      1 -
+      audioFeatures.predictions.mood_aggressive / 2 -
+      audioFeatures.predictions.mood_sad / 2 +
+      audioFeatures.predictions.mood_happy / 2,
+    metalness: 0.4,
+    color: audioFeatures.color[13],
   });
+  /*   matEssenceShape.map = texture;
+  matEssenceShape.normalMap = textureNormal; */
   matEssenceShape.needsUpdate = true;
   essenceShape = new THREE.Mesh(geoEssenceShape, matEssenceShape);
   scene.add(essenceShape);
@@ -259,6 +290,7 @@ var matParticle = new THREE.MeshStandardMaterial({
 });
 
 function spawnParticle() {
+  var geoParticle = new THREE.PlaneBufferGeometry(0.12, 0.1, 1, 1);
   var travelParticle = new THREE.Mesh(geoParticle, matParticle);
   var particleXPos = getRndInteger(-50, 50);
   var particleYPos = getRndInteger(-20, 20);
@@ -282,7 +314,7 @@ function spawnRadiation(angle, index) {
   let selectedAngle;
   var randomColor = getRndInteger(0, 8);
   var spawnedGroupRadiation = groupRadiation.clone();
-  var geoSphereRadiation = new THREE.SphereGeometry(0.1, shape, shape);
+  var geoSphereRadiation = new THREE.SphereGeometry(0.05, shape, shape);
 
   var spawnedSphereRadiation = new THREE.Mesh(
     geoSphereRadiation,
@@ -297,71 +329,98 @@ function spawnRadiation(angle, index) {
   spawnedGroupRadiation.rotateX(getRndInteger(0, 360));
   spawnedGroupRadiation.rotateY(getRndInteger(0, 360));
   spawnedGroupRadiation.rotateZ(getRndInteger(0, 360));
+
   spawnedGroupRadiation.add(spawnedSphereRadiation);
   radiationCollection.add(spawnedGroupRadiation);
   scene.add(radiationCollection);
 }
 
 // Firework Function
-function spawnBeatBoom(angle, material) {
-  let selectedAngle;
-  if (angle === undefined) {
-    selectedAngle = getRndInteger(0, 225);
-  } else {
-    selectedAngle = angle;
-  }
-
-  var randomColor = getRndInteger(0, 11);
-
+function spawnBeatBoom(angle, color, size) {
   var spawnedGroupRadiation = groupRadiation.clone();
   var geoSphereRadiation = new THREE.SphereGeometry(
-    0.03,
+    size,
     resolutionShape,
     resolutionShape
   );
   var spawnedSphereRadiation = new THREE.Mesh(
     geoSphereRadiation,
-    colorMaterial[randomColor]
+    colorMaterial[color]
   );
 
   spawnedGroupRadiation.rotateZ(angle);
   spawnedGroupRadiation.add(spawnedSphereRadiation);
-  spawnedGroupRadiation.position.x = 2;
+  spawnedGroupRadiation.position.x = 0;
 
   radiationCollection.add(spawnedGroupRadiation);
   scene.add(radiationCollection);
 }
 
 function firework() {
-  for (let index = 0; index < 30; index++) {
-    spawnBeatBoom(index);
+  var value = 0;
+  var size = 4 * audioFeatures.rms;
+  for (let index = 0; index < 63; index++) {
+    spawnBeatBoom(value, audioFeatures.activeChromaIndex, size);
+    value += 0.1;
   }
+  /* spawnBeatBoom(0.1);
+  spawnBeatBoom(0.2);
+  spawnBeatBoom(0.3);
+  spawnBeatBoom(0.4);
+  spawnBeatBoom(0.5);
+  spawnBeatBoom(0.6);
+  spawnBeatBoom(0.7);
+  spawnBeatBoom(0.8);
+  spawnBeatBoom(0.9);
+  spawnBeatBoom(1); */
 }
-/* var interval = setInterval(firework, 1000); */
 
-// Road Effect Function
-function spawnRadiationWave(index, material) {
-  var spawnedGroupRadiation = groupRadiation.clone();
-  var spawnedSphereRadiation = new THREE.Mesh(geoSphereRadiation, material);
-  var scale = meanSplicedFrequencyList[index] / allMeanFrequency[index];
+var interval = setInterval(firework, 2000);
 
-  spawnedSphereRadiation.scale.x = scale;
-  spawnedSphereRadiation.scale.y = scale;
-  spawnedSphereRadiation.scale.z = scale;
-  spawnedGroupRadiation.position.set(
-    (index / allMeanFrequency.length) * 20 - 10,
-    -4,
+// Planets
+
+const groupPlanets = new THREE.Group();
+
+function spawnPlanet(colorIndex, size) {
+  var actualSize = size * 10;
+  var planetMat = createMaterial(
+    audioFeatures.color[colorIndex],
+    audioFeatures.color[colorIndex],
+    0.2,
     1
   );
+  var shape = resolutionShape;
+  if (shape <= 2) {
+    shape = 2;
+  }
+  var geoPlanet = new THREE.SphereGeometry(actualSize, shape, shape);
+  var planet = new THREE.Mesh(geoPlanet, planetMat);
 
-  spawnedGroupRadiation.add(spawnedSphereRadiation);
-  radiationCollection.add(spawnedGroupRadiation);
-  scene.add(radiationCollection);
+  var maxValue = 20;
+  var getRandomPositionX = getRndInteger(-maxValue, maxValue);
+  var getRandomPositionY = getRndInteger(-maxValue, maxValue);
+
+  console.dir(getRandomPositionX);
+  while (getRandomPositionX >= -4 && getRandomPositionX <= 4) {
+    getRandomPositionX = getRndInteger(-maxValue, maxValue);
+    console.dir(getRandomPositionX);
+  }
+
+  console.dir(getRandomPositionX);
+  while (getRandomPositionY >= -2 && getRandomPositionY <= 2) {
+    getRandomPositionY = getRndInteger(-maxValue, maxValue);
+    console.dir(getRandomPositionY);
+  }
+
+  planet.position.set(getRandomPositionX, getRandomPositionY, 2);
+
+  groupPlanets.add(planet);
+  scene.add(groupPlanets);
 }
 
 // Animate Variables
 let last = 0;
-let speed = 0.05;
+let particleSpawnSpeed = 0.05;
 var clock = new THREE.Clock();
 var delta = 0;
 let morphTime = 0;
@@ -373,8 +432,15 @@ var allMeanFrequency = [
 ];
 var rmsList = [];
 var rmsMean = 0;
+var defaultMoveSpeed = 0.01;
+var fogDistance = 150;
 
-// ANIMATE
+var peakLoudness = 0;
+// ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE
+// ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE
+// ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE
+// ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE
+// ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE
 function animate(timeStamp) {
   requestAnimationFrame(animate);
   control.update();
@@ -386,7 +452,7 @@ function animate(timeStamp) {
   morphTime += audioFeatures.rms * morphTimeAmplifier;
 
   // Spawn Paricles
-  if (timeInSecond - last >= speed) {
+  if (timeInSecond - last >= particleSpawnSpeed) {
     last = timeInSecond;
     spawnParticle();
   }
@@ -394,10 +460,10 @@ function animate(timeStamp) {
   // Particle Loop
   groupTravelParticle.children.forEach((particle) => {
     // Particle Movment
-    particle.position.z -= 0.01 + audioFeatures.bpm / 1500;
+    particle.position.z -= defaultMoveSpeed;
 
     // Remove Particle
-    if (particle.position.z < -50) {
+    if (particle.position.z < -fogDistance) {
       groupTravelParticle.remove(particle);
     }
   });
@@ -407,21 +473,46 @@ function animate(timeStamp) {
     var mesh = radiationGroup.children[0];
 
     // Radiation Movment
-    mesh.position.x += audioFeatures.bpm / 10000;
+
     if (
       audioFeatures.predictions.mood_aggressive > 0.6 &&
       audioFeatures.predictions.mood_sad > audioFeatures.predictions.mood_happy
     ) {
       // Triangle Wave
-      mesh.position.y = 1 - Math.abs((mesh.position.x % 2) - 1);
+      if (mesh.position.x < 5) {
+        mesh.position.x += audioFeatures.bpm / 1000;
+        mesh.position.y = 1 - Math.abs((mesh.position.x % 2) - 1) + 1.2;
+      } else {
+        mesh.position.z -= 0.1;
+        mesh.position.x += 0.05;
+      }
     } else {
       // Sine Wave
-      mesh.position.y = 2 * Math.sin(1 * mesh.position.x);
+      if (mesh.position.x < 5) {
+        mesh.position.x += audioFeatures.bpm / 1000;
+        mesh.position.y = 1 * Math.sin(1 * mesh.position.x) + 1.2;
+      } else {
+        mesh.position.z -= 0.1;
+        mesh.position.x += 0.05;
+      }
     }
 
     // Remove Radiation
-    if (mesh.position.x > 20 || mesh.position.z < -50) {
+    if (mesh.position.z < -fogDistance) {
       radiationCollection.remove(radiationGroup);
+    }
+  });
+
+  // Planet Loop
+
+  groupPlanets.children.forEach((planet) => {
+    // Particle Movment
+    planet.position.z -= defaultMoveSpeed;
+    planet.rotation.y -= defaultMoveSpeed / 10;
+    planet.rotation.z -= defaultMoveSpeed / 10;
+    // Remove Particle
+    if (planet.position.z < -fogDistance) {
+      groupPlanets.remove(planet);
     }
   });
 
@@ -429,14 +520,18 @@ function animate(timeStamp) {
   if (audioFeatures.ready) {
     createEssenceShape();
     audioFeatures["essenceShapeReady"] = true;
-    pointLight.color.setHex(colorToHexColor(audioFeatures.color[0]));
-    pointLight2.color.setHex(colorToHexColor(audioFeatures.color[3]));
+    pointLight.color.setHex(colorToHexColor(audioFeatures.color[13]));
+    pointLight2.color.setHex(colorToHexColor(audioFeatures.color[13]));
+    defaultMoveSpeed = 0.01 + audioFeatures.bpm / 1500;
+
+    fogDistance -= (fogDistance * audioFeatures.predictions.mood_sad) / 1.5;
+    console.dir("Fog Distance: " + fogDistance);
+    scene.fog = new THREE.Fog(0x050505, 1, fogDistance);
     audioFeatures["ready"] = false;
   }
 
   // When essence shape is initated
   if (audioFeatures.essenceShapeReady) {
-    
     // Essence Shape Behaviour
     geoEssenceShape.userData.nPos.forEach((p, idx) => {
       let ns = noise(p.x, p.y, p.z, morphTime);
@@ -457,6 +552,12 @@ function animate(timeStamp) {
     rmsMean = calculateAverageOfArray(rmsList);
     if (audioFeatures.rms > rmsMean * 2.2) {
       spawnRadiation(undefined, audioFeatures.activeChromaIndex);
+    }
+    if (audioFeatures.loudness > peakLoudness) {
+      peakLoudness = audioFeatures.loudness;
+      /*  spawnPlanet(audioFeatures.activeChromaIndex, audioFeatures.loudness/50 ); */
+    } else {
+      peakLoudness -= 0.001;
     }
   }
 

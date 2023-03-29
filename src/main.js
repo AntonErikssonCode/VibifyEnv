@@ -168,7 +168,7 @@ dropArea.addEventListener("drop", (e) => {
   console.dir(audioFeatures)
 
   // UPLOAD MODE
- /*  processFileUpload(files); */
+/*   processFileUpload(files); */
 });
 dropArea.addEventListener("click", () => {
   dropInput.click();
@@ -202,7 +202,7 @@ function initThreeWithAffect() {
   createColorSpectrumMaterials();
   audioFeatures["ready"] = true;
 }
-/* initThree(); */
+initThree();
 
 function processFileUpload(files) {
   if (files.length > 1) {

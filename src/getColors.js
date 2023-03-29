@@ -78,6 +78,7 @@ function getColors() {
   const color11 = hslToHex(secondaryAngle-30, 75 + saturation, 25+ brightness);
   const color12 = hslToHex(secondaryAngle + 30, 75 + saturation, 25+ brightness);
   const background = hslToHex(mainAngle, 75 + saturation, 50 + brightness);
+  const essenceShapeColor = hslToHex(mainAngle, 75 + saturation, 25 + brightness);
 
 
   
@@ -94,7 +95,8 @@ function getColors() {
     color10,
     color11,
     color12,
-    background
+    background,
+    essenceShapeColor
   ];
 
   color1Div.style.background = audioFeatures.color[0];
@@ -115,7 +117,7 @@ function getColors() {
     const angle = 90;
     const steps = 90 / length;
     let generatedColor  = hslToHex(mainAngle - angle/2 + steps * index , 75 + saturation, 75+ brightness);
-    console.dir(generatedColor);
+  /*   console.dir(generatedColor); */
     audioFeatures.colorSpectrum.push(generatedColor)
     
   }
