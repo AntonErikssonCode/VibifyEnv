@@ -64,7 +64,7 @@ function getColors() {
   let brightness = (mainArousal / 100) * 100 ;
   console.dir("brightness: " + brightness);
 
-
+  
   const color1 = hslToHex(mainAngle, 75 + saturation, 25 + brightness);
   const color2 = hslToHex(mainAngle - 45, 75 + saturation, 25+ brightness);
   const color3 = hslToHex(mainAngle - 30, 75 + saturation, 25+ brightness);
@@ -77,9 +77,28 @@ function getColors() {
   const color10 = hslToHex(secondaryAngle, 75 + saturation, 25+ brightness);
   const color11 = hslToHex(secondaryAngle-30, 75 + saturation, 25+ brightness);
   const color12 = hslToHex(secondaryAngle + 30, 75 + saturation, 25+ brightness);
+
   const background = hslToHex(mainAngle, 75 + saturation, 50 + brightness);
   const essenceShapeColor = hslToHex(mainAngle, 75 + saturation, 25 + brightness);
 
+/*   var colorRange = 150;
+  var colorRangeHalf = colorRange/2;
+  
+  const color1 = hslToHex(mainAngle, 75 + saturation, 25 + brightness);
+  const color2 = hslToHex(mainAngle - 45, 75 + saturation, 25+ brightness);
+  const color3 = hslToHex(mainAngle - 30, 75 + saturation, 25+ brightness);
+  const color4 = hslToHex(mainAngle - 15, 75 + saturation, 25+ brightness);
+  const color5 = hslToHex(mainAngle + 15, 75 + saturation, 25+ brightness);
+  const color6 = hslToHex(mainAngle + 30, 75 + saturation, 25+ brightness);
+  const color7 = hslToHex(mainAngle + 45, 75 + saturation, 25+ brightness);
+  const color8 = hslToHex(mainAngle, 75 + saturation, 25+ brightness);
+  const color9 = hslToHex(mainAngle, 75 + saturation, 25+ brightness);
+  const color10 = hslToHex(secondaryAngle, 75 + saturation, 25+ brightness);
+  const color11 = hslToHex(secondaryAngle-30, 75 + saturation, 25+ brightness);
+  const color12 = hslToHex(secondaryAngle + 30, 75 + saturation, 25+ brightness);
+
+  const background = hslToHex(mainAngle, 75 + saturation, 50 + brightness);
+  const essenceShapeColor = hslToHex(mainAngle, 75 + saturation, 25 + brightness); */
 
   
   audioFeatures.color = [

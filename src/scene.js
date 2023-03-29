@@ -336,11 +336,11 @@ function spawnRadiation(angle, index) {
   radiationCollection.add(spawnedGroupRadiation);
   scene.add(radiationCollection);
 }
-
+var geoSphereRadiation;
 // Firework Function
 function spawnBeatBoom(angle, color, size) {
   var spawnedGroupRadiation = groupRadiation.clone();
-  var geoSphereRadiation = new THREE.SphereGeometry(
+  geoSphereRadiation = new THREE.SphereGeometry(
     size,
     resolutionShape,
     resolutionShape
@@ -349,7 +349,7 @@ function spawnBeatBoom(angle, color, size) {
     geoSphereRadiation,
     colorMaterial[color]
   );
-
+  spawnedSphereRadiation.position.z = -3;
   spawnedGroupRadiation.rotateZ(angle);
   spawnedGroupRadiation.add(spawnedSphereRadiation);
   spawnedGroupRadiation.position.x = 0;
@@ -360,17 +360,14 @@ function spawnBeatBoom(angle, color, size) {
 
 function firework() {
   var value = 0;
-  var size = 3 * audioFeatures.rms;
+  var size = 6 * audioFeatures.rms;
   for (let index = 0; index < 63; index++) {
-    if(index%2==0){
+    if (index % 2 == 0) {
       spawnBeatBoom(value, audioFeatures.activeChromaIndex, size);
       value += 0.21;
-      
     }
-   
   }
 }
-
 
 /* var interval = setInterval(firework, 2000); */
 
@@ -379,7 +376,7 @@ function firework() {
 const groupPlanets = new THREE.Group();
 
 function spawnPlanet(colorIndex, size) {
-  var actualSize = size * 10;
+  var actualSize = size * 3;
   var planetMat = createMaterial(
     audioFeatures.color[colorIndex],
     audioFeatures.color[colorIndex],
@@ -431,7 +428,10 @@ var rmsList = [];
 var rmsMean = 0;
 var defaultMoveSpeed = 0.01;
 var fogDistance = 150;
-
+var xModifier = 0.05;
+var yModifier = 0.05;
+var yDirection = "up";
+var xDirection = "right";
 var peakLoudness = 0;
 // ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE
 // ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE
@@ -470,21 +470,26 @@ function animate(timeStamp) {
     var mesh = radiationGroup.children[0];
 
     // Radiation Movment
-    if (mesh.position.x < 5) {
-      mesh.position.x += audioFeatures.bpm / 1000;
+    if (mesh.position.x < 15) {
+      mesh.position.x +=
+        /* audioFeatures.bpm / 10000 + */ audioFeatures.rms / 2;
       if (
         audioFeatures.predictions.mood_aggressive > 0.6 &&
         audioFeatures.predictions.mood_sad >
           audioFeatures.predictions.mood_happy
       ) {
         // Triangle
-        mesh.position.y = 1 - Math.abs((mesh.position.x % 2) - 1) + 2;
+        mesh.position.y = 1 - Math.abs((mesh.position.x % 2) - 1) + 3;
       } else {
         // Sine
-        mesh.position.y = 1 * Math.sin(1 * mesh.position.x) + 2;
+        mesh.position.y = 1 * Math.sin(1 * mesh.position.x - 1) + 3;
       }
     } else {
-      mesh.position.z -= 0.1;
+      audioFeatures.energy == 0
+        ? (mesh.position.z += 0.01)
+        : (mesh.position.z -=
+            audioFeatures.bpm / 100000 + audioFeatures.rms * 1.5);
+      /* mesh.position. = 2 * Math.sin(1 * mesh.position.x -1) + 2; */
     }
 
     // Remove Radiation
@@ -526,7 +531,7 @@ function animate(timeStamp) {
     geoEssenceShape.userData.nPos.forEach((p, idx) => {
       let ns = noise(p.x, p.y, p.z, morphTime);
       v3.copy(p)
-        .multiplyScalar(radius + audioFeatures.rms)
+        .multiplyScalar(radius + audioFeatures.rms * 1.2)
         .addScaledVector(p, ns);
       pos.setXYZ(idx, v3.x, v3.y, v3.z);
     });
@@ -545,13 +550,55 @@ function animate(timeStamp) {
     }
     if (audioFeatures.loudness > peakLoudness) {
       peakLoudness = audioFeatures.loudness;
-/*        spawnPlanet(audioFeatures.activeChromaIndex, audioFeatures.loudness/50 );
- */    } else {
+      /*        spawnPlanet(audioFeatures.activeChromaIndex, audioFeatures.loudness/50 );
+       */
+    } else {
       peakLoudness -= 0.001;
     }
 
     /*   console.log(audioFeatures.beatSwitch) */
   }
+
+  var rangePos = 0.5;
+  var rangeNeg = -0.5;
+  var yModifierSpeed = audioFeatures.rms/5;
+  var xModifierSpeed = audioFeatures.rms/10;
+  if (yDirection === "up") {
+    if (camera.position.y <= rangePos) {
+      yModifier = yModifierSpeed;
+    } else {
+      yModifier = -yModifierSpeed;
+      yDirection = "down";
+    }
+  }
+  if (yDirection === "down") {
+    if (camera.position.y >= rangeNeg) {
+      yModifier = -yModifierSpeed;
+    } else {
+      yModifier = yModifierSpeed;
+      yDirection = "up";
+    }
+  }
+  if (xDirection === "right") {
+    if (camera.position.x <= rangePos) {
+      xModifier = xModifierSpeed;
+    } else {
+      xModifier = -xModifierSpeed;
+      xDirection = "left";
+    }
+  }
+  if (xDirection === "left") {
+    if (camera.position.x >= rangeNeg) {
+      xModifier = -xModifierSpeed;
+    } else {
+      xModifier = xModifierSpeed;
+      xDirection = "right";
+    }
+  }
+
+
+  camera.position.y += yModifier;
+  camera.position.x += xModifier;
 
   composer.render(scene, camera);
 }

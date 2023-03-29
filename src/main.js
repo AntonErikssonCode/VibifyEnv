@@ -113,7 +113,7 @@ function initMeyda(file) {
             throttleFirework();
             
           }
-          if (features.rms > (energyPeak*0.6 +lowPassEnergyMean)/2) {
+          if (features.rms > (energyPeak*0.8 +lowPassEnergyMean)/2) {
             throttleFirework();
           }
         }
@@ -155,6 +155,8 @@ function initMeyda(file) {
         audioFeatures["complexSpectrum"] = features.complexSpectrum;
         audioFeatures["amplitudeSpectrum"] = features.amplitudeSpectrum;
         audioFeatures["mfcc"] = features.mfcc;
+        audioFeatures["perceptualSpread"] = features.perceptualSpread;
+        audioFeatures["perceptualSharpness"] = features.perceptualSharpness;
 
         loudnessHTML.innerHTML =
           "Loudness: " + audioFeatures["loudness"].toFixed(2);
