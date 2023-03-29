@@ -561,8 +561,8 @@ function animate(timeStamp) {
 
   var rangePos = 0.5;
   var rangeNeg = -0.5;
-  var yModifierSpeed = audioFeatures.rms/5;
-  var xModifierSpeed = audioFeatures.rms/10;
+  var yModifierSpeed = audioFeatures.rms/10;
+  var xModifierSpeed = audioFeatures.rms/20;
   if (yDirection === "up") {
     if (camera.position.y <= rangePos) {
       yModifier = yModifierSpeed;

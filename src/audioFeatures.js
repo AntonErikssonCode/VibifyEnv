@@ -26,7 +26,7 @@
 
 // Hurt
 
-let audioFeatures12312 = {
+let audioFeatures= {
   colorSpectrum: [],
   ready: false,
   essenceShapeReady: false, 
@@ -61,7 +61,7 @@ activeChromaIndex: 0,
 // Dont stop me now song
 
 
-let audioFeatures= {
+let audioFeatures2= {
   rms: 0,
   loudness: 0,
   energy: 0,
