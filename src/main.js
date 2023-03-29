@@ -13,6 +13,7 @@ import {
   setRenderColor,
   updateColor,
 } from "./scene.js";
+import { calculateAverageOfArray } from "./utilityFunctions.js";
 const loudnessHTML = document.querySelector("#loudnessTag");
 const chromaHTML = document.querySelector("#chromaTag");
 const rmsHTML = document.querySelector("#rmsTag");
@@ -33,6 +34,7 @@ const dance = document.querySelector("#danceTag");
 const beatContainer = document.querySelector("#beatContainer");
 
 const keys = ["C", "C♯", "D", "D♯", "E", "F", "F♯", "G", "G♯", "A", "A♯", "B"];
+var lowPassEnergy = [];
 function initMeyda(file) {
   const meydaContext = new AudioContext();
   const reader = new FileReader();
@@ -58,7 +60,7 @@ function initMeyda(file) {
 
   source.connect(filter);
   source.connect(meydaContext.destination);
-
+th
   if (typeof Meyda === "undefined") {
     console.log("Meyda could not be found! Have you included it?");
   } else {
@@ -70,16 +72,31 @@ function initMeyda(file) {
       bufferSize: 512,
       featureExtractors: ["energy"],
       callback: (features) => {
-        if (features.energy > 30) {
-          beatContainer.style.background = "red";
-          if (beatUsed == false) {
-            audioFeatures["beatSwitch"] = !audioFeatures["beatSwitch"];
-            beatUsed = true;
-            console.dir(audioFeatures);
+        
+        if (features.energy > 0.01) {
+
+          
+
+
+          lowPassEnergy.push(features.energy);
+          var lowPassEnergyMean= calculateAverageOfArray(lowPassEnergy)
+          console.dir("Mean Energy: " + lowPassEnergyMean)
+          console.dir("Energy: " + features.energy)
+
+         /*  console.dir(lowPassEnergyMean) */
+          if (features.energy > lowPassEnergyMean*5) {
+            beatContainer.style.background = "red";
+            if (beatUsed == false) {
+              audioFeatures["beatSwitch"] = !audioFeatures["beatSwitch"];
+              beatUsed = true;
+              /* console.dir("bEAT"); */
+              firework();
+         
+            }
+          } else {
+            beatContainer.style.background = "blue";
+            beatUsed = false;
           }
-        } else {
-          beatContainer.style.background = "blue";
-          beatUsed = false;
         }
       },
     });
@@ -129,9 +146,9 @@ function initMeyda(file) {
         audioFeatures["activeChromaIndex"] = audioFeatures["chroma"].indexOf(
           Math.max(...audioFeatures["chroma"])
         );
-        chromaHTML.innerHTML = "Chroma: " + keys[audioFeatures.activeChromaIndex];
-        /*         console.dir(features)
-         */
+        chromaHTML.innerHTML =
+          "Chroma: " + keys[audioFeatures.activeChromaIndex];
+     
       },
     });
     analyzer.start();
@@ -139,7 +156,6 @@ function initMeyda(file) {
 }
 
 const KEEP_PERCENTAGE = 0.15; // keep only 15% of audio file
-
 let essentia = null;
 let essentiaAnalysis;
 let featureExtractionWorker = null;
@@ -163,12 +179,12 @@ dropArea.addEventListener("drop", (e) => {
   uploadedFile = e.dataTransfer.files[0];
 
   // DEBUG MODE
-   
+
   initMeyda(uploadedFile);
-  console.dir(audioFeatures)
+  console.dir(audioFeatures);
 
   // UPLOAD MODE
-/*   processFileUpload(files); */
+ /*    processFileUpload(files); */
 });
 dropArea.addEventListener("click", () => {
   dropInput.click();
@@ -182,7 +198,6 @@ function initThree() {
   getColors();
   setRenderColor();
   console.dir(audioFeatures);
- 
 
   createColorSpectrumMaterials();
   updateColor();
@@ -202,7 +217,7 @@ function initThreeWithAffect() {
   createColorSpectrumMaterials();
   audioFeatures["ready"] = true;
 }
-initThree();
+
 
 function processFileUpload(files) {
   if (files.length > 1) {

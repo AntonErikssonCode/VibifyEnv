@@ -363,19 +363,10 @@ function firework() {
     spawnBeatBoom(value, audioFeatures.activeChromaIndex, size);
     value += 0.1;
   }
-  /* spawnBeatBoom(0.1);
-  spawnBeatBoom(0.2);
-  spawnBeatBoom(0.3);
-  spawnBeatBoom(0.4);
-  spawnBeatBoom(0.5);
-  spawnBeatBoom(0.6);
-  spawnBeatBoom(0.7);
-  spawnBeatBoom(0.8);
-  spawnBeatBoom(0.9);
-  spawnBeatBoom(1); */
 }
 
-var interval = setInterval(firework, 2000);
+
+/* var interval = setInterval(firework, 2000); */
 
 // Planets
 
@@ -473,28 +464,21 @@ function animate(timeStamp) {
     var mesh = radiationGroup.children[0];
 
     // Radiation Movment
-
-    if (
-      audioFeatures.predictions.mood_aggressive > 0.6 &&
-      audioFeatures.predictions.mood_sad > audioFeatures.predictions.mood_happy
-    ) {
-      // Triangle Wave
-      if (mesh.position.x < 5) {
-        mesh.position.x += audioFeatures.bpm / 1000;
+    if (mesh.position.x < 5) {
+      mesh.position.x += audioFeatures.bpm / 1000;
+      if (
+        audioFeatures.predictions.mood_aggressive > 0.6 &&
+        audioFeatures.predictions.mood_sad >
+          audioFeatures.predictions.mood_happy
+      ) {
+        // Triangle
         mesh.position.y = 1 - Math.abs((mesh.position.x % 2) - 1) + 1.2;
       } else {
-        mesh.position.z -= 0.1;
-        mesh.position.x += 0.05;
+        // Sine
+        mesh.position.y = 1 * Math.sin(1 * mesh.position.x) + 1.2;
       }
     } else {
-      // Sine Wave
-      if (mesh.position.x < 5) {
-        mesh.position.x += audioFeatures.bpm / 1000;
-        mesh.position.y = 1 * Math.sin(1 * mesh.position.x) + 1.2;
-      } else {
-        mesh.position.z -= 0.1;
-        mesh.position.x += 0.05;
-      }
+      mesh.position.z -= 0.1;
     }
 
     // Remove Radiation
@@ -559,6 +543,8 @@ function animate(timeStamp) {
     } else {
       peakLoudness -= 0.001;
     }
+
+    /*   console.log(audioFeatures.beatSwitch) */
   }
 
   composer.render(scene, camera);
