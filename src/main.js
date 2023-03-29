@@ -113,7 +113,7 @@ function initMeyda(file) {
             throttleFirework();
             
           }
-          if (features.rms > energyPeak*0.6) {
+          if (features.rms > (energyPeak*0.6 +lowPassEnergyMean)/2) {
             throttleFirework();
           }
         }

@@ -75,8 +75,8 @@ scene.add(light);
 const dirLight = new THREE.DirectionalLight(0xffffff, 0.5);
 dirLight.position.y = 500;
 scene.add(dirLight);
-const helper = new THREE.DirectionalLightHelper(dirLight, 5);
-scene.add(helper);
+/* const helper = new THREE.DirectionalLightHelper(dirLight, 5);
+scene.add(helper); */
 
 const pointLight = new THREE.PointLight(0xffffff, 10, 17);
 pointLight.position.set(-5, 5, 5);
@@ -90,7 +90,7 @@ scene.add(pointLight2);
 
 // Materials
 let colorSpectrumMaterials = [];
-const particleMaterialOpacity = 1;
+const particleMaterialOpacity = 0.4;
 const material1 = new THREE.MeshStandardMaterial({
   color: audioFeatures.color[0],
   emissive: audioFeatures.color[0],
@@ -154,12 +154,14 @@ const material10 = new THREE.MeshStandardMaterial({
 const material11 = new THREE.MeshStandardMaterial({
   color: audioFeatures.color[11],
   emissive: audioFeatures.color[11],
-  opacity: 0.6,
+  opacity: particleMaterialOpacity,
   transparent: true,
 });
 const material12 = new THREE.MeshStandardMaterial({
   color: audioFeatures.color[0],
   emissive: audioFeatures.color[0],
+  opacity: particleMaterialOpacity,
+  transparent: true,
 });
 
 const colorMaterial = [
@@ -360,8 +362,12 @@ function firework() {
   var value = 0;
   var size = 3 * audioFeatures.rms;
   for (let index = 0; index < 63; index++) {
-    spawnBeatBoom(value, audioFeatures.activeChromaIndex, size);
-    value += 0.1;
+    if(index%2==0){
+      spawnBeatBoom(value, audioFeatures.activeChromaIndex, size);
+      value += 0.21;
+      
+    }
+   
   }
 }
 
@@ -411,7 +417,7 @@ function spawnPlanet(colorIndex, size) {
 
 // Animate Variables
 let last = 0;
-let particleSpawnSpeed = 0.05;
+let particleSpawnSpeed = 4;
 var clock = new THREE.Clock();
 var delta = 0;
 let morphTime = 0;
@@ -508,7 +514,7 @@ function animate(timeStamp) {
     pointLight2.color.setHex(colorToHexColor(audioFeatures.color[13]));
     defaultMoveSpeed = 0.01 + audioFeatures.bpm / 1500;
 
-    fogDistance -= (fogDistance * audioFeatures.predictions.mood_sad) / 1.5;
+    fogDistance -= (fogDistance * audioFeatures.predictions.mood_sad) / 3;
     console.dir("Fog Distance: " + fogDistance);
     scene.fog = new THREE.Fog(0x050505, 1, fogDistance);
     audioFeatures["ready"] = false;
