@@ -159,65 +159,72 @@ function getColors() {
     25 + brightness
   );
  */
-  var colorRange = 90 + audioFeatures.predictions.danceability*100/4 -audioFeatures.predictions.mood_sad*100/4; // Dancebility adds range
+  var colorRange =
+    90 +
+    (audioFeatures.predictions.danceability * 100) / 4 -
+    (audioFeatures.predictions.mood_sad * 100) / 4; // Dancebility adds range
   var colorRangeHalf = colorRange / 2;
   var colorStepMain = colorRange / 7;
   var colorStepSecond = colorRange / 5;
   // 7 true
-
-  const inScaleColor1 = hslToHex(mainAngle, 75 + saturation, 25 + brightness);
+var brightnessBias = 15;
+  const inScaleColor1 = hslToHex(mainAngle, 75 + saturation, brightnessBias + brightness);
   const inScaleColor2 = hslToHex(
     mainAngle + colorStepMain * 1,
     75 + saturation,
-    25 + brightness
+    brightnessBias + brightness
   );
   const inScaleColor3 = hslToHex(
     mainAngle + colorStepMain * 2,
     75 + saturation,
-    25 + brightness
+    brightnessBias + brightness
   );
   const inScaleColor4 = hslToHex(
     mainAngle + colorStepMain * 3,
     75 + saturation,
-    25 + brightness
+    brightnessBias + brightness
   );
   const inScaleColor5 = hslToHex(
     mainAngle + colorStepMain * 1 - colorRangeHalf,
     75 + saturation,
-    25 + brightness
+    brightnessBias + brightness
   );
   const inScaleColor6 = hslToHex(
     mainAngle + colorStepMain * 2 - colorRangeHalf,
     75 + saturation,
-    25 + brightness
+    brightnessBias + brightness
   );
   const inScaleColor7 = hslToHex(
     mainAngle + colorStepMain * 3 - colorRangeHalf,
     75 + saturation,
-    25 + brightness
+    brightnessBias + brightness
   );
 
   // 5 false
   const outOfScaleColor1 = hslToHex(
     secondaryAngle + colorStepMain * 2 - colorRangeHalf,
     75 + saturation,
-    25 + brightness
+    brightnessBias + brightness
   );
   const outOfScaleColor2 = hslToHex(
     secondaryAngle + colorStepMain * 1 - colorRangeHalf,
     75 + saturation,
-    25 + brightness
+    brightnessBias + brightness
   );
-  const outOfScaleColor3 = hslToHex(secondaryAngle, 75 + saturation, 25 + brightness);
+  const outOfScaleColor3 = hslToHex(
+    secondaryAngle,
+    75 + saturation,
+    brightnessBias + brightness
+  );
   const outOfScaleColor4 = hslToHex(
     secondaryAngle + colorStepMain * 1,
     75 + saturation,
-    25 + brightness
+    brightnessBias + brightness
   );
   const outOfScaleColor5 = hslToHex(
     secondaryAngle + colorStepMain * 2,
     75 + saturation,
-    25 + brightness
+    brightnessBias + brightness
   );
 
   const background = hslToHex(mainAngle, 75 + saturation, 50 + brightness);
@@ -226,7 +233,7 @@ function getColors() {
     75 + saturation,
     25 + brightness
   );
-  if(audioFeatures.key == "major"){
+  if (audioFeatures.key == "major") {
     audioFeatures.color = [
       inScaleColor1,
       outOfScaleColor1,
@@ -238,16 +245,13 @@ function getColors() {
       inScaleColor5,
       outOfScaleColor4,
       inScaleColor6,
-     
-     
+
       outOfScaleColor5,
       inScaleColor7,
       background,
       essenceShapeColor,
     ];
-
-  }
-  else{
+  } else {
     audioFeatures.color = [
       inScaleColor1,
       outOfScaleColor1,
@@ -264,9 +268,7 @@ function getColors() {
       background,
       essenceShapeColor,
     ];
-
   }
-  
 
   color1Div.style.background = audioFeatures.color[0];
   color2Div.style.background = audioFeatures.color[1];
@@ -293,8 +295,6 @@ function getColors() {
 
     audioFeatures.colorSpectrum.push(generatedColor);
   }
-
-  
 }
 
 export { getColors };

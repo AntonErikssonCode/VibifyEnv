@@ -71,25 +71,26 @@ composer.addPass(afterImagePass);
 const control = new OrbitControls(camera, renderer.domElement);
 
 // Lights
-const light = new THREE.AmbientLight(0xffffff, 0.01);
+const light = new THREE.AmbientLight(0xffffff, 0.05);
 scene.add(light);
 
-const dirLight = new THREE.DirectionalLight(0xffffff, 2);
-dirLight.position.y = 500;
-dirLight.position.z = 10;
+const dirLight = new THREE.DirectionalLight(0xffffff, 3);
+
+dirLight.position.y = 100;
+dirLight.castShadow = false;
 scene.add(dirLight);
 /* const helper = new THREE.DirectionalLightHelper(dirLight, 5);
 scene.add(helper); */
 
-const pointLight = new THREE.PointLight(0xffffff, 2, 17);
+const pointLight = new THREE.PointLight(0xffffff, 10, 20);
 pointLight.position.set(-3, 0, 10);
 pointLight.castShadow = true;
 scene.add(pointLight);
 
-const pointLight2 = new THREE.PointLight(0xffffff, 3, 17);
+const pointLight2 = new THREE.PointLight(0xffffff, 5, 20);
 pointLight2.position.set(5, 5, 10);
 pointLight2.castShadow = true;
-/* scene.add(pointLight2); */
+scene.add(pointLight2);
 
 // Materials
 let colorSpectrumMaterials = [];
@@ -359,11 +360,15 @@ function spawnRadiation(angle, index) {
 var geoSphereRadiation;
 // Firework Function
 function spawnBeatBoom(angle, color, size) {
+  var shape = resolutionShape;
+  if (shape <= 3) {
+    shape = 3;
+  }
   var spawnedGroupRadiation = groupRadiation.clone();
   geoSphereRadiation = new THREE.SphereGeometry(
     size,
-    resolutionShape,
-    resolutionShape
+    shape+1,
+    shape
   );
   var spawnedSphereRadiation = new THREE.Mesh(
     geoSphereRadiation,
@@ -552,14 +557,14 @@ function animate(timeStamp) {
   if (audioFeatures.ready) {
     createEssenceShape();
     audioFeatures["essenceShapeReady"] = true;
-   /*  pointLight.color.setHex(colorToHexColor(audioFeatures.color[13]));
-    pointLight2.color.setHex(colorToHexColor(audioFeatures.color[13])); */
+    pointLight.color.setHex(colorToHexColor(audioFeatures.color[0]));
+    pointLight2.color.setHex(colorToHexColor(audioFeatures.color[7]));
     defaultMoveSpeed = 0.01 + audioFeatures.bpm / 1500;
 
     fogDistance = (fogDistance * audioFeatures.predictions.mood_sad) ;
     console.dir("Fog Distance: " + fogDistance);
     scene.fog = new THREE.Fog(0x050505, 1, 150);
-    emissiveIntensityColor = audioFeatures.predictions.mood_happy; 
+    emissiveIntensityColor = 0.75 + audioFeatures.predictions.mood_happy/4; 
 
     audioFeatures["ready"] = false;
   }
@@ -639,7 +644,7 @@ function animate(timeStamp) {
 
   camera.position.y += yModifier;
   camera.position.x += xModifier;
-  camera.position.z += yModifier +xModifier/2 ;
+  /* camera.position.z += yModifier +xModifier/2 ; */
   console.dir( camera.position.z )
   
 
