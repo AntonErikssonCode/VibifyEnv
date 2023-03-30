@@ -48,12 +48,13 @@ function getColors() {
   console.dir(mainValens);
   console.dir(secondaryValens);
 
-  let mainAngle = (Math.atan2(mainValens, mainArousal) * 180) / Math.PI;
+  var spin = 0;
+  let mainAngle = (Math.atan2(mainValens, mainArousal) * 180 + spin) / Math.PI;
   if (mainAngle < 0) {
     mainAngle += 360;
   }
   let secondaryAngle =
-    (Math.atan2(secondaryValens, secondaryArousal) * 180) / Math.PI;
+    (Math.atan2(secondaryValens, secondaryArousal) * 180 + spin) / Math.PI;
   if (secondaryAngle < 0) {
     secondaryAngle += 360;
   }
@@ -167,7 +168,8 @@ function getColors() {
   var colorStepMain = colorRange / 7;
   var colorStepSecond = colorRange / 5;
   // 7 true
-var brightnessBias = 15;
+  var hej = audioFeatures.predictions.mood_happy + audioFeatures.predictions.mood_sad/2;
+var brightnessBias = 25 *hej;
   const inScaleColor1 = hslToHex(mainAngle, 75 + saturation, brightnessBias + brightness);
   const inScaleColor2 = hslToHex(
     mainAngle + colorStepMain * 1,
