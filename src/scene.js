@@ -324,7 +324,7 @@ function spawnRadiation(angle, index) {
 
   var spawnedSphereRadiation = new THREE.Mesh(
     geoSphereRadiation,
-    colorMaterial[index]
+    audioFeatures.color[index]
   );
 
   if (angle === undefined) {
@@ -361,16 +361,31 @@ function spawnBeatBoom(angle, color, size) {
   radiationCollection.add(spawnedGroupRadiation);
   scene.add(radiationCollection);
 }
-
+var fireworkModifier = 0;
 function firework() {
   var value = 0;
   var size = 5 * audioFeatures.rms;
-  for (let index = 0; index < 63; index++) {
+  fireworkModifier = 1;
+  var colorIndexLength = audioFeatures.activeColorIndexes.length;
+  var colorIndex = 0;
+  var count = 0;
+console.dir(audioFeatures.activeColorIndexes)
+  for (let index = 0; index < 54; index++) {
+    
     if (index % 3 == 0) {
-      spawnBeatBoom(value, audioFeatures.activeChromaIndex, size);
-      value += 0.30;
+      spawnBeatBoom(value, audioFeatures.activeColorIndexes[colorIndex], size);
+      value += 0.35 *fireworkModifier;
+      count++;
+      colorIndex++;
+      if (colorIndex >=colorIndexLength) {
+        colorIndex = 0;
+        
+      }
+     
     }
   }
+  console.dir(count)
+ 
 }
 
 /* var interval = setInterval(firework, 2000); */

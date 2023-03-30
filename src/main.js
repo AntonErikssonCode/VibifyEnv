@@ -105,8 +105,8 @@ function initMeyda(file) {
         if (features.energy > 0.001) {
           lowPassEnergy.push(features.rms);
           var lowPassEnergyMean = calculateAverageOfArray(lowPassEnergy);
-          console.dir("Peak Energy: " + lowPassEnergyMean);
-          console.dir("Energy: " + features.rms);
+    /*       console.dir("Peak Energy: " + lowPassEnergyMean);
+          console.dir("Energy: " + features.rms); */
 
           if (features.rms > energyPeak) {
             energyPeak = features.rms;
