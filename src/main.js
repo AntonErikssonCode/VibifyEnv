@@ -168,20 +168,36 @@ function initMeyda(file) {
           Math.max(...audioFeatures["chroma"])
         );
         
-        var chromaPrio = [];
+
+        // Selects indexes based on chroma, relative to our active scale. 
+     /*    var chromaPrio = []; */
+        var activeIndexes = [];
         for (let index = 0; index < audioFeatures.chroma.length; index++) {
           const element = audioFeatures.chroma[index];
           if(element > 0.95){
-            const obj = { chromaIndex: index, value: element, tone: keys[index] };
-            chromaPrio.push(obj )
+            /* const obj = { chromaIndex: index, value: element, tone: keys[index] }; */
+            /* chromaPrio.push(obj) */
+          /*   console.dir(keys[index]) */
+            audioFeatures.keysOrdered.forEach((key, index2)=>{
+              if(key==keys[index]){
+                activeIndexes.push(index2)
+              }
+            })
+
           }
+         
 
           
         }
-        audioFeatures["activeHarmony"] = chromaPrio;
+        audioFeatures["activeColorIndexes"] = activeIndexes;
+    /*     console.dir(activeIndexes)
+        console.dir(" ") */
+       
+       /*  audioFeatures["activeHarmony"] = chromaPrio; */
         
-        console.dir(chromaPrio)
-
+        
+      /*   console.dir(chromaPrio)
+ */
 
         
         chromaHTML.innerHTML =

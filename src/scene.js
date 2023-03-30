@@ -364,7 +364,7 @@ function spawnBeatBoom(angle, color, size) {
 
 function firework() {
   var value = 0;
-  var size = 7 * audioFeatures.rms;
+  var size = 5 * audioFeatures.rms;
   for (let index = 0; index < 63; index++) {
     if (index % 3 == 0) {
       spawnBeatBoom(value, audioFeatures.activeChromaIndex, size);
@@ -474,7 +474,7 @@ function animate(timeStamp) {
     var mesh = radiationGroup.children[0];
 
     // Radiation Movment
-    if (mesh.position.x < 15) {
+    if (mesh.position.x < 20) {
       mesh.position.x +=
         /* audioFeatures.bpm / 10000 + */ audioFeatures.rms / 2;
       if (
@@ -602,6 +602,8 @@ function animate(timeStamp) {
 
   camera.position.y += yModifier;
   camera.position.x += xModifier;
+  
+
 
   composer.render(scene, camera);
 }
