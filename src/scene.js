@@ -57,7 +57,7 @@ const bloomPass = new UnrealBloomPass(new THREE.Vector2(w, h),   1.5,
 const afterImagePass = new AfterimagePass();
 const effectVignette = new ShaderPass(VignetteShader);
 
-afterImagePass.uniforms["damp"].value = 0.75;
+afterImagePass.uniforms["damp"].value = 0.975;
 effectVignette.uniforms["offset"].value =
   audioFeatures.predictions.mood_sad / 4 + 0.4 -audioFeatures.predictions.mood_happy / 4;
 effectVignette.uniforms["darkness"].value = 5;

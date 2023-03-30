@@ -84,7 +84,7 @@ function sliceIntoChunks(arr, chunkSize) {
   return res;
 }
 
-function throttle(cb, delay = 500) {
+function throttle(cb, delay = 300) {
   let shouldWait = false
   let waitingArgs
   const timeoutFunc = () => {

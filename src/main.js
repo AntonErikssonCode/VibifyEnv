@@ -63,7 +63,7 @@ function initMeyda(file) {
 
   let filter = meydaContext.createBiquadFilter();
   filter.type = "lowpass";
-  filter.frequency.setValueAtTime(100, meydaContext.currentTime, 0);
+  filter.frequency.setValueAtTime(50, meydaContext.currentTime, 0);
 
   source.connect(filter);
   source.connect(meydaContext.destination);
@@ -90,7 +90,7 @@ function initMeyda(file) {
             throttleFirework();
             
           }
-          if (features.rms > (energyPeak*0.9 +lowPassEnergyMean)/2) {
+          if (features.rms > (energyPeak*0.90 +lowPassEnergyMean)/2) {
             throttleFirework();
           }
         }

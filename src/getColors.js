@@ -178,7 +178,7 @@ function getColors() {
   
   }
   var hej = audioFeatures.predictions.mood_happy*10 + audioFeatures.predictions.mood_sad*10;
-var brightnessBias = 10 +brightnessBiasModulator;
+var brightnessBias = 17 +brightnessBiasModulator;
   const inScaleColor1 = hslToHex(mainAngle, 75 + saturation, brightnessBias + brightness);
   const inScaleColor2 = hslToHex(
     mainAngle + colorStepMain * 1,
