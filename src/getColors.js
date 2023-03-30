@@ -159,7 +159,7 @@ function getColors() {
     25 + brightness
   );
  */
-  var colorRange = 90 + audioFeatures.predictions.danceability;
+  var colorRange = 45 + audioFeatures.predictions.danceability;
   var colorRangeHalf = colorRange / 2;
   var colorStepMain = colorRange / 7;
   var colorStepSecond = colorRange / 5;
@@ -203,18 +203,18 @@ function getColors() {
     75 + saturation,
     25 + brightness
   );
-  const color9 = hslToHex(
+  const outOfScaleColor2 = hslToHex(
     secondaryAngle + colorStepMain * 1 - colorRangeHalf,
     75 + saturation,
     25 + brightness
   );
-  const color10 = hslToHex(secondaryAngle, 75 + saturation, 25 + brightness);
-  const color11 = hslToHex(
+  const outOfScaleColor3 = hslToHex(secondaryAngle, 75 + saturation, 25 + brightness);
+  const outOfScaleColor4 = hslToHex(
     secondaryAngle + colorStepMain * 1,
     75 + saturation,
     25 + brightness
   );
-  const color12 = hslToHex(
+  const outOfScaleColor5 = hslToHex(
     secondaryAngle + colorStepMain * 2,
     75 + saturation,
     25 + brightness
@@ -226,23 +226,47 @@ function getColors() {
     75 + saturation,
     25 + brightness
   );
+  if(audioFeatures.key == "major"){
+    audioFeatures.color = [
+      inScaleColor1,
+      outOfScaleColor1,
+      inScaleColor2,
+      outOfScaleColor2,
+      inScaleColor3,
+      inScaleColor4,
+      outOfScaleColor3,
+      inScaleColor5,
+      outOfScaleColor4,
+      inScaleColor6,
+     
+     
+      outOfScaleColor5,
+      inScaleColor7,
+      background,
+      essenceShapeColor,
+    ];
 
-  audioFeatures.color = [
-    color1,
-    color2,
-    color3,
-    color4,
-    color5,
-    color6,
-    color7,
-    color8,
-    color9,
-    color10,
-    color11,
-    color12,
-    background,
-    essenceShapeColor,
-  ];
+  }
+  else{
+    audioFeatures.color = [
+      inScaleColor1,
+      outOfScaleColor1,
+      inScaleColor2,
+      inScaleColor3,
+      outOfScaleColor2,
+      inScaleColor4,
+      outOfScaleColor3,
+      inScaleColor5,
+      inScaleColor6,
+      outOfScaleColor4,
+      inScaleColor7,
+      outOfScaleColor5,
+      background,
+      essenceShapeColor,
+    ];
+
+  }
+  
 
   color1Div.style.background = audioFeatures.color[0];
   color2Div.style.background = audioFeatures.color[1];

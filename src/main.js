@@ -167,6 +167,23 @@ function initMeyda(file) {
         audioFeatures["activeChromaIndex"] = audioFeatures["chroma"].indexOf(
           Math.max(...audioFeatures["chroma"])
         );
+        
+        var chromaPrio = [];
+        for (let index = 0; index < audioFeatures.chroma.length; index++) {
+          const element = audioFeatures.chroma[index];
+          if(element > 0.95){
+            const obj = { chromaIndex: index, value: element, tone: keys[index] };
+            chromaPrio.push(obj )
+          }
+
+          
+        }
+        audioFeatures["activeHarmony"] = chromaPrio;
+        
+        console.dir(chromaPrio)
+
+
+        
         chromaHTML.innerHTML =
           "Chroma: " + keys[audioFeatures.activeChromaIndex];
       },
