@@ -51,13 +51,15 @@ const renderScene = new RenderPass(scene, camera);
 
 // Post Processing
 const composer = new EffectComposer(renderer);
-const bloomPass = new UnrealBloomPass(new THREE.Vector2(w, h), 0.5, 0.1, 0.6);
+const bloomPass = new UnrealBloomPass(new THREE.Vector2(w, h),   1.5,
+0.4,
+0.85);
 const afterImagePass = new AfterimagePass();
 const effectVignette = new ShaderPass(VignetteShader);
 
 afterImagePass.uniforms["damp"].value = 0.75;
 effectVignette.uniforms["offset"].value =
-  audioFeatures.predictions.mood_sad / 3 + 0.2;
+  audioFeatures.predictions.mood_sad / 4 + 0.4 -audioFeatures.predictions.mood_happy / 4;
 effectVignette.uniforms["darkness"].value = 5;
 
 composer.addPass(renderScene);
@@ -69,97 +71,111 @@ composer.addPass(afterImagePass);
 const control = new OrbitControls(camera, renderer.domElement);
 
 // Lights
-const light = new THREE.AmbientLight(0xffffff, 0.1);
+const light = new THREE.AmbientLight(0xffffff, 0.01);
 scene.add(light);
 
-const dirLight = new THREE.DirectionalLight(0xffffff, 0.5);
+const dirLight = new THREE.DirectionalLight(0xffffff, 2);
 dirLight.position.y = 500;
+dirLight.position.z = 10;
 scene.add(dirLight);
 /* const helper = new THREE.DirectionalLightHelper(dirLight, 5);
 scene.add(helper); */
 
-const pointLight = new THREE.PointLight(0xffffff, 10, 17);
-pointLight.position.set(-5, 5, 5);
+const pointLight = new THREE.PointLight(0xffffff, 2, 17);
+pointLight.position.set(-3, 0, 10);
 pointLight.castShadow = true;
 scene.add(pointLight);
 
-const pointLight2 = new THREE.PointLight(0xffffff, 5, 17);
-pointLight2.position.set(5, 5, 5);
+const pointLight2 = new THREE.PointLight(0xffffff, 3, 17);
+pointLight2.position.set(5, 5, 10);
 pointLight2.castShadow = true;
-scene.add(pointLight2);
+/* scene.add(pointLight2); */
 
 // Materials
 let colorSpectrumMaterials = [];
-const particleMaterialOpacity = 0.4;
+const particleMaterialOpacity = 1;
+var emissiveIntensityColor = audioFeatures.emissiveIntensityColor;
 const material1 = new THREE.MeshStandardMaterial({
   color: audioFeatures.color[0],
   emissive: audioFeatures.color[0],
+  emissiveIntensity: emissiveIntensityColor, 
   opacity: particleMaterialOpacity,
   transparent: true,
 });
 const material2 = new THREE.MeshStandardMaterial({
   color: audioFeatures.color[1],
   emissive: audioFeatures.color[1],
+  emissiveIntensity: emissiveIntensityColor, 
   opacity: particleMaterialOpacity,
   transparent: true,
 });
 const material3 = new THREE.MeshStandardMaterial({
   color: audioFeatures.color[2],
   emissive: audioFeatures.color[2],
+  emissiveIntensity: emissiveIntensityColor, 
   opacity: particleMaterialOpacity,
   transparent: true,
 });
 const material4 = new THREE.MeshStandardMaterial({
   color: audioFeatures.color[3],
   emissive: audioFeatures.color[3],
+  emissiveIntensity: emissiveIntensityColor, 
   opacity: particleMaterialOpacity,
   transparent: true,
 });
 const material5 = new THREE.MeshStandardMaterial({
   color: audioFeatures.color[5],
   emissive: audioFeatures.color[5],
+  emissiveIntensity: emissiveIntensityColor, 
   opacity: particleMaterialOpacity,
   transparent: true,
 });
 const material6 = new THREE.MeshStandardMaterial({
   color: audioFeatures.color[6],
   emissive: audioFeatures.color[6],
+  emissiveIntensity: emissiveIntensityColor, 
   opacity: particleMaterialOpacity,
   transparent: true,
 });
 const material7 = new THREE.MeshStandardMaterial({
   color: audioFeatures.color[7],
   emissive: audioFeatures.color[7],
+  emissiveIntensity: emissiveIntensityColor, 
   opacity: particleMaterialOpacity,
   transparent: true,
 });
 const material8 = new THREE.MeshStandardMaterial({
   color: audioFeatures.color[8],
   emissive: audioFeatures.color[8],
+  emissiveIntensity: emissiveIntensityColor, 
   opacity: particleMaterialOpacity,
   transparent: true,
 });
 const material9 = new THREE.MeshStandardMaterial({
   color: audioFeatures.color[9],
   emissive: audioFeatures.color[9],
+  emissiveIntensity: emissiveIntensityColor, 
   opacity: particleMaterialOpacity,
   transparent: true,
 });
 const material10 = new THREE.MeshStandardMaterial({
   color: audioFeatures.color[10],
   emissive: audioFeatures.color[10],
+  emissiveIntensity: emissiveIntensityColor, 
   opacity: particleMaterialOpacity,
   transparent: true,
 });
 const material11 = new THREE.MeshStandardMaterial({
   color: audioFeatures.color[11],
   emissive: audioFeatures.color[11],
+  emissiveIntensity: emissiveIntensityColor, 
   opacity: particleMaterialOpacity,
   transparent: true,
 });
 const material12 = new THREE.MeshStandardMaterial({
   color: audioFeatures.color[0],
   emissive: audioFeatures.color[0],
+  emissiveIntensity: emissiveIntensityColor, 
   opacity: particleMaterialOpacity,
   transparent: true,
 });
@@ -302,7 +318,7 @@ function spawnParticle() {
   var particleYPos = getRndInteger(-20, 20);
   var particleRotation = getRndInteger(0, 45);
 
-  travelParticle.position.set(particleXPos, particleYPos, 2);
+  travelParticle.position.set(particleXPos, particleYPos, 5);
   travelParticle.rotateZ(particleRotation);
   groupTravelParticle.add(travelParticle);
 }
@@ -353,7 +369,7 @@ function spawnBeatBoom(angle, color, size) {
     geoSphereRadiation,
     colorMaterial[color]
   );
-  spawnedSphereRadiation.position.z = -3;
+  spawnedSphereRadiation.position.z = -2;
   spawnedGroupRadiation.rotateZ(angle);
   spawnedGroupRadiation.add(spawnedSphereRadiation);
   spawnedGroupRadiation.position.x = 0;
@@ -364,7 +380,7 @@ function spawnBeatBoom(angle, color, size) {
 var fireworkModifier = 0;
 function firework() {
   var value = 0;
-  var size = 5 * audioFeatures.rms;
+  var size = 7 * audioFeatures.rms;
   fireworkModifier = 1;
   var colorIndexLength = audioFeatures.activeColorIndexes.length;
   var colorIndex = 0;
@@ -449,8 +465,10 @@ var defaultMoveSpeed = 0.01;
 var fogDistance = 150;
 var xModifier = 0.05;
 var yModifier = 0.05;
+var zModifier = 0.05;
 var yDirection = "up";
 var xDirection = "right";
+var zDirection = "out";
 var peakLoudness = 0;
 // ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE
 // ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE
@@ -489,7 +507,7 @@ function animate(timeStamp) {
     var mesh = radiationGroup.children[0];
 
     // Radiation Movment
-    if (mesh.position.x < 20) {
+    if (mesh.position.x < 30) {
       mesh.position.x +=
         /* audioFeatures.bpm / 10000 + */ audioFeatures.rms / 2;
       if (
@@ -498,10 +516,10 @@ function animate(timeStamp) {
           audioFeatures.predictions.mood_happy
       ) {
         // Triangle
-        mesh.position.y = 1 - Math.abs((mesh.position.x % 2) - 1) + 3;
+        mesh.position.y = 1 - Math.abs((mesh.position.x % 2) - 1) + 2;
       } else {
         // Sine
-        mesh.position.y = 1 * Math.sin(1 * mesh.position.x - 1) + 3;
+        mesh.position.y = 1 * Math.sin(1 * mesh.position.x - 1) + 2;
       }
     } else {
       audioFeatures.energy < 0.1
@@ -534,13 +552,15 @@ function animate(timeStamp) {
   if (audioFeatures.ready) {
     createEssenceShape();
     audioFeatures["essenceShapeReady"] = true;
-    pointLight.color.setHex(colorToHexColor(audioFeatures.color[13]));
-    pointLight2.color.setHex(colorToHexColor(audioFeatures.color[13]));
+   /*  pointLight.color.setHex(colorToHexColor(audioFeatures.color[13]));
+    pointLight2.color.setHex(colorToHexColor(audioFeatures.color[13])); */
     defaultMoveSpeed = 0.01 + audioFeatures.bpm / 1500;
 
     fogDistance = (fogDistance * audioFeatures.predictions.mood_sad) ;
     console.dir("Fog Distance: " + fogDistance);
     scene.fog = new THREE.Fog(0x050505, 1, 150);
+    emissiveIntensityColor = audioFeatures.predictions.mood_happy; 
+
     audioFeatures["ready"] = false;
   }
 
@@ -582,6 +602,7 @@ function animate(timeStamp) {
   var rangeNeg = -3;
   var yModifierSpeed = audioFeatures.rms / 10;
   var xModifierSpeed = audioFeatures.rms / 20;
+  var zModifierSpeed = audioFeatures.rms ;
   if (yDirection === "up") {
     if (camera.position.y <= rangePos) {
       yModifier = yModifierSpeed;
@@ -615,8 +636,11 @@ function animate(timeStamp) {
     }
   }
 
+
   camera.position.y += yModifier;
   camera.position.x += xModifier;
+  camera.position.z += yModifier +xModifier/2 ;
+  console.dir( camera.position.z )
   
 
 

@@ -26,7 +26,7 @@
 
 // Hurt
 
-let audioFeatures= {
+let audioFeaturesda= {
   colorSpectrum: [],
   ready: false,
   essenceShapeReady: false, 
@@ -62,7 +62,7 @@ activeChromaIndex: 0,
 // Dont stop me now song
 
 
-let audioFeatures3= {
+let audioFeatures = {
   rms: 0,
   loudness: 0,
   energy: 0,
@@ -93,7 +93,7 @@ let audioFeatures3= {
 
 // GIFT OF GUILT
 
-let audioFeatures21= {
+let audioFeatures3123= {
   ready: false,
   essenceShapeReady: false, 
   rms: 0,
@@ -101,9 +101,9 @@ let audioFeatures21= {
   energy: 0,
   spectralCentroid: 0,
   chroma: [],
-  bpm: 150,
-  scale: 0,
-  tempo:72,
+  bpm: 78.13,
+  scale: "F",
+  tempo:"minor",
   beatSwitch: false,
   amplitudeSpectrum: [],
   predictions: {
@@ -113,6 +113,7 @@ let audioFeatures21= {
     mood_sad: 0.33,
     danceability: 0.69,
   },
+  emissiveIntensityColor: 0, 
   colorSpectrum: [],
   arousal: -0.60135, 
   valence: -0.66736522,
@@ -128,7 +129,7 @@ let audioFeatures21= {
 // random
   
 
-let audioFeatures3123 = {
+let audioFeatures3 = {
   rms: 0,
   loudness: 1,
   energy: 0,

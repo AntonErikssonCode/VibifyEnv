@@ -159,7 +159,7 @@ function getColors() {
     25 + brightness
   );
  */
-  var colorRange = 70 + audioFeatures.predictions.danceability*100;
+  var colorRange = 90 + audioFeatures.predictions.danceability*100/4 -audioFeatures.predictions.mood_sad*100/4; // Dancebility adds range
   var colorRangeHalf = colorRange / 2;
   var colorStepMain = colorRange / 7;
   var colorStepSecond = colorRange / 5;

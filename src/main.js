@@ -35,31 +35,8 @@ const relaxe = document.querySelector("#relaxTag");
 const aggressive = document.querySelector("#aggressiveTag");
 const dance = document.querySelector("#danceTag");
 
-const beatContainer = document.querySelector("#beatContainer"); /* 
-function throttle2(cb, delay = 1200) {
-  let shouldWait = false;
-  let waitingArgs;
-  const timeoutFunc = () => {
-    if (waitingArgs == null) {
-      shouldWait = false;
-    } else {
-      cb(...waitingArgs);
-      waitingArgs = null;
-      setTimeout(timeoutFunc, delay);
-    }
-  };
+const beatContainer = document.querySelector("#beatContainer");  
 
-  return (...args) => {
-    if (shouldWait) {
-      waitingArgs = args;
-      return;
-    }
-
-    cb(...args);
-    shouldWait = true;
-    setTimeout(timeoutFunc, delay);
-  };
-} */
 const throttleFirework = throttle(() => {
   firework();
 });
@@ -237,7 +214,7 @@ dropArea.addEventListener("drop", (e) => {
   console.dir(audioFeatures);
 
   // UPLOAD MODE
-   /*   processFileUpload(files); */
+    /*  processFileUpload(files); */
 });
 dropArea.addEventListener("click", () => {
   dropInput.click();
