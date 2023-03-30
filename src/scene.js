@@ -251,8 +251,12 @@ function createEssenceShape() {
       10 -
       3
   );
+  var shape = resolutionShape;
+  if (shape <= 1) {
+    shape = 1;
+  }
 
-  geoEssenceShape = new THREE.IcosahedronGeometry(radius, resolutionShape);
+  geoEssenceShape = new THREE.IcosahedronGeometry(radius, shape);
 
   pos = geoEssenceShape.attributes.position;
   for (let i = 0; i < pos.count; i++) {
@@ -360,11 +364,11 @@ function spawnBeatBoom(angle, color, size) {
 
 function firework() {
   var value = 0;
-  var size = 6 * audioFeatures.rms;
+  var size = 7 * audioFeatures.rms;
   for (let index = 0; index < 63; index++) {
-    if (index % 2 == 0) {
+    if (index % 3 == 0) {
       spawnBeatBoom(value, audioFeatures.activeChromaIndex, size);
-      value += 0.21;
+      value += 0.30;
     }
   }
 }
@@ -485,15 +489,15 @@ function animate(timeStamp) {
         mesh.position.y = 1 * Math.sin(1 * mesh.position.x - 1) + 3;
       }
     } else {
-      audioFeatures.energy == 0
-        ? (mesh.position.z += 0.01)
+      audioFeatures.energy < 0.1
+        ? (mesh.position.z -= 0.01)
         : (mesh.position.z -=
-            audioFeatures.bpm / 100000 + audioFeatures.rms * 1.5);
+            audioFeatures.bpm / 100000 + audioFeatures.rms * 1.5, mesh.position.x +=0.01);
       /* mesh.position. = 2 * Math.sin(1 * mesh.position.x -1) + 2; */
     }
 
     // Remove Radiation
-    if (mesh.position.z < -fogDistance) {
+    if (mesh.position.z < -fogDistance-50) {
       radiationCollection.remove(radiationGroup);
     }
   });
@@ -519,9 +523,9 @@ function animate(timeStamp) {
     pointLight2.color.setHex(colorToHexColor(audioFeatures.color[13]));
     defaultMoveSpeed = 0.01 + audioFeatures.bpm / 1500;
 
-    fogDistance -= (fogDistance * audioFeatures.predictions.mood_sad) / 3;
+    fogDistance = (fogDistance * audioFeatures.predictions.mood_sad) ;
     console.dir("Fog Distance: " + fogDistance);
-    scene.fog = new THREE.Fog(0x050505, 1, fogDistance);
+    scene.fog = new THREE.Fog(0x050505, 1, 150);
     audioFeatures["ready"] = false;
   }
 
@@ -559,10 +563,10 @@ function animate(timeStamp) {
     /*   console.log(audioFeatures.beatSwitch) */
   }
 
-  var rangePos = 0.5;
-  var rangeNeg = -0.5;
-  var yModifierSpeed = audioFeatures.rms/10;
-  var xModifierSpeed = audioFeatures.rms/20;
+  var rangePos = 3;
+  var rangeNeg = -3;
+  var yModifierSpeed = audioFeatures.rms / 10;
+  var xModifierSpeed = audioFeatures.rms / 20;
   if (yDirection === "up") {
     if (camera.position.y <= rangePos) {
       yModifier = yModifierSpeed;
@@ -595,7 +599,6 @@ function animate(timeStamp) {
       xDirection = "right";
     }
   }
-
 
   camera.position.y += yModifier;
   camera.position.x += xModifier;

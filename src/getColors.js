@@ -61,46 +61,172 @@ function getColors() {
   let saturation = (mainValens / 4) * 100;
   console.dir("saturation: " + saturation);
 
-  let brightness = (mainArousal / 100) * 100 ;
+  let brightness = (mainArousal / 100) * 100;
   console.dir("brightness: " + brightness);
 
-  
+  const keys = [
+    "C",
+    "C♯",
+    "D",
+    "D♯",
+    "E",
+    "F",
+    "F♯",
+    "G",
+    "G♯",
+    "A",
+    "A♯",
+    "B",
+  ];
+  const major = [
+    true,
+    false,
+    true,
+    false,
+    true,
+    true,
+    false,
+    true,
+    false,
+    true,
+    false,
+    true,
+  ];
+  // A Minor
+  const minor = [
+    true, //A
+    false, //Bb
+    true, //B
+    true, //C
+    false, //C#
+    true, //D
+    false, //D#
+    true, //E
+    true, //F
+    false, //F#
+    true, //G
+    false, //G#
+  ];
+  let newKeysOrder = [];
+  let lastKeys = [];
+  let foundKeys = false;
+  console.dir(audioFeatures.scale);
+  console.dir(audioFeatures.key);
+
+  for (let index = 0; index < keys.length; index++) {
+    const element = keys[index];
+    if (element == audioFeatures.scale) {
+      console.dir("found at: " + index);
+      foundKeys = true;
+    }
+    if (foundKeys) {
+      newKeysOrder.push(element);
+    } else {
+      lastKeys.push(element);
+    }
+  }
+
+  newKeysOrder = newKeysOrder.concat(lastKeys);
+  audioFeatures["keysOrdered"] = newKeysOrder;
+  console.dir(newKeysOrder);
+
+  /* 
   const color1 = hslToHex(mainAngle, 75 + saturation, 25 + brightness);
-  const color2 = hslToHex(mainAngle - 45, 75 + saturation, 25+ brightness);
-  const color3 = hslToHex(mainAngle - 30, 75 + saturation, 25+ brightness);
-  const color4 = hslToHex(mainAngle - 15, 75 + saturation, 25+ brightness);
-  const color5 = hslToHex(mainAngle + 15, 75 + saturation, 25+ brightness);
-  const color6 = hslToHex(mainAngle + 30, 75 + saturation, 25+ brightness);
-  const color7 = hslToHex(mainAngle + 45, 75 + saturation, 25+ brightness);
-  const color8 = hslToHex(mainAngle, 75 + saturation, 25+ brightness);
-  const color9 = hslToHex(mainAngle, 75 + saturation, 25+ brightness);
-  const color10 = hslToHex(secondaryAngle, 75 + saturation, 25+ brightness);
-  const color11 = hslToHex(secondaryAngle-30, 75 + saturation, 25+ brightness);
-  const color12 = hslToHex(secondaryAngle + 30, 75 + saturation, 25+ brightness);
+  const color2 = hslToHex(mainAngle - 45, 75 + saturation, 25 + brightness);
+  const color3 = hslToHex(mainAngle - 30, 75 + saturation, 25 + brightness);
+  const color4 = hslToHex(mainAngle - 15, 75 + saturation, 25 + brightness);
+  const color5 = hslToHex(mainAngle + 15, 75 + saturation, 25 + brightness);
+  const color6 = hslToHex(mainAngle + 30, 75 + saturation, 25 + brightness);
+  const color7 = hslToHex(mainAngle + 45, 75 + saturation, 25 + brightness);
+  const color8 = hslToHex(mainAngle, 75 + saturation, 25 + brightness);
+  const color9 = hslToHex(mainAngle, 75 + saturation, 25 + brightness);
+  const color10 = hslToHex(secondaryAngle, 75 + saturation, 25 + brightness);
+  const color11 = hslToHex(
+    secondaryAngle - 30,
+    75 + saturation,
+    25 + brightness
+  );
+  const color12 = hslToHex(
+    secondaryAngle + 30,
+    75 + saturation,
+    25 + brightness
+  );
 
   const background = hslToHex(mainAngle, 75 + saturation, 50 + brightness);
-  const essenceShapeColor = hslToHex(mainAngle, 75 + saturation, 25 + brightness);
+  const essenceShapeColor = hslToHex(
+    mainAngle,
+    75 + saturation,
+    25 + brightness
+  );
+ */
+  var colorRange = 90 + audioFeatures.predictions.danceability;
+  var colorRangeHalf = colorRange / 2;
+  var colorStepMain = colorRange / 7;
+  var colorStepSecond = colorRange / 5;
+  // 7 true
 
-/*   var colorRange = 150;
-  var colorRangeHalf = colorRange/2;
-  
-  const color1 = hslToHex(mainAngle, 75 + saturation, 25 + brightness);
-  const color2 = hslToHex(mainAngle - 45, 75 + saturation, 25+ brightness);
-  const color3 = hslToHex(mainAngle - 30, 75 + saturation, 25+ brightness);
-  const color4 = hslToHex(mainAngle - 15, 75 + saturation, 25+ brightness);
-  const color5 = hslToHex(mainAngle + 15, 75 + saturation, 25+ brightness);
-  const color6 = hslToHex(mainAngle + 30, 75 + saturation, 25+ brightness);
-  const color7 = hslToHex(mainAngle + 45, 75 + saturation, 25+ brightness);
-  const color8 = hslToHex(mainAngle, 75 + saturation, 25+ brightness);
-  const color9 = hslToHex(mainAngle, 75 + saturation, 25+ brightness);
-  const color10 = hslToHex(secondaryAngle, 75 + saturation, 25+ brightness);
-  const color11 = hslToHex(secondaryAngle-30, 75 + saturation, 25+ brightness);
-  const color12 = hslToHex(secondaryAngle + 30, 75 + saturation, 25+ brightness);
+  const inScaleColor1 = hslToHex(mainAngle, 75 + saturation, 25 + brightness);
+  const inScaleColor2 = hslToHex(
+    mainAngle + colorStepMain * 1,
+    75 + saturation,
+    25 + brightness
+  );
+  const inScaleColor3 = hslToHex(
+    mainAngle + colorStepMain * 2,
+    75 + saturation,
+    25 + brightness
+  );
+  const inScaleColor4 = hslToHex(
+    mainAngle + colorStepMain * 3,
+    75 + saturation,
+    25 + brightness
+  );
+  const inScaleColor5 = hslToHex(
+    mainAngle + colorStepMain * 1 - colorRangeHalf,
+    75 + saturation,
+    25 + brightness
+  );
+  const inScaleColor6 = hslToHex(
+    mainAngle + colorStepMain * 2 - colorRangeHalf,
+    75 + saturation,
+    25 + brightness
+  );
+  const inScaleColor7 = hslToHex(
+    mainAngle + colorStepMain * 3 - colorRangeHalf,
+    75 + saturation,
+    25 + brightness
+  );
+
+  // 5 false
+  const outOfScaleColor1 = hslToHex(
+    secondaryAngle + colorStepMain * 2 - colorRangeHalf,
+    75 + saturation,
+    25 + brightness
+  );
+  const color9 = hslToHex(
+    secondaryAngle + colorStepMain * 1 - colorRangeHalf,
+    75 + saturation,
+    25 + brightness
+  );
+  const color10 = hslToHex(secondaryAngle, 75 + saturation, 25 + brightness);
+  const color11 = hslToHex(
+    secondaryAngle + colorStepMain * 1,
+    75 + saturation,
+    25 + brightness
+  );
+  const color12 = hslToHex(
+    secondaryAngle + colorStepMain * 2,
+    75 + saturation,
+    25 + brightness
+  );
 
   const background = hslToHex(mainAngle, 75 + saturation, 50 + brightness);
-  const essenceShapeColor = hslToHex(mainAngle, 75 + saturation, 25 + brightness); */
+  const essenceShapeColor = hslToHex(
+    mainAngle,
+    75 + saturation,
+    25 + brightness
+  );
 
-  
   audioFeatures.color = [
     color1,
     color2,
@@ -115,7 +241,7 @@ function getColors() {
     color11,
     color12,
     background,
-    essenceShapeColor
+    essenceShapeColor,
   ];
 
   color1Div.style.background = audioFeatures.color[0];
@@ -135,12 +261,16 @@ function getColors() {
   for (let index = 0; index < length; index++) {
     const angle = 90;
     const steps = 90 / length;
-    let generatedColor  = hslToHex(mainAngle - angle/2 + steps * index , 75 + saturation, 75+ brightness);
-  /*   console.dir(generatedColor); */
-    audioFeatures.colorSpectrum.push(generatedColor)
-    
+    let generatedColor = hslToHex(
+      mainAngle - angle / 2 + steps * index,
+      75 + saturation,
+      75 + brightness
+    );
+
+    audioFeatures.colorSpectrum.push(generatedColor);
   }
- /*  console.dir(audioFeatures.colorSpectrum) */
+
+  
 }
 
 export { getColors };

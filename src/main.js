@@ -113,7 +113,7 @@ function initMeyda(file) {
             throttleFirework();
             
           }
-          if (features.rms > (energyPeak*0.8 +lowPassEnergyMean)/2) {
+          if (features.rms > (energyPeak*0.9 +lowPassEnergyMean)/2) {
             throttleFirework();
           }
         }
@@ -204,7 +204,7 @@ dropArea.addEventListener("drop", (e) => {
   console.dir(audioFeatures);
 
   // UPLOAD MODE
-  /*    processFileUpload(files); */
+   /*   processFileUpload(files); */
 });
 dropArea.addEventListener("click", () => {
   dropInput.click();
