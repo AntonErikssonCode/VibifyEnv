@@ -210,12 +210,12 @@ dropArea.addEventListener("drop", (e) => {
 
   // DEBUG MODE
 
-  initMeyda(uploadedFile);
-  console.dir(audioFeatures);
+  /* initMeyda(uploadedFile);
+  console.dir(audioFeatures); */
 
   // UPLOAD MODE
-/*      processFileUpload(files);
- */});
+     processFileUpload(files);
+});
 dropArea.addEventListener("click", () => {
   dropInput.click();
 });
@@ -233,8 +233,8 @@ function initThree() {
   updateColor();
   audioFeatures["ready"] = true;
 }
-initThree();
-
+/* initThree();
+ */
 // Init
 function initThreeWithAffect() {
   fetchLabeledData();

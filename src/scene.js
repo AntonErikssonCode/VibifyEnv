@@ -64,7 +64,7 @@ effectVignette.uniforms["darkness"].value = 5;
 
 composer.addPass(renderScene);
 composer.addPass(effectVignette);
-composer.addPass(bloomPass);
+/* composer.addPass(bloomPass); */
 composer.addPass(afterImagePass);
 
 // Controls
@@ -94,7 +94,7 @@ scene.add(pointLight2);
 
 // Materials
 let colorSpectrumMaterials = [];
-const particleMaterialOpacity = 1;
+const particleMaterialOpacity = 0.9;
 var emissiveIntensityColor = audioFeatures.emissiveIntensityColor;
 const material1 = new THREE.MeshStandardMaterial({
   color: audioFeatures.color[0],
@@ -216,7 +216,7 @@ function setRenderColor() {
   let modifier = -negativeBias;
   var color = shade(audioFeatures.color[12], darknessBias + modifier / 3);
 
-  scene.background = new THREE.Color(color);
+ /*  scene.background = new THREE.Color(color); */
 }
 
 function createColorSpectrumMaterials() {
@@ -512,7 +512,7 @@ function animate(timeStamp) {
     var mesh = radiationGroup.children[0];
 
     // Radiation Movment
-    if (mesh.position.x < 30) {
+    if (mesh.position.x < 25) {
       mesh.position.x +=
         /* audioFeatures.bpm / 10000 + */ audioFeatures.rms / 2;
       if (
@@ -535,7 +535,7 @@ function animate(timeStamp) {
     }
 
     // Remove Radiation
-    if (mesh.position.z < -fogDistance-50) {
+    if (mesh.position.z < -500/* fogDistance-50 */) {
       radiationCollection.remove(radiationGroup);
     }
   });
@@ -563,7 +563,7 @@ function animate(timeStamp) {
 
     fogDistance = (fogDistance * audioFeatures.predictions.mood_sad) ;
     console.dir("Fog Distance: " + fogDistance);
-    scene.fog = new THREE.Fog(0x050505, 1, 150);
+    scene.fog = new THREE.Fog(0x050505, 1, 500);
     emissiveIntensityColor = 0.75 + audioFeatures.predictions.mood_happy/4; 
 
     audioFeatures["ready"] = false;

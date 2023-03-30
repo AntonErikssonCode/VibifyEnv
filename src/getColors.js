@@ -168,8 +168,17 @@ function getColors() {
   var colorStepMain = colorRange / 7;
   var colorStepSecond = colorRange / 5;
   // 7 true
-  var hej = audioFeatures.predictions.mood_happy + audioFeatures.predictions.mood_sad/2;
-var brightnessBias = 25 *hej;
+
+
+  var brightnessBiasModulator;
+  if(audioFeatures.predictions.mood_happy>audioFeatures.predictions.mood_sad){
+    brightnessBiasModulator = audioFeatures.predictions.mood_happy*10;
+  }else{
+    brightnessBiasModulator =  audioFeatures.predictions.mood_sad*10;
+  
+  }
+  var hej = audioFeatures.predictions.mood_happy*10 + audioFeatures.predictions.mood_sad*10;
+var brightnessBias = 10 +brightnessBiasModulator;
   const inScaleColor1 = hslToHex(mainAngle, 75 + saturation, brightnessBias + brightness);
   const inScaleColor2 = hslToHex(
     mainAngle + colorStepMain * 1,
