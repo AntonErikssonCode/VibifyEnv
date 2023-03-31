@@ -458,7 +458,7 @@ let particleSpawnSpeed = 2;
 var clock = new THREE.Clock();
 var delta = 0;
 let morphTime = 0;
-let morphTimeAmplifier = audioFeatures.predictions.mood_aggressive/4;
+let morphTimeAmplifier = audioFeatures.predictions.mood_aggressive/2.5;
 var meanSplicedFrequencyList = [];
 var allMeanFrequency = [
   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,

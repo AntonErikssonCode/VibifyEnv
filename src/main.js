@@ -210,7 +210,7 @@ dropArea.addEventListener("drop", (e) => {
 
   // DEBUG MODE
 
-  /* initMeyda(uploadedFile);
+/*   initMeyda(uploadedFile);
   console.dir(audioFeatures); */
 
   // UPLOAD MODE
@@ -233,8 +233,8 @@ function initThree() {
   updateColor();
   audioFeatures["ready"] = true;
 }
-/* initThree();
- */
+/* initThree(); */
+
 // Init
 function initThreeWithAffect() {
   fetchLabeledData();
