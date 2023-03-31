@@ -59,7 +59,7 @@ function getColors() {
     secondaryAngle += 360;
   }
 
-  let saturation = (mainValens / 4) * 100;
+  let saturation = 50*audioFeatures.predictions.mood_happy;
   console.dir("saturation: " + saturation);
 
   let brightness = (mainArousal / 100) * 100;
@@ -161,25 +161,27 @@ function getColors() {
   );
  */
   var colorRange =
-    90 +
-    (audioFeatures.predictions.danceability * 100) / 4 -
+    110 +
+    (audioFeatures.predictions.danceability * 100) / 6 -
     (audioFeatures.predictions.mood_sad * 100) / 4; // Dancebility adds range
   var colorRangeHalf = colorRange / 2;
   var colorStepMain = colorRange / 7;
   var colorStepSecond = colorRange / 5;
   // 7 true
 
-
   var brightnessBiasModulator;
-  if(audioFeatures.predictions.mood_happy>audioFeatures.predictions.mood_sad){
-    brightnessBiasModulator = audioFeatures.predictions.mood_happy*10;
-  }else{
-    brightnessBiasModulator =  audioFeatures.predictions.mood_sad*10;
-  
+  if (
+    audioFeatures.predictions.mood_happy > audioFeatures.predictions.mood_sad
+  ) {
+    brightnessBiasModulator = audioFeatures.predictions.mood_happy * 10;
+  } else {
+    brightnessBiasModulator = audioFeatures.predictions.mood_sad * 10;
   }
-  var hej = audioFeatures.predictions.mood_happy*10 + audioFeatures.predictions.mood_sad*10;
-var brightnessBias = 17 +brightnessBiasModulator;
-  const inScaleColor1 = hslToHex(mainAngle, 75 + saturation, brightnessBias + brightness);
+  var hej =
+    audioFeatures.predictions.mood_happy * 10 +
+    audioFeatures.predictions.mood_sad * 10;
+  var brightnessBias = 17 + brightnessBiasModulator;
+  /* const inScaleColor1 = hslToHex(mainAngle, 75 + saturation, brightnessBias + brightness);
   const inScaleColor2 = hslToHex(
     mainAngle + colorStepMain * 1,
     75 + saturation,
@@ -211,7 +213,7 @@ var brightnessBias = 17 +brightnessBiasModulator;
     brightnessBias + brightness
   );
 
-  // 5 false
+
   const outOfScaleColor1 = hslToHex(
     secondaryAngle + colorStepMain * 2 - colorRangeHalf,
     75 + saturation,
@@ -236,14 +238,93 @@ var brightnessBias = 17 +brightnessBiasModulator;
     secondaryAngle + colorStepMain * 2,
     75 + saturation,
     brightnessBias + brightness
-  );
-
-  const background = hslToHex(mainAngle, 75 + saturation, 50 + brightness);
+  ); */
+  const saturationBias = 50;
+  const background = hslToHex(mainAngle, saturationBias + saturation, 50 + brightness);
   const essenceShapeColor = hslToHex(
     mainAngle,
-    75 + saturation,
+    saturationBias + saturation,
     25 + brightness
   );
+  const c1 = hslToHex(
+    mainAngle ,
+    saturationBias + saturation,
+    brightnessBias + brightness
+  );
+  const c2 = hslToHex(
+    mainAngle + colorStepMain * 1 - colorRangeHalf,
+    saturationBias + saturation,
+    brightnessBias + brightness
+  );
+  const c3 = hslToHex(
+    mainAngle + colorStepMain * 2 - colorRangeHalf,
+    saturationBias + saturation,
+    brightnessBias + brightness
+  );
+  const c4 = hslToHex(
+    mainAngle + colorStepMain * 3 - colorRangeHalf,
+    saturationBias + saturation,
+    brightnessBias + brightness
+  );
+  const c5 = hslToHex(
+    mainAngle + colorStepMain * 4 - colorRangeHalf,
+    saturationBias + saturation,
+    brightnessBias + brightness
+  );
+  const c6 = hslToHex(
+    mainAngle + colorStepMain * 1,
+    saturationBias + saturation,
+    brightnessBias + brightness
+  );
+  const c7 = hslToHex(
+    mainAngle + colorStepMain * 2,
+    saturationBias + saturation,
+    brightnessBias + brightness
+  );
+  const c8 = hslToHex(
+    mainAngle + colorStepMain * 3,
+    saturationBias + saturation,
+    brightnessBias + brightness
+  );
+  const c9 = hslToHex(
+    mainAngle + colorStepMain * 4,
+    saturationBias + saturation,
+    brightnessBias + brightness
+  );
+
+  const c10 = hslToHex(
+    secondaryAngle - colorStepMain,
+    saturationBias + saturation,
+    brightnessBias + brightness
+  );
+  const c11 = hslToHex(
+    secondaryAngle,
+    saturationBias + saturation,
+    brightnessBias + brightness
+  );
+  const c12 = hslToHex(
+    secondaryAngle + colorStepMain,
+    saturationBias + saturation,
+    brightnessBias + brightness
+  );
+  audioFeatures.color = [
+    c1,
+    c2,
+    c3,
+    c4,
+    c5,
+    c6,
+    c7,
+    c8,
+    c9,
+    c10,
+    c11,
+    c12,
+
+    background,
+    essenceShapeColor,
+  ];
+  /* 
   if (audioFeatures.key == "major") {
     audioFeatures.color = [
       inScaleColor1,
@@ -279,7 +360,7 @@ var brightnessBias = 17 +brightnessBiasModulator;
       background,
       essenceShapeColor,
     ];
-  }
+  } */
 
   color1Div.style.background = audioFeatures.color[0];
   color2Div.style.background = audioFeatures.color[1];

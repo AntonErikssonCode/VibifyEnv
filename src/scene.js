@@ -57,7 +57,7 @@ const bloomPass = new UnrealBloomPass(new THREE.Vector2(w, h),   1.5,
 const afterImagePass = new AfterimagePass();
 const effectVignette = new ShaderPass(VignetteShader);
 
-afterImagePass.uniforms["damp"].value = 0.975;
+afterImagePass.uniforms["damp"].value = 0.70;
 effectVignette.uniforms["offset"].value =
   audioFeatures.predictions.mood_sad / 4 + 0.4 -audioFeatures.predictions.mood_happy / 4;
 effectVignette.uniforms["darkness"].value = 5;
@@ -94,7 +94,7 @@ scene.add(pointLight2);
 
 // Materials
 let colorSpectrumMaterials = [];
-const particleMaterialOpacity = 0.9;
+const particleMaterialOpacity = 1;
 var emissiveIntensityColor = audioFeatures.emissiveIntensityColor;
 const material1 = new THREE.MeshStandardMaterial({
   color: audioFeatures.color[0],
@@ -254,7 +254,7 @@ let geoEssenceShape;
 let essenceShape;
 let noise;
 let v3 = new THREE.Vector3();
-let radius = 1;
+let radius = 1.2;
 let nPos = [];
 let pos;
 let resolutionShape;
@@ -454,11 +454,11 @@ function spawnPlanet(colorIndex, size) {
 
 // Animate Variables
 let last = 0;
-let particleSpawnSpeed = 4;
+let particleSpawnSpeed = 2;
 var clock = new THREE.Clock();
 var delta = 0;
 let morphTime = 0;
-let morphTimeAmplifier = audioFeatures.predictions.mood_aggressive;
+let morphTimeAmplifier = audioFeatures.predictions.mood_aggressive/4;
 var meanSplicedFrequencyList = [];
 var allMeanFrequency = [
   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -510,21 +510,25 @@ function animate(timeStamp) {
   // Radiation Loop
   radiationCollection.children.forEach((radiationGroup) => {
     var mesh = radiationGroup.children[0];
-
+    var hej = Math.floor(audioFeatures.predictions.mood_aggressive*10/2)+1;
     // Radiation Movment
     if (mesh.position.x < 25) {
       mesh.position.x +=
-        /* audioFeatures.bpm / 10000 + */ audioFeatures.rms / 2;
+        audioFeatures.bpm / 10000 + audioFeatures.rms / 3;
       if (
         audioFeatures.predictions.mood_aggressive > 0.6 &&
         audioFeatures.predictions.mood_sad >
           audioFeatures.predictions.mood_happy
       ) {
         // Triangle
-        mesh.position.y = 1 - Math.abs((mesh.position.x % 2) - 1) + 2;
+        mesh.position.y = 1 - Math.abs((mesh.position.x % 3) - 1) + 2;
       } else {
         // Sine
-        mesh.position.y = 1 * Math.sin(1 * mesh.position.x - 1) + 2;
+     
+          mesh.position.y = 1 * Math.sin(1 * mesh.position.x ) + 2;
+
+      
+        
       }
     } else {
       audioFeatures.energy < 0.1
@@ -535,7 +539,7 @@ function animate(timeStamp) {
     }
 
     // Remove Radiation
-    if (mesh.position.z < -500/* fogDistance-50 */) {
+    if (mesh.position.z < -200/* fogDistance-50 */) {
       radiationCollection.remove(radiationGroup);
     }
   });
@@ -563,7 +567,7 @@ function animate(timeStamp) {
 
     fogDistance = (fogDistance * audioFeatures.predictions.mood_sad) ;
     console.dir("Fog Distance: " + fogDistance);
-    scene.fog = new THREE.Fog(0x050505, 1, 500);
+    scene.fog = new THREE.Fog(0x050505, 1, 200);
     emissiveIntensityColor = 0.75 + audioFeatures.predictions.mood_happy/4; 
 
     audioFeatures["ready"] = false;
@@ -603,8 +607,8 @@ function animate(timeStamp) {
     /*   console.log(audioFeatures.beatSwitch) */
   }
 
-  var rangePos = 3;
-  var rangeNeg = -3;
+  var rangePos = 1.5;
+  var rangeNeg = -1.5;
   var yModifierSpeed = audioFeatures.rms / 10;
   var xModifierSpeed = audioFeatures.rms / 20;
   var zModifierSpeed = audioFeatures.rms ;
