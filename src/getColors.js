@@ -239,7 +239,7 @@ function getColors() {
     75 + saturation,
     brightnessBias + brightness
   ); */
-  const saturationBias = 50;
+  const saturationBias = 40;
   const background = hslToHex(mainAngle, saturationBias + saturation, 50 + brightness);
   const essenceShapeColor = hslToHex(
     mainAngle,
