@@ -64,7 +64,7 @@ effectVignette.uniforms["darkness"].value = 5;
 
 composer.addPass(renderScene);
 composer.addPass(effectVignette);
-/* composer.addPass(bloomPass); */
+composer.addPass(bloomPass);
 composer.addPass(afterImagePass);
 
 // Controls
@@ -87,14 +87,23 @@ pointLight.position.set(-3, 0, 10);
 pointLight.castShadow = true;
 scene.add(pointLight);
 
-const pointLight2 = new THREE.PointLight(0xffffff, 5, 20);
+/* const pointLight2 = new THREE.PointLight(0xffffff, 5, 20);
 pointLight2.position.set(5, 5, 10);
 pointLight2.castShadow = true;
-scene.add(pointLight2);
+scene.add(pointLight2); */
 
 // Materials
 let colorSpectrumMaterials = [];
-const particleMaterialOpacity = 1;
+let particleMaterialOpacity = 1;
+
+
+const materialRoughness =
+  1 -
+  audioFeatures.predictions.mood_aggressive / 2 -
+  audioFeatures.predictions.mood_sad / 2 +
+  audioFeatures.predictions.mood_happy / 2;
+
+const materialMetalness = 0.5 * audioFeatures.predictions.mood_sad;
 var emissiveIntensityColor = audioFeatures.emissiveIntensityColor;
 const material1 = new THREE.MeshStandardMaterial({
   color: audioFeatures.color[0],
@@ -102,6 +111,9 @@ const material1 = new THREE.MeshStandardMaterial({
   emissiveIntensity: emissiveIntensityColor,
   opacity: particleMaterialOpacity,
   transparent: true,
+
+  roughness: materialRoughness,
+  metalness: materialMetalness,
 });
 const material2 = new THREE.MeshStandardMaterial({
   color: audioFeatures.color[1],
@@ -109,6 +121,9 @@ const material2 = new THREE.MeshStandardMaterial({
   emissiveIntensity: emissiveIntensityColor,
   opacity: particleMaterialOpacity,
   transparent: true,
+
+  roughness: materialRoughness,
+  metalness: materialMetalness,
 });
 const material3 = new THREE.MeshStandardMaterial({
   color: audioFeatures.color[2],
@@ -116,6 +131,9 @@ const material3 = new THREE.MeshStandardMaterial({
   emissiveIntensity: emissiveIntensityColor,
   opacity: particleMaterialOpacity,
   transparent: true,
+
+  roughness: materialRoughness,
+  metalness: materialMetalness,
 });
 const material4 = new THREE.MeshStandardMaterial({
   color: audioFeatures.color[3],
@@ -123,6 +141,9 @@ const material4 = new THREE.MeshStandardMaterial({
   emissiveIntensity: emissiveIntensityColor,
   opacity: particleMaterialOpacity,
   transparent: true,
+
+  roughness: materialRoughness,
+  metalness: materialMetalness,
 });
 const material5 = new THREE.MeshStandardMaterial({
   color: audioFeatures.color[5],
@@ -130,6 +151,9 @@ const material5 = new THREE.MeshStandardMaterial({
   emissiveIntensity: emissiveIntensityColor,
   opacity: particleMaterialOpacity,
   transparent: true,
+
+  roughness: materialRoughness,
+  metalness: materialMetalness,
 });
 const material6 = new THREE.MeshStandardMaterial({
   color: audioFeatures.color[6],
@@ -137,6 +161,9 @@ const material6 = new THREE.MeshStandardMaterial({
   emissiveIntensity: emissiveIntensityColor,
   opacity: particleMaterialOpacity,
   transparent: true,
+
+  roughness: materialRoughness,
+  metalness: materialMetalness,
 });
 const material7 = new THREE.MeshStandardMaterial({
   color: audioFeatures.color[7],
@@ -144,6 +171,9 @@ const material7 = new THREE.MeshStandardMaterial({
   emissiveIntensity: emissiveIntensityColor,
   opacity: particleMaterialOpacity,
   transparent: true,
+
+  roughness: materialRoughness,
+  metalness: materialMetalness,
 });
 const material8 = new THREE.MeshStandardMaterial({
   color: audioFeatures.color[8],
@@ -151,6 +181,9 @@ const material8 = new THREE.MeshStandardMaterial({
   emissiveIntensity: emissiveIntensityColor,
   opacity: particleMaterialOpacity,
   transparent: true,
+
+  roughness: materialRoughness,
+  metalness: materialMetalness,
 });
 const material9 = new THREE.MeshStandardMaterial({
   color: audioFeatures.color[9],
@@ -158,6 +191,9 @@ const material9 = new THREE.MeshStandardMaterial({
   emissiveIntensity: emissiveIntensityColor,
   opacity: particleMaterialOpacity,
   transparent: true,
+
+  roughness: materialRoughness,
+  metalness: materialMetalness,
 });
 const material10 = new THREE.MeshStandardMaterial({
   color: audioFeatures.color[10],
@@ -165,6 +201,9 @@ const material10 = new THREE.MeshStandardMaterial({
   emissiveIntensity: emissiveIntensityColor,
   opacity: particleMaterialOpacity,
   transparent: true,
+
+  roughness: materialRoughness,
+  metalness: materialMetalness,
 });
 const material11 = new THREE.MeshStandardMaterial({
   color: audioFeatures.color[11],
@@ -172,6 +211,9 @@ const material11 = new THREE.MeshStandardMaterial({
   emissiveIntensity: emissiveIntensityColor,
   opacity: particleMaterialOpacity,
   transparent: true,
+
+  roughness: materialRoughness,
+  metalness: materialMetalness,
 });
 const material12 = new THREE.MeshStandardMaterial({
   color: audioFeatures.color[0],
@@ -179,6 +221,9 @@ const material12 = new THREE.MeshStandardMaterial({
   emissiveIntensity: emissiveIntensityColor,
   opacity: particleMaterialOpacity,
   transparent: true,
+
+  roughness: materialRoughness,
+  metalness: materialMetalness,
 });
 
 const colorMaterial = [
@@ -450,7 +495,7 @@ let particleSpawnSpeed = 2;
 var clock = new THREE.Clock();
 var delta = 0;
 let morphTime = 0;
-let morphTimeAmplifier = audioFeatures.predictions.mood_aggressive / 2.5;
+let morphTimeAmplifier = audioFeatures.predictions.mood_aggressive; /* / 2.5 */
 var meanSplicedFrequencyList = [];
 var allMeanFrequency = [
   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -525,7 +570,8 @@ function animate(timeStamp) {
         : ((mesh.position.z -=
             audioFeatures.bpm / 100000 + audioFeatures.rms * 1.5),
           (mesh.position.x += 0.01),
-          (radiationGroup.rotation.z +=  audioFeatures.bpm / 100000 + audioFeatures.rms * 1.5/300));
+          (radiationGroup.rotation.z +=
+            audioFeatures.bpm / 100000 + (audioFeatures.rms * 1.5) / 300));
       /* mesh.position. = 2 * Math.sin(1 * mesh.position.x -1) + 2; */
     }
 
@@ -553,8 +599,8 @@ function animate(timeStamp) {
     createEssenceShape();
     audioFeatures["essenceShapeReady"] = true;
     pointLight.color.setHex(colorToHexColor(audioFeatures.color[0]));
-    pointLight2.color.setHex(colorToHexColor(audioFeatures.color[7]));
-    defaultMoveSpeed = 0.01 + audioFeatures.bpm / 1500;
+    /*     pointLight2.color.setHex(colorToHexColor(audioFeatures.color[7]));
+     */ defaultMoveSpeed = 0.01 + audioFeatures.bpm / 1500;
 
     fogDistance = fogDistance * audioFeatures.predictions.mood_sad;
     console.dir("Fog Distance: " + fogDistance);

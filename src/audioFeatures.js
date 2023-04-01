@@ -26,7 +26,7 @@
 
 // Hurt
 
-let audioFeatures3121233 = {
+let audioFeatures = {
   colorSpectrum: [],
   ready: false,
   essenceShapeReady: false, 
@@ -62,7 +62,7 @@ activeChromaIndex: 0,
 // Dont stop me now song
 
 
-let audioFeaturesdde213123 = {
+let audioFeatures9 = {
   rms: 0,
   loudness: 0,
   energy: 0,
@@ -93,7 +93,7 @@ let audioFeaturesdde213123 = {
 
 // GIFT OF GUILT
 
-let audioFeaturessadasdasd= {
+let audioFeatures312= {
   ready: false,
   essenceShapeReady: false, 
   rms: 0,
@@ -129,7 +129,7 @@ let audioFeaturessadasdasd= {
 // random
   
 
-let audioFeatures  = {
+let audioFeatures313123  = {
   rms: 0,
   loudness: 1,
   energy: 0,
