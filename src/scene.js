@@ -95,7 +95,7 @@ scene.add(pointLight2); */
 // Materials
 let colorSpectrumMaterials = [];
 let particleMaterialOpacity = 1;
-
+console.dir("particleMaterialOpacity: " + particleMaterialOpacity)
 
 const materialRoughness =
   1 -
@@ -277,15 +277,14 @@ function createColorSpectrumMaterials() {
 }
 
 function updateColor() {
+  particleMaterialOpacity = 0.5 + 1 *   audioFeatures.predictions.mood_aggressive;
   colorMaterial.forEach((material, index) => {
     material.color.setHex(colorToHexColor(audioFeatures.color[index]));
     material.emissive.setHex(colorToHexColor(audioFeatures.color[index]));
+    material.opacity = particleMaterialOpacity;
   });
 
-  colorSpectrumMaterials.forEach((materialSpectrum, index2) => {
-    materialSpectrum.color.setHex(audioFeatures.colorSpectrum[index2]);
-    materialSpectrum.emissive.setHex(audioFeatures.colorSpectrum[index2]);
-  });
+
 }
 
 // Base Object
@@ -405,7 +404,7 @@ function spawnRadiation(angle, index) {
 var geoSphereRadiation;
 // Firework Function
 function spawnBeatBoom(angle, color, size) {
-  var shape = resolutionShape;
+  var shape = resolutionShape -4;
   if (shape <= 3) {
     shape = 3;
   }
@@ -426,7 +425,8 @@ function spawnBeatBoom(angle, color, size) {
 var fireworkModifier = 0;
 function firework() {
   var value = 0;
-  var size = 7 * audioFeatures.rms;
+  var size = 6.5 * audioFeatures.rms;
+  
   fireworkModifier = 1;
   var colorIndexLength = audioFeatures.activeColorIndexes.length;
   var colorIndex = 0;
@@ -552,6 +552,8 @@ function animate(timeStamp) {
     // Radiation Movment
     if (mesh.position.x < 25) {
       mesh.position.x += audioFeatures.bpm / 10000 + audioFeatures.rms / 3;
+      mesh.rotation.x += audioFeatures.bpm / 10000 + audioFeatures.rms / 15;
+      mesh.rotation.y += audioFeatures.bpm / 10000 + audioFeatures.rms / 20;
       if (
         audioFeatures.predictions.mood_aggressive > 0.6 &&
         audioFeatures.predictions.mood_sad >
