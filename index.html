@@ -20,10 +20,11 @@
     ></script>
     <script src="./src/audioFeatures.js"></script>
     <script src="src/inteface.js"></script>
+    <!--   <script type="module"  src="src/sceneBasics.js"></script> -->
+    <script type="module" src="src/scene.js"></script>
   </head>
   <body>
     <main id="main">
-      
       <div class="audio-container hiddable">
         <div id="file-select-area">
           <div id="file-drop-area">
@@ -60,10 +61,6 @@
           </div>
         </div>
       </div>
-
-      <div id="beatContainer" class="hiddable">BEAT</div>
-
-    
       <div id="colors" class="hiddable">
         <div id="testColor1" class="testColor"></div>
         <div id="testColor2" class="testColor"></div>
@@ -77,24 +74,21 @@
         <div id="testColor10" class="testColor"></div>
         <div id="testColor11" class="testColor"></div>
         <div id="testColor12" class="testColor"></div>
-   
-      
-
       </div>
-      <button class="hideButton" id="hideButton" onclick="hideShowDisplay()">Hide</button>
+      <button class="hideButton" id="hideButton" onclick="hideShowDisplay()">
+        Hide
+      </button>
+
+    
+      <button class="cameraButton" id="cameraButton">Move</button>
       <canvas id="myCanvasId"></canvas>
     </main>
-
-    <script src="https://cdn.jsdelivr.net/npm/essentia.js@0.1.0/dist/essentia-wasm.web.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/essentia.js@0.1.0/dist/essentia.js-core.js"></script>
-
-    <script
-      type="text/javascript"
-      src="https://unpkg.com/meyda@5.5.1/dist/web/meyda.min.js"
-    ></script>
-    <!--     <script src="https://unpkg.com/perlin-noise-3d"></script>
- -->
-    <script type="module" src="src/scene.js"></script>
-    <script src="src/main.js" type="module" async defer></script>
   </body>
+  <script src="https://cdn.jsdelivr.net/npm/essentia.js@0.1.0/dist/essentia-wasm.web.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/essentia.js@0.1.0/dist/essentia.js-core.js"></script>
+  <script
+    type="text/javascript"
+    src="https://unpkg.com/meyda@5.5.1/dist/web/meyda.min.js"
+  ></script>
+  <script src="src/main.js" type="module" async defer></script>
 </html>

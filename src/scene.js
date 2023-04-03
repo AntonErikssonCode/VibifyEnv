@@ -37,7 +37,6 @@ const h = window.innerHeight;
 
 // Camera
 let scene = new THREE.Scene();
-
 const camera = new THREE.PerspectiveCamera(90, w /* *0.7 */ / h, 0.1, 1000);
 camera.position.z = 5;
 
@@ -489,6 +488,22 @@ function spawnPlanet(colorIndex, size) {
   scene.add(groupPlanets);
 }
 
+
+function moveCamera(){
+  if(camera.position.z == 5){
+    camera.position.z = 15;
+  }
+  else{
+    camera.position.z = 5;
+  }
+}
+
+const camerabutton = document.querySelector(".cameraButton")
+console.dir(camerabutton)
+camerabutton.onclick = function() {
+  moveCamera()
+};
+
 // Animate Variables
 let last = 0;
 let particleSpawnSpeed = 2;
@@ -702,4 +717,4 @@ function onWindowResize() {
 window.addEventListener("resize", onWindowResize, false);
 
 //Export funktions
-export { setRenderColor, firework, updateColor, createColorSpectrumMaterials };
+export { setRenderColor, firework, updateColor, createColorSpectrumMaterials, moveCamera};

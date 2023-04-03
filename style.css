@@ -69,6 +69,13 @@ top: 0;
 right: 0;
 
 }
+.cameraButton{
+  z-index: 5;
+  position: absolute;
+  top: 30px;
+  right: 0;
+
+}
 
 
 
