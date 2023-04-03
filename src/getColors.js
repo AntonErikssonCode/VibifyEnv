@@ -53,11 +53,12 @@ function getColors() {
   if (
     audioFeatures.predictions.mood_happy > audioFeatures.predictions.mood_sad
   ) {
-    if(audioFeatures.predictions.mood_relaxed > audioFeatures.predictions.mood_aggressive){
-      spin = -150;
+    if (
+      audioFeatures.predictions.mood_relaxed >
+        audioFeatures.predictions.mood_aggressive 
+    ) {
+      spin = -170;
     }
-
-  
   }
   let mainAngle = (Math.atan2(mainValens, mainArousal) * 180 + spin) / Math.PI;
   if (mainAngle < 0) {

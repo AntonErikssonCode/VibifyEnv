@@ -514,9 +514,10 @@ var clock = new THREE.Clock();
 var delta = 0;
 let morphTime = 0;
 let morphTimeAmplifier =
-  (audioFeatures.predictions.mood_aggressive *
+  (audioFeatures.predictions.mood_aggressive +
     audioFeatures.predictions.danceability) /
-  2 * 2;
+  2 ;
+  console.dir("morphTimeAmplifier: " + morphTimeAmplifier)
 var meanSplicedFrequencyList = [];
 var allMeanFrequency = [
   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,

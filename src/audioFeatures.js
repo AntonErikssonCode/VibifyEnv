@@ -1,7 +1,7 @@
 
-// Hurt
+// Test
 
-let audioFeatures3lö = {
+let audioFeatures = {
   colorSpectrum: [],
   ready: false,
   essenceShapeReady: false, 
@@ -16,11 +16,11 @@ let audioFeatures3lö = {
   beatSwitch: false,
   amplitudeSpectrum: [],
   predictions: {
-    mood_aggressive: 0,
-    mood_relaxed: 0,
-    mood_happy: 0,
-    mood_sad: 0,
-  danceability: 0,
+    mood_aggressive: 0.45,
+    mood_relaxed: 0.49,
+    mood_happy: 0.55,
+    mood_sad: 0.54,
+  danceability: 0.45,
   },
   arousal: -0.60135, 
   valence: -0.66736522,
@@ -101,7 +101,7 @@ let audioFeaturesdx= {
 
 // GIFT OF GUILT
 
-let audioFeatures= {
+let audioFeaturesz= {
   ready: false,
   essenceShapeReady: false, 
   rms: 0,
@@ -175,7 +175,7 @@ let audioFeatures1  = {
 
 // Max Sad
 // Moonlight sonata
-let audioFeatures2d   = {
+let audioFeaturescxd   = {
   ready: false,
   essenceShapeReady: false, 
   rms: 0,
