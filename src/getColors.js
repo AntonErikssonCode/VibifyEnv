@@ -48,7 +48,17 @@ function getColors() {
   console.dir(mainValens);
   console.dir(secondaryValens);
 
-  var spin = -40;
+  var spin = 40;
+  // gift 40
+  if (
+    audioFeatures.predictions.mood_happy > audioFeatures.predictions.mood_sad
+  ) {
+    if(audioFeatures.predictions.mood_relaxed > audioFeatures.predictions.mood_aggressive){
+      spin = -150;
+    }
+
+  
+  }
   let mainAngle = (Math.atan2(mainValens, mainArousal) * 180 + spin) / Math.PI;
   if (mainAngle < 0) {
     mainAngle += 360;
@@ -167,7 +177,7 @@ function getColors() {
 
   const brightnessBias = 20;
 
-  let saturation = 50*audioFeatures.predictions.mood_happy ;
+  let saturation = 50 * audioFeatures.predictions.mood_happy;
   console.dir("saturation: " + saturation);
 
   let brightness = 5 * audioFeatures.predictions.mood_aggressive;
@@ -180,8 +190,8 @@ function getColors() {
   );
   const essenceShapeColor = hslToHex(
     mainAngle,
-    saturationBias + saturation-2,
-    brightnessBias + brightness-2
+    saturationBias + saturation - 2,
+    brightnessBias + brightness - 2
   );
   const c1 = hslToHex(
     mainAngle,

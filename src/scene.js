@@ -516,7 +516,7 @@ let morphTime = 0;
 let morphTimeAmplifier =
   (audioFeatures.predictions.mood_aggressive *
     audioFeatures.predictions.danceability) /
-  2; /* / 2.5 */
+  2 * 2;
 var meanSplicedFrequencyList = [];
 var allMeanFrequency = [
   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -589,7 +589,7 @@ function animate(timeStamp) {
         mesh.position.y = 1 * Math.sin(1 * mesh.position.x) + 2;
       }
     } else {
-      if (audioFeatures.energy < 0.1) {
+      if (audioFeatures.energy < 0.01) {
         mesh.position.z -= 0.01;
       } else {
         mesh.position.z -= audioFeatures.bpm / 100000 + audioFeatures.rms * 1.5;
@@ -597,9 +597,11 @@ function animate(timeStamp) {
 
         // Direction of spiral
         if (audioFeatures.key == "major") {
+          console.dir(audioFeatures.key )
           radiationGroup.rotation.z +=
             audioFeatures.bpm / 100000 + (audioFeatures.rms * 1.5) / 300;
         } else {
+          console.dir(audioFeatures.key )
           radiationGroup.rotation.z -=
             audioFeatures.bpm / 100000 + (audioFeatures.rms * 1.5) / 300;
         }

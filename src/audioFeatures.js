@@ -1,29 +1,37 @@
-/* let audioFeatures = {
+
+// Hurt
+
+let audioFeatures3lö = {
+  colorSpectrum: [],
+  ready: false,
+  essenceShapeReady: false, 
   rms: 0,
-  loudness: 1,
+  loudness: 0,
   energy: 0,
   spectralCentroid: 0,
   chroma: [],
-  bpm: 150,
-  scale: 0,
-   tempo:72,
+  bpm: 91.46,
+  scale: "G",
+  key: "major",
   beatSwitch: false,
   amplitudeSpectrum: [],
   predictions: {
-    mood_aggressive: 0.0,
-    mood_relaxed: 0.0,
-    mood_happy: 0.0,
-    mood_sad: 0.0,
-    danceability: 0.13219948802143336,
+    mood_aggressive: 0,
+    mood_relaxed: 0,
+    mood_happy: 0,
+    mood_sad: 0,
+  danceability: 0,
   },
+  arousal: -0.60135, 
+  valence: -0.66736522,
   gotColors: false,
   mainColor: "0xffffff",
   secondaryColor: "0xffffff",
   colorDifference: 0,
+activeChromaIndex: 0,
+  color : ["#ffffff", "#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff"],
   
 };
- */
-
 // Hurt
 
 let audioFeatures2  = {
@@ -62,7 +70,7 @@ activeChromaIndex: 0,
 // Dont stop me now song
 
 
-let audioFeatures3c= {
+let audioFeaturesdx= {
   rms: 0,
   loudness: 0,
   energy: 0,
@@ -93,7 +101,7 @@ let audioFeatures3c= {
 
 // GIFT OF GUILT
 
-let audioFeatures3 = {
+let audioFeatures= {
   ready: false,
   essenceShapeReady: false, 
   rms: 0,
@@ -103,7 +111,7 @@ let audioFeatures3 = {
   chroma: [],
   bpm: 78.13,
   scale: "F",
-  tempo:"minor",
+  key:"minor",
   beatSwitch: false,
   amplitudeSpectrum: [],
   predictions: {
@@ -130,7 +138,7 @@ let audioFeatures3 = {
 // SAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD
 // SAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD
 // SAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD
-// Max Sad
+// Min Sad
 // Cactus
 let audioFeatures1  = {
   ready: false,
@@ -142,7 +150,7 @@ let audioFeatures1  = {
   chroma: [],
   bpm: 120,
   scale: "B",
-  tempo:"minor",
+  key:"minor",
   beatSwitch: false,
   amplitudeSpectrum: [],
   predictions: {
@@ -165,7 +173,7 @@ let audioFeatures1  = {
 };
 
 
-// Minimum Sad
+// Max Sad
 // Moonlight sonata
 let audioFeatures2d   = {
   ready: false,
@@ -177,7 +185,7 @@ let audioFeatures2d   = {
   chroma: [],
   bpm: 135.14,
   scale: "C",
-  tempo:"minor",
+  key:"minor",
   beatSwitch: false,
   amplitudeSpectrum: [],
   predictions: {
@@ -208,7 +216,7 @@ let audioFeatures2d   = {
 /// HAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPPY
 // Max Happy
 //Johnny B Goode
-let audioFeatures3123d = {
+let audioFeatures3 = {
   ready: false,
   essenceShapeReady: false, 
   rms: 0,
@@ -218,7 +226,7 @@ let audioFeatures3123d = {
   chroma: [],
   bpm: 84.27,
   scale: "Bb",
-  tempo:"major",
+  key:"major",
   beatSwitch: false,
   amplitudeSpectrum: [],
   predictions: {
@@ -243,7 +251,7 @@ let audioFeatures3123d = {
 
 // Minimum Happy
 // Dance of the Knights
-let audioFeatures3123d312d = {
+let audioFeaturesc = {
   ready: false,
   essenceShapeReady: false, 
   rms: 0,
@@ -253,7 +261,7 @@ let audioFeatures3123d312d = {
   chroma: [],
   bpm: 106.38,
   scale: "B",
-  tempo:"minor",
+  key:"minor",
   beatSwitch: false,
   amplitudeSpectrum: [],
   predictions: {
@@ -293,7 +301,7 @@ let audioFeaturesö   = {
   chroma: [],
   bpm: 82.71,
   scale: "F",
-  tempo:"minor",
+  key:"minor",
   beatSwitch: false,
   amplitudeSpectrum: [],
   predictions: {
@@ -328,7 +336,7 @@ let audioFeatures2dsad   = {
   chroma: [],
   bpm: 135.14,
   scale: "C",
-  tempo:"minor",
+  key:"minor",
   beatSwitch: false,
   amplitudeSpectrum: [],
   predictions: {
@@ -368,7 +376,7 @@ let audioFeatures312s   = {
   chroma: [],
   bpm: 100,
   scale: "E",
-  tempo:"major",
+  key:"major",
   beatSwitch: false,
   amplitudeSpectrum: [],
   predictions: {
@@ -393,7 +401,7 @@ let audioFeatures312s   = {
 
 
 // Crack the Sky 
-let audioFeatures   = {
+let audioFeatures21   = {
   ready: false,
   essenceShapeReady: false, 
   rms: 0,
@@ -403,7 +411,7 @@ let audioFeatures   = {
   chroma: [],
   bpm: 122.94,
   scale: "A",
-  tempo:"minor",
+  key:"minor",
   beatSwitch: false,
   amplitudeSpectrum: [],
   predictions: {
@@ -431,7 +439,7 @@ let audioFeatures   = {
 // Danceability
 // Min Danceability
 // Heartbeats
-let audioFeatures3ca  = {
+let audioFeatures3s = {
   ready: false,
   essenceShapeReady: false, 
   rms: 0,
@@ -441,7 +449,7 @@ let audioFeatures3ca  = {
   chroma: [],
   bpm: 88.24,
   scale: "Eb",
-  tempo:"major",
+  key:"major",
   beatSwitch: false,
   amplitudeSpectrum: [],
   predictions: {
@@ -476,7 +484,7 @@ let audioFeatures2daa   = {
   chroma: [],
   bpm: 97.4,
   scale: "F#",
-  tempo:"minor",
+  key:"minor",
   beatSwitch: false,
   amplitudeSpectrum: [],
   predictions: {
