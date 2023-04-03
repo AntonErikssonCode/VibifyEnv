@@ -26,7 +26,7 @@
 
 // Hurt
 
-let audioFeatures = {
+let audioFeatures2  = {
   colorSpectrum: [],
   ready: false,
   essenceShapeReady: false, 
@@ -62,7 +62,7 @@ activeChromaIndex: 0,
 // Dont stop me now song
 
 
-let audioFeatures9 = {
+let audioFeatures3c= {
   rms: 0,
   loudness: 0,
   energy: 0,
@@ -93,7 +93,7 @@ let audioFeatures9 = {
 
 // GIFT OF GUILT
 
-let audioFeatures312= {
+let audioFeatures3 = {
   ready: false,
   essenceShapeReady: false, 
   rms: 0,
@@ -126,68 +126,375 @@ let audioFeatures312= {
 };
 
 
-// random
-  
 
-let audioFeatures313123  = {
+// SAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD
+// SAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD
+// SAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD
+// Max Sad
+// Cactus
+let audioFeatures1  = {
+  ready: false,
+  essenceShapeReady: false, 
   rms: 0,
   loudness: 1,
   energy: 0,
   spectralCentroid: 0,
   chroma: [],
-  bpm: 200,
-  scale: 0,
-  tempo:200,
+  bpm: 120,
+  scale: "B",
+  tempo:"minor",
   beatSwitch: false,
   amplitudeSpectrum: [],
   predictions: {
-    mood_aggressive: 0.9,
-    mood_relaxed:  0.2,
-    mood_happy: 0.8,
-    mood_sad: 0.13,
-    danceability: 0.13219948802143336,
+    mood_sad: 0.29,
+    mood_happy: 0.37,
+    
+    mood_relaxed:  0.41,
+    mood_aggressive: 0.91,
+    
+    danceability: 0.7,
   },
+  emissiveIntensityColor: 0, 
   colorSpectrum: [],
-  arousal: -0.60135, 
-  valence: -0.66736522,
   gotColors: false,
   mainColor: "0xffffff",
   secondaryColor: "0xffffff",
   colorDifference: 0,
-  color : ["#ffffff","#ffffff","#ffffff","#ffffff", "#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff"],
-  
+  color : ["#ffffff", "#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff"],
   
 };
 
-// Hurt
 
-let audioFeaturesd= {
-  colorSpectrum: [],
+// Minimum Sad
+// Moonlight sonata
+let audioFeatures2d   = {
   ready: false,
   essenceShapeReady: false, 
   rms: 0,
-  loudness: 0,
+  loudness: 1,
   energy: 0,
   spectralCentroid: 0,
   chroma: [],
-  bpm: 145,
-  scale: 0,
+  bpm: 135.14,
+  scale: "C",
+  tempo:"minor",
   beatSwitch: false,
   amplitudeSpectrum: [],
   predictions: {
-    mood_aggressive: 0.833771124109625,
-    mood_relaxed: 0.16889307498932,
-    mood_happy: 0.1734541764669,
-    mood_sad: 0.18741086781024932,
-  danceability: 0.23,
+    mood_sad: 1,
+    mood_happy: 0.06,
+   
+    mood_relaxed:  0.97,
+    mood_aggressive: 0.04,
+   
+   
+    danceability: 0.1,
   },
-  arousal: -0.60135, 
-  valence: -0.66736522,
+  emissiveIntensityColor: 0, 
+  colorSpectrum: [],
   gotColors: false,
   mainColor: "0xffffff",
   secondaryColor: "0xffffff",
   colorDifference: 0,
-activeChromaIndex: 0,
+  color : ["#ffffff", "#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff"],
+  
+};
+
+
+
+
+/// HAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPPY
+/// HAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPPY
+/// HAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPPY
+// Max Happy
+//Johnny B Goode
+let audioFeatures3123d = {
+  ready: false,
+  essenceShapeReady: false, 
+  rms: 0,
+  loudness: 1,
+  energy: 0,
+  spectralCentroid: 0,
+  chroma: [],
+  bpm: 84.27,
+  scale: "Bb",
+  tempo:"major",
+  beatSwitch: false,
+  amplitudeSpectrum: [],
+  predictions: {
+    mood_sad: 0.45,
+    mood_happy: 0.83,
+    
+    mood_relaxed:  0.53,
+    mood_aggressive: 0.94,
+    
+    danceability: 0.83,
+  },
+  emissiveIntensityColor: 0, 
+  colorSpectrum: [],
+  gotColors: false,
+  mainColor: "0xffffff",
+  secondaryColor: "0xffffff",
+  colorDifference: 0,
+  color : ["#ffffff", "#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff"],
+  
+};
+
+
+// Minimum Happy
+// Dance of the Knights
+let audioFeatures3123d312d = {
+  ready: false,
+  essenceShapeReady: false, 
+  rms: 0,
+  loudness: 1,
+  energy: 0,
+  spectralCentroid: 0,
+  chroma: [],
+  bpm: 106.38,
+  scale: "B",
+  tempo:"minor",
+  beatSwitch: false,
+  amplitudeSpectrum: [],
+  predictions: {
+    mood_sad: 0.94,
+    mood_happy: 0.04,
+   
+    mood_relaxed:  0.94,
+    mood_aggressive: 0.11,
+   
+   
+    danceability: 0.23,
+  },
+  emissiveIntensityColor: 0, 
+  colorSpectrum: [],
+  gotColors: false,
+  mainColor: "0xffffff",
+  secondaryColor: "0xffffff",
+  colorDifference: 0,
+  color : ["#ffffff", "#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff"],
+  
+};
+
+
+
+// REEEEEELAXXXXXAAAAD
+// REEEEEELAXXXXXAAAAD
+// REEEEEELAXXXXXAAAAD
+// Min Relax
+// Rock Co.Kane Flow
+let audioFeaturesö   = {
+  ready: false,
+  essenceShapeReady: false, 
+  rms: 0,
+  loudness: 1,
+  energy: 0,
+  spectralCentroid: 0,
+  chroma: [],
+  bpm: 82.71,
+  scale: "F",
+  tempo:"minor",
+  beatSwitch: false,
+  amplitudeSpectrum: [],
+  predictions: {
+    mood_sad: 0.6,
+    mood_happy: 0.54,
+    
+    mood_relaxed:  0.35,
+    mood_aggressive: 0.76,
+    
+    danceability: 1,
+  },
+  emissiveIntensityColor: 0, 
+  colorSpectrum: [],
+  gotColors: false,
+  mainColor: "0xffffff",
+  secondaryColor: "0xffffff",
+  colorDifference: 0,
+  color : ["#ffffff", "#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff"],
+  
+};
+
+
+// Max Relax
+// Moonlight sonata
+let audioFeatures2dsad   = {
+  ready: false,
+  essenceShapeReady: false, 
+  rms: 0,
+  loudness: 1,
+  energy: 0,
+  spectralCentroid: 0,
+  chroma: [],
+  bpm: 135.14,
+  scale: "C",
+  tempo:"minor",
+  beatSwitch: false,
+  amplitudeSpectrum: [],
+  predictions: {
+    mood_sad: 1,
+    mood_happy: 0.06,
+   
+    mood_relaxed:  0.97,
+    mood_aggressive: 0.04,
+   
+   
+    danceability: 0.1,
+  },
+  emissiveIntensityColor: 0, 
+  colorSpectrum: [],
+  gotColors: false,
+  mainColor: "0xffffff",
+  secondaryColor: "0xffffff",
+  colorDifference: 0,
+  color : ["#ffffff", "#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff"],
+  
+};
+
+
+
+// AAAAAAAAAAAAAAAAAAAAAAGGGGGGGGGGREEEEEESIVEEEEEEEEEEO
+// AAAAAAAAAAAAAAAAAAAAAAGGGGGGGGGGREEEEEESIVEEEEEEEEEEO
+// AAAAAAAAAAAAAAAAAAAAAAGGGGGGGGGGREEEEEESIVEEEEEEEEEEO
+// Min Agressive
+// Love yourself
+let audioFeatures312s   = {
+  ready: false,
+  essenceShapeReady: false, 
+  rms: 0,
+  loudness: 1,
+  energy: 0,
+  spectralCentroid: 0,
+  chroma: [],
+  bpm: 100,
+  scale: "E",
+  tempo:"major",
+  beatSwitch: false,
+  amplitudeSpectrum: [],
+  predictions: {
+    mood_sad: 0.91,
+    mood_happy: 0.64,
+   
+    mood_relaxed:  0.8,
+    mood_aggressive: 0.02,
+   
+   
+    danceability: 0.04,
+  },
+  emissiveIntensityColor: 0, 
+  colorSpectrum: [],
+  gotColors: false,
+  mainColor: "0xffffff",
+  secondaryColor: "0xffffff",
+  colorDifference: 0,
+  color : ["#ffffff", "#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff"],
+  
+};
+
+
+// Crack the Sky 
+let audioFeatures   = {
+  ready: false,
+  essenceShapeReady: false, 
+  rms: 0,
+  loudness: 1,
+  energy: 0,
+  spectralCentroid: 0,
+  chroma: [],
+  bpm: 122.94,
+  scale: "A",
+  tempo:"minor",
+  beatSwitch: false,
+  amplitudeSpectrum: [],
+  predictions: {
+    mood_sad: 0.33,
+    mood_happy: 0.45,
+   
+    mood_relaxed:  0.41,
+    mood_aggressive: 0.94,
+   
+   
+    danceability: 0.65,
+  },
+  emissiveIntensityColor: 0, 
+  colorSpectrum: [],
+  gotColors: false,
+  mainColor: "0xffffff",
+  secondaryColor: "0xffffff",
+  colorDifference: 0,
+  color : ["#ffffff", "#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff"],
+  
+};
+
+
+
+// Danceability
+// Min Danceability
+// Heartbeats
+let audioFeatures3ca  = {
+  ready: false,
+  essenceShapeReady: false, 
+  rms: 0,
+  loudness: 1,
+  energy: 0,
+  spectralCentroid: 0,
+  chroma: [],
+  bpm: 88.24,
+  scale: "Eb",
+  tempo:"major",
+  beatSwitch: false,
+  amplitudeSpectrum: [],
+  predictions: {
+    mood_sad: 0.99,
+    mood_happy: 0.08,
+   
+    mood_relaxed:  0.93,
+    mood_aggressive: 0.04,
+   
+   
+    danceability: 0.07,
+  },
+  emissiveIntensityColor: 0, 
+  colorSpectrum: [],
+  gotColors: false,
+  mainColor: "0xffffff",
+  secondaryColor: "0xffffff",
+  colorDifference: 0,
+  color : ["#ffffff", "#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff"],
+  
+};
+
+// Max Danceability
+// Dark Age
+let audioFeatures2daa   = {
+  ready: false,
+  essenceShapeReady: false, 
+  rms: 0,
+  loudness: 1,
+  energy: 0,
+  spectralCentroid: 0,
+  chroma: [],
+  bpm: 97.4,
+  scale: "F#",
+  tempo:"minor",
+  beatSwitch: false,
+  amplitudeSpectrum: [],
+  predictions: {
+    mood_sad: 0.60,
+    mood_happy: 0.54,
+   
+    mood_relaxed:  0.35,
+    mood_aggressive: 0.76,
+   
+   
+    danceability: 1,
+  },
+  emissiveIntensityColor: 0, 
+  colorSpectrum: [],
+  gotColors: false,
+  mainColor: "0xffffff",
+  secondaryColor: "0xffffff",
+  colorDifference: 0,
   color : ["#ffffff", "#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff"],
   
 };

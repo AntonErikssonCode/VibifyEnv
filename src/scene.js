@@ -44,6 +44,8 @@ camera.position.z = 5;
 const renderer = new THREE.WebGLRenderer({
   antialias: true,
   canvas: myCanvasId,
+  alpha: true,
+  
 });
 renderer.setSize(w, h);
 const renderScene = new RenderPass(scene, camera);
@@ -254,13 +256,13 @@ function createMaterial(color, emissive, emissiveIntensity, opacity) {
 
 // Color Functions
 function setRenderColor() {
-  const darknessBias = -0.4;
-  const positiveBias = audioFeatures.predictions.mood_happy / 6;
+  const darknessBias = -0.5;
+ /*  const positiveBias = audioFeatures.predictions.mood_happy / 6;
   const negativeBias = audioFeatures.predictions.mood_sad;
-  let modifier = -negativeBias;
-  var color = shade(audioFeatures.color[12], darknessBias + modifier / 3);
+  let modifier = -negativeBias; */
+  var color = shade(audioFeatures.color[13], darknessBias );
 
-  /*  scene.background = new THREE.Color(color); */
+   scene.background = new THREE.Color(color);
 }
 
 function createColorSpectrumMaterials() {
@@ -487,23 +489,22 @@ function moveCamera() {
     camera.position.z = 25;
     camera.position.x = 0;
     camera.position.y = 0;
-    console.dir("change to 15")
+    console.dir("change to 15");
     cameraZoomedIn = false;
   } else {
     camera.position.z = 5;
     camera.position.x = 0;
     camera.position.y = 0;
-    console.dir("change to 5")
+    console.dir("change to 5");
     cameraZoomedIn = true;
   }
-
 }
 
 const camerabutton = document.querySelector(".cameraButton");
 
 camerabutton.onclick = function () {
   moveCamera();
-  console.dir("camera button clicked")
+  console.dir("camera button clicked");
 };
 
 // Animate Variables
@@ -512,7 +513,10 @@ let particleSpawnSpeed = 2;
 var clock = new THREE.Clock();
 var delta = 0;
 let morphTime = 0;
-let morphTimeAmplifier = audioFeatures.predictions.mood_aggressive; /* / 2.5 */
+let morphTimeAmplifier =
+  (audioFeatures.predictions.mood_aggressive *
+    audioFeatures.predictions.danceability) /
+  2; /* / 2.5 */
 var meanSplicedFrequencyList = [];
 var allMeanFrequency = [
   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -564,11 +568,12 @@ function animate(timeStamp) {
   // Radiation Loop
   radiationCollection.children.forEach((radiationGroup) => {
     var mesh = radiationGroup.children[0];
-    var hej =
-      Math.floor((audioFeatures.predictions.mood_aggressive * 10) / 2) + 1;
+
     // Radiation Movment
     if (mesh.position.x < 25) {
-      mesh.position.x += audioFeatures.bpm / 10000 + audioFeatures.rms / 3;
+      mesh.position.x +=
+        audioFeatures.bpm / 10000 +
+        audioFeatures.rms * audioFeatures.predictions.danceability;
       mesh.rotation.x += audioFeatures.bpm / 10000 + audioFeatures.rms / 15;
       mesh.rotation.y += audioFeatures.bpm / 10000 + audioFeatures.rms / 20;
       if (
@@ -584,14 +589,21 @@ function animate(timeStamp) {
         mesh.position.y = 1 * Math.sin(1 * mesh.position.x) + 2;
       }
     } else {
-      audioFeatures.energy < 0.1
-        ? (mesh.position.z -= 0.01)
-        : ((mesh.position.z -=
-            audioFeatures.bpm / 100000 + audioFeatures.rms * 1.5),
-          (mesh.position.x += 0.01),
-          (radiationGroup.rotation.z +=
-            audioFeatures.bpm / 100000 + (audioFeatures.rms * 1.5) / 300));
-      /* mesh.position. = 2 * Math.sin(1 * mesh.position.x -1) + 2; */
+      if (audioFeatures.energy < 0.1) {
+        mesh.position.z -= 0.01;
+      } else {
+        mesh.position.z -= audioFeatures.bpm / 100000 + audioFeatures.rms * 1.5;
+        mesh.position.x += 0.01;
+
+        // Direction of spiral
+        if (audioFeatures.key == "major") {
+          radiationGroup.rotation.z +=
+            audioFeatures.bpm / 100000 + (audioFeatures.rms * 1.5) / 300;
+        } else {
+          radiationGroup.rotation.z -=
+            audioFeatures.bpm / 100000 + (audioFeatures.rms * 1.5) / 300;
+        }
+      }
     }
 
     // Remove Radiation
@@ -635,7 +647,7 @@ function animate(timeStamp) {
     geoEssenceShape.userData.nPos.forEach((p, idx) => {
       let ns = noise(p.x, p.y, p.z, morphTime);
       v3.copy(p)
-        .multiplyScalar(radius + audioFeatures.rms * 1.2)
+        .multiplyScalar(radius + audioFeatures.rms * 1.15)
         .addScaledVector(p, ns);
       pos.setXYZ(idx, v3.x, v3.y, v3.z);
     });
@@ -701,11 +713,11 @@ function animate(timeStamp) {
     }
   }
 
-  if(cameraZoomedIn){
+  if (cameraZoomedIn) {
     camera.position.y += yModifier;
     camera.position.x += xModifier;
   }
-
+  
 
   composer.render(scene, camera);
 }

@@ -214,7 +214,7 @@ dropArea.addEventListener("drop", (e) => {
   console.dir(audioFeatures);
 
   // UPLOAD MODE
-   /*   processFileUpload(files); */
+    /*  processFileUpload(files); */
 });
 dropArea.addEventListener("click", () => {
   dropInput.click();

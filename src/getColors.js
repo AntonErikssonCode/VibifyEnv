@@ -48,7 +48,7 @@ function getColors() {
   console.dir(mainValens);
   console.dir(secondaryValens);
 
-  var spin = 0;
+  var spin = -40;
   let mainAngle = (Math.atan2(mainValens, mainArousal) * 180 + spin) / Math.PI;
   if (mainAngle < 0) {
     mainAngle += 360;
