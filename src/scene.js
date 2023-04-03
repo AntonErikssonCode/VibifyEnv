@@ -20,17 +20,6 @@ import { ShaderPass } from "https://cdn.jsdelivr.net/npm/three@0.125/examples/js
 import { VignetteShader } from "https://cdn.jsdelivr.net/npm/three@0.125/examples/jsm/shaders/VignetteShader.js";
 import openSimplexNoise from "https://cdn.skypack.dev/open-simplex-noise";
 
-// Texture
-const loader = new THREE.TextureLoader();
-const texture = loader.load(
-  "../assets/textures/Metal/metal-with-leaks_albedo.png"
-);
-const textureNormal = loader.load(
-  "../assets/textures/Metal/metal-with-leaks_normal-ogl.png"
-);
-texture.wrapS = THREE.RepeatWrapping;
-texture.wrapT = THREE.RepeatWrapping;
-texture.repeat.set(10, 10);
 // Constants
 const w = window.innerWidth;
 const h = window.innerHeight;
@@ -45,7 +34,6 @@ const renderer = new THREE.WebGLRenderer({
   antialias: true,
   canvas: myCanvasId,
   alpha: true,
-  
 });
 renderer.setSize(w, h);
 const renderScene = new RenderPass(scene, camera);
@@ -70,6 +58,55 @@ composer.addPass(afterImagePass);
 
 // Controls
 const control = new OrbitControls(camera, renderer.domElement);
+// Texture
+const loader = new THREE.TextureLoader();
+/* const texture = loader.load(
+  "../assets/textures/Metal/metal-with-leaks_albedo.png"
+);
+const textureNormal = loader.load(
+  "../assets/textures/Metal/metal-with-leaks_normal-ogl.png"
+);
+const textureao = loader.load("../assets/textures/Metal/metal-with_ao.png");
+const textureNormalHeight = loader.load(
+  "../assets/textures/Metal/metal-with-leaks_normal-ogl.png"
+);
+const textureMetalic = loader.load(
+  "../assets/textures/Metal/metal-with-leaks_albedo.png"
+); */
+
+const texture = loader.load(
+  "../assets/textures/Rusted/rusted-steel_albedo.png"
+);
+const textureNormal = loader.load(
+  "../assets/textures/Rusted/rusted-steel_normal-ogl.png"
+);
+const textureao = loader.load("../assets/textures/Rusted/rusted-steel_ao.png");
+const textureNormalHeight = loader.load(
+  "../assets/textures/Rusted/rusted-steel_normal-ogl.png"
+);
+const textureMetalic = loader.load(
+  "../assets/textures/Rusted/rusted-steel_albedo.png"
+);
+// Base Object
+const material = new THREE.MeshPhongMaterial({
+  color: 0xffffff,
+
+  map: texture,
+  normalMap: textureNormal,
+  displacementMap: textureNormalHeight,
+  displacementScale: 1,
+  aoMap: textureao,
+
+});
+const geoBaseObject = new THREE.SphereGeometry(1, 20, 20);
+const baseObject = new THREE.Mesh(geoBaseObject, material);
+baseObject.position.x = 4;
+scene.add(baseObject);
+
+texture.wrapS = THREE.RepeatWrapping;
+texture.wrapT = THREE.RepeatWrapping;
+texture.repeat.set(10, 10);
+
 
 // Lights
 const light = new THREE.AmbientLight(0xffffff, 0.05);
@@ -79,8 +116,8 @@ const dirLight = new THREE.DirectionalLight(0xffffff, 3);
 
 dirLight.position.y = 100;
 dirLight.castShadow = false;
-scene.add(dirLight);
-/* const helper = new THREE.DirectionalLightHelper(dirLight, 5);
+/* scene.add(dirLight);
+ *//* const helper = new THREE.DirectionalLightHelper(dirLight, 5);
 scene.add(helper); */
 
 const pointLight = new THREE.PointLight(0xffffff, 10, 20);
@@ -88,10 +125,10 @@ pointLight.position.set(-3, 0, 10);
 pointLight.castShadow = true;
 scene.add(pointLight);
 
-/* const pointLight2 = new THREE.PointLight(0xffffff, 5, 20);
+const pointLight2 = new THREE.PointLight(0xffffff, 3, 20);
 pointLight2.position.set(5, 5, 10);
 pointLight2.castShadow = true;
-scene.add(pointLight2); */
+scene.add(pointLight2);
 
 // Materials
 let colorSpectrumMaterials = [];
@@ -257,12 +294,12 @@ function createMaterial(color, emissive, emissiveIntensity, opacity) {
 // Color Functions
 function setRenderColor() {
   const darknessBias = -0.5;
- /*  const positiveBias = audioFeatures.predictions.mood_happy / 6;
+  /*  const positiveBias = audioFeatures.predictions.mood_happy / 6;
   const negativeBias = audioFeatures.predictions.mood_sad;
   let modifier = -negativeBias; */
-  var color = shade(audioFeatures.color[13], darknessBias );
+  var color = shade(audioFeatures.color[13], darknessBias);
 
-   scene.background = new THREE.Color(color);
+  scene.background = new THREE.Color(color);
 }
 
 function createColorSpectrumMaterials() {
@@ -283,14 +320,15 @@ function updateColor() {
     material.color.setHex(colorToHexColor(audioFeatures.color[index]));
     material.emissive.setHex(colorToHexColor(audioFeatures.color[index]));
     material.opacity = particleMaterialOpacity;
+    material.displacementMap = textureNormalHeight;
+    material.displacementScale = 1;
+    material.normalMap = textureNormal;
+    /*    material.map = texture; */
+    material.aoMap = textureao;
   });
 }
 
-// Base Object
-const material = new THREE.MeshLambertMaterial({ color: 0xffffff });
-const geoBaseObject = new THREE.SphereGeometry(0.1, 20, 20);
-const baseObject = new THREE.Mesh(geoBaseObject, material);
-scene.add(baseObject);
+
 
 // Essence Shape
 let geoEssenceShape;
@@ -516,8 +554,8 @@ let morphTime = 0;
 let morphTimeAmplifier =
   (audioFeatures.predictions.mood_aggressive +
     audioFeatures.predictions.danceability) /
-  2 ;
-  console.dir("morphTimeAmplifier: " + morphTimeAmplifier)
+  2;
+console.dir("morphTimeAmplifier: " + morphTimeAmplifier);
 var meanSplicedFrequencyList = [];
 var allMeanFrequency = [
   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -598,11 +636,11 @@ function animate(timeStamp) {
 
         // Direction of spiral
         if (audioFeatures.key == "major") {
-          console.dir(audioFeatures.key )
+          console.dir(audioFeatures.key);
           radiationGroup.rotation.z +=
             audioFeatures.bpm / 100000 + (audioFeatures.rms * 1.5) / 300;
         } else {
-          console.dir(audioFeatures.key )
+          console.dir(audioFeatures.key);
           radiationGroup.rotation.z -=
             audioFeatures.bpm / 100000 + (audioFeatures.rms * 1.5) / 300;
         }
@@ -720,7 +758,6 @@ function animate(timeStamp) {
     camera.position.y += yModifier;
     camera.position.x += xModifier;
   }
-  
 
   composer.render(scene, camera);
 }

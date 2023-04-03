@@ -1,7 +1,7 @@
 
 // Test
 
-let audioFeatures = {
+let audioFeaturesl = {
   colorSpectrum: [],
   ready: false,
   essenceShapeReady: false, 
@@ -34,7 +34,7 @@ activeChromaIndex: 0,
 };
 // Hurt
 
-let audioFeatures2  = {
+let audioFeatures  = {
   colorSpectrum: [],
   ready: false,
   essenceShapeReady: false, 
@@ -101,7 +101,7 @@ let audioFeaturesdx= {
 
 // GIFT OF GUILT
 
-let audioFeaturesz= {
+let audioFeaturesd= {
   ready: false,
   essenceShapeReady: false, 
   rms: 0,
@@ -216,7 +216,7 @@ let audioFeaturescxd   = {
 /// HAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPPY
 // Max Happy
 //Johnny B Goode
-let audioFeatures3 = {
+let audioFeaturesdsc = {
   ready: false,
   essenceShapeReady: false, 
   rms: 0,
