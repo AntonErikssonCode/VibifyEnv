@@ -94,7 +94,7 @@ scene.add(pointLight2); */
 // Materials
 let colorSpectrumMaterials = [];
 let particleMaterialOpacity = 1;
-console.dir("particleMaterialOpacity: " + particleMaterialOpacity)
+console.dir("particleMaterialOpacity: " + particleMaterialOpacity);
 
 const materialRoughness =
   1 -
@@ -276,14 +276,12 @@ function createColorSpectrumMaterials() {
 }
 
 function updateColor() {
-  particleMaterialOpacity = 0.5 + 1 *   audioFeatures.predictions.mood_aggressive;
+  particleMaterialOpacity = 0.5 + 1 * audioFeatures.predictions.mood_aggressive;
   colorMaterial.forEach((material, index) => {
     material.color.setHex(colorToHexColor(audioFeatures.color[index]));
     material.emissive.setHex(colorToHexColor(audioFeatures.color[index]));
     material.opacity = particleMaterialOpacity;
   });
-
-
 }
 
 // Base Object
@@ -403,7 +401,7 @@ function spawnRadiation(angle, index) {
 var geoSphereRadiation;
 // Firework Function
 function spawnBeatBoom(angle, color, size) {
-  var shape = resolutionShape -4;
+  var shape = resolutionShape - 4;
   if (shape <= 3) {
     shape = 3;
   }
@@ -425,12 +423,12 @@ var fireworkModifier = 0;
 function firework() {
   var value = 0;
   var size = 6.5 * audioFeatures.rms;
-  
+
   fireworkModifier = 1;
   var colorIndexLength = audioFeatures.activeColorIndexes.length;
   var colorIndex = 0;
   var count = 0;
-  console.dir(audioFeatures.activeColorIndexes);
+
   for (let index = 0; index < 54; index++) {
     if (index % 3 == 0) {
       spawnBeatBoom(value, audioFeatures.activeColorIndexes[colorIndex], size);
@@ -442,7 +440,6 @@ function firework() {
       }
     }
   }
-  console.dir(count);
 }
 
 /* var interval = setInterval(firework, 2000); */
@@ -470,16 +467,12 @@ function spawnPlanet(colorIndex, size) {
   var getRandomPositionX = getRndInteger(-maxValue, maxValue);
   var getRandomPositionY = getRndInteger(-maxValue, maxValue);
 
-  console.dir(getRandomPositionX);
   while (getRandomPositionX >= -4 && getRandomPositionX <= 4) {
     getRandomPositionX = getRndInteger(-maxValue, maxValue);
-    console.dir(getRandomPositionX);
   }
 
-  console.dir(getRandomPositionX);
   while (getRandomPositionY >= -2 && getRandomPositionY <= 2) {
     getRandomPositionY = getRndInteger(-maxValue, maxValue);
-    console.dir(getRandomPositionY);
   }
 
   planet.position.set(getRandomPositionX, getRandomPositionY, 2);
@@ -488,20 +481,29 @@ function spawnPlanet(colorIndex, size) {
   scene.add(groupPlanets);
 }
 
-
-function moveCamera(){
-  if(camera.position.z == 5){
-    camera.position.z = 15;
-  }
-  else{
+let cameraZoomedIn = true;
+function moveCamera() {
+  if (camera.position.z <= 6) {
+    camera.position.z = 25;
+    camera.position.x = 0;
+    camera.position.y = 0;
+    console.dir("change to 15")
+    cameraZoomedIn = false;
+  } else {
     camera.position.z = 5;
+    camera.position.x = 0;
+    camera.position.y = 0;
+    console.dir("change to 5")
+    cameraZoomedIn = true;
   }
+
 }
 
-const camerabutton = document.querySelector(".cameraButton")
-console.dir(camerabutton)
-camerabutton.onclick = function() {
-  moveCamera()
+const camerabutton = document.querySelector(".cameraButton");
+
+camerabutton.onclick = function () {
+  moveCamera();
+  console.dir("camera button clicked")
 };
 
 // Animate Variables
@@ -699,10 +701,11 @@ function animate(timeStamp) {
     }
   }
 
-  camera.position.y += yModifier;
-  camera.position.x += xModifier;
-  /* camera.position.z += yModifier +xModifier/2 ; */
-  console.dir(camera.position.z);
+  if(cameraZoomedIn){
+    camera.position.y += yModifier;
+    camera.position.x += xModifier;
+  }
+
 
   composer.render(scene, camera);
 }
@@ -717,4 +720,10 @@ function onWindowResize() {
 window.addEventListener("resize", onWindowResize, false);
 
 //Export funktions
-export { setRenderColor, firework, updateColor, createColorSpectrumMaterials, moveCamera};
+export {
+  setRenderColor,
+  firework,
+  updateColor,
+  createColorSpectrumMaterials,
+  moveCamera,
+};
