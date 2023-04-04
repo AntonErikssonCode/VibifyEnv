@@ -1,4 +1,5 @@
 import { hslToHex } from "./utilityFunctions.js";
+
 function getColors() {
   audioFeatures["colorSpectrum"] = [];
   const color1Div = document.querySelector("#testColor1");

@@ -2,7 +2,7 @@
  */
 import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.125/build/three.module.js";
 import { OrbitControls } from "../modules/OrbitControls.js";
-import { addSmallCube } from "../geometry.js";
+
 import {
   normalize,
   hslToHex,

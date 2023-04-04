@@ -5,7 +5,7 @@ import {
   emotionalModelUpdate,
   getColorsOld,
 } from "./updateState.js";
-import { addSmallCube } from "../geometry.js";
+
 import { getColors } from "./getColors.js";
 import {
   createColorSpectrumMaterials,
