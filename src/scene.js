@@ -35,7 +35,7 @@ const renderer = new THREE.WebGLRenderer({
   canvas: myCanvasId,
   /* alpha: true, */
 });
-/* renderer.outputEncoding = THREE.RGBADepthPacking; */
+renderer.outputEncoding = THREE.RGBADepthPacking;
 renderer.setSize(w, h);
 const renderScene = new RenderPass(scene, camera);
 
@@ -61,7 +61,7 @@ composer.addPass(afterImagePass);
 const control = new OrbitControls(camera, renderer.domElement);
 // Texture
 const loader = new THREE.TextureLoader();
-const textureType = "Smooth";
+const textureType = "Paper";
 
 const texture = loader.load(
   `../assets/textures/${textureType}/texture.jpg`,
@@ -119,7 +119,7 @@ scene.add(dirLight);
 /* const helper = new THREE.DirectionalLightHelper(dirLight, 5);
 scene.add(helper); */
 
-const pointLight = new THREE.PointLight(0xffffff, 2);
+const pointLight = new THREE.PointLight(0xffffff, 1);
 pointLight.position.set(3, 0, 50);
 pointLight.castShadow = true;
 scene.add(pointLight);
@@ -330,7 +330,7 @@ function updateColor() {
     material.displacementScale = 0.01;
     material.normalMap = textureNormal;
     material.normalScale = new THREE.Vector2(8, 8);
-    
+
     /* material.emissiveIntensity = emissiveIntensityColor;
     material.clearcoat = 1;
     material.clearcoatRoughness = 0.1;
@@ -387,20 +387,19 @@ function createEssenceShape() {
   const materialTest = new THREE.MeshPhysicalMaterial({
     normalMap: textureNormal,
     flatShading: false,
-    normalScale: new THREE.Vector2(5,5),
-   /*  displacementMap: textureNormalHeight,
+    normalScale: new THREE.Vector2(5, 5),
+    /*  displacementMap: textureNormalHeight,
     displacementScale: 0.0, */
 
     color: audioFeatures.color[12],
     // Glass
     /* metalness: 0,  
    roughness: 1, */
-    metalness: 0.0,
-    roughness: 0.9,
-    reflectivity: 0,
-    clearcoat: 1,
-    clearcoatRoughness: 1,
- 
+    metalness: audioFeatures.predictions.mood_aggressive,
+    roughness: audioFeatures.predictions.mood_sad,
+    reflectivity: audioFeatures.predictions.mood_sad,
+    clearcoat: 0,
+    clearcoatRoughness: 0,
   });
 
   matEssenceShape.needsUpdate = true;
@@ -640,7 +639,9 @@ function animate(timeStamp) {
         audioFeatures.bpm / 10000 +
         audioFeatures.rms * audioFeatures.predictions.danceability;
       mesh.rotation.x += audioFeatures.bpm / 10000 + audioFeatures.rms / 15;
-      mesh.rotation.y += audioFeatures.bpm / 10000 + audioFeatures.rms / 20;
+      mesh.rotation.y -= audioFeatures.bpm / 10000 + audioFeatures.rms / 20;
+      mesh.rotation.z += audioFeatures.bpm / 10000 + audioFeatures.rms / 10;
+
       if (
         audioFeatures.predictions.mood_aggressive > 0.6 &&
         audioFeatures.predictions.mood_sad >
@@ -779,8 +780,13 @@ function animate(timeStamp) {
   }
 
   if (cameraZoomedIn) {
-    camera.position.y += yModifier;
-    camera.position.x += xModifier;
+    if (audioFeatures.key == "major") {
+      camera.position.y += yModifier;
+      camera.position.x += xModifier;
+    } else {
+      camera.position.y -= yModifier;
+      camera.position.x -= xModifier;
+    }
   }
 
   composer.render(scene, camera);
