@@ -74,7 +74,7 @@ const textureMetalic = loader.load(
   "../assets/textures/Metal/metal-with-leaks_albedo.png"
 ); */
 
-const texture = loader.load(
+/* const texture = loader.load(
   "../assets/textures/Rusted/rusted-steel_albedo.png"
 );
 const textureNormal = loader.load(
@@ -86,7 +86,14 @@ const textureNormalHeight = loader.load(
 );
 const textureMetalic = loader.load(
   "../assets/textures/Rusted/rusted-steel_albedo.png"
-);
+); */
+const texture = loader.load("../assets/textures/Corroded/img.jpg");
+const textureNormal = loader.load("../assets/textures/Corroded/normal.jpg");
+
+const textureNormalHeight = loader.load("../assets/textures/Corroded/bump.jpg");
+/* texture.wrapS = THREE.RepeatWrapping;
+texture.wrapT = THREE.RepeatWrapping;
+texture.repeat.set(10, 10); */
 // Base Object
 const material = new THREE.MeshPhongMaterial({
   color: 0xffffff,
@@ -94,18 +101,17 @@ const material = new THREE.MeshPhongMaterial({
   map: texture,
   normalMap: textureNormal,
   displacementMap: textureNormalHeight,
-  displacementScale: 1,
-  aoMap: textureao,
-
+  displacementScale: 0.3,
+  /*   normalMap: textureNormal,
+  
+ 
+  aoMap: textureao, */
 });
-const geoBaseObject = new THREE.SphereGeometry(1, 20, 20);
+const geoBaseObject = new THREE.SphereGeometry(1, 50, 50);
 const baseObject = new THREE.Mesh(geoBaseObject, material);
 baseObject.position.x = 4;
-scene.add(baseObject);
+/* scene.add(baseObject); */
 
-texture.wrapS = THREE.RepeatWrapping;
-texture.wrapT = THREE.RepeatWrapping;
-texture.repeat.set(10, 10);
 
 
 // Lights
@@ -116,8 +122,8 @@ const dirLight = new THREE.DirectionalLight(0xffffff, 3);
 
 dirLight.position.y = 100;
 dirLight.castShadow = false;
-/* scene.add(dirLight);
- *//* const helper = new THREE.DirectionalLightHelper(dirLight, 5);
+scene.add(dirLight);
+ /* const helper = new THREE.DirectionalLightHelper(dirLight, 5);
 scene.add(helper); */
 
 const pointLight = new THREE.PointLight(0xffffff, 10, 20);
@@ -125,7 +131,7 @@ pointLight.position.set(-3, 0, 10);
 pointLight.castShadow = true;
 scene.add(pointLight);
 
-const pointLight2 = new THREE.PointLight(0xffffff, 3, 20);
+const pointLight2 = new THREE.PointLight(0xffffff, 1, 20);
 pointLight2.position.set(5, 5, 10);
 pointLight2.castShadow = true;
 scene.add(pointLight2);
@@ -320,15 +326,16 @@ function updateColor() {
     material.color.setHex(colorToHexColor(audioFeatures.color[index]));
     material.emissive.setHex(colorToHexColor(audioFeatures.color[index]));
     material.opacity = particleMaterialOpacity;
-    material.displacementMap = textureNormalHeight;
-    material.displacementScale = 1;
-    material.normalMap = textureNormal;
-    /*    material.map = texture; */
-    material.aoMap = textureao;
+    /* material.displacementMap = textureNormalHeight;
+    material.displacementScale = 1; */
+/*     material.normalMap = textureNormal;
+ */ /*    material.map = texture; */
+    /* map: texture,
+    normalMap: textureNormal,
+    displacementMap: textureNormalHeight,
+    displacementScale: 0.3, */
   });
 }
-
-
 
 // Essence Shape
 let geoEssenceShape;
