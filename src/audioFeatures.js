@@ -34,7 +34,7 @@ activeChromaIndex: 0,
 };
 // Hurt
 
-let audioFeatures3  = {
+let audioFeatures  = {
   colorSpectrum: [],
   ready: false,
   essenceShapeReady: false, 
@@ -70,7 +70,7 @@ activeChromaIndex: 0,
 // Dont stop me now song
 
 
-let audioFeaturesdx= {
+let audioFeaturesd= {
   rms: 0,
   loudness: 0,
   energy: 0,
@@ -101,7 +101,7 @@ let audioFeaturesdx= {
 
 // GIFT OF GUILT
 
-let audioFeatures= {
+let audioFeatureslx = {
   ready: false,
   essenceShapeReady: false, 
   rms: 0,
@@ -140,7 +140,7 @@ let audioFeatures= {
 // SAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD
 // Min Sad
 // Cactus
-let audioFeatures1  = {
+let audioFeaturesczx  = {
   ready: false,
   essenceShapeReady: false, 
   rms: 0,
@@ -216,7 +216,7 @@ let audioFeaturescxd   = {
 /// HAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPPY
 // Max Happy
 //Johnny B Goode
-let audioFeaturesdsc = {
+let audioFeaturesx  = {
   ready: false,
   essenceShapeReady: false, 
   rms: 0,

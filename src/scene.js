@@ -31,10 +31,11 @@ camera.position.z = 5;
 
 // Renderer
 const renderer = new THREE.WebGLRenderer({
-  antialias: true,
+  /*  antialias: true, */
   canvas: myCanvasId,
-  alpha: true,
+  /* alpha: true, */
 });
+/* renderer.outputEncoding = THREE.RGBADepthPacking; */
 renderer.setSize(w, h);
 const renderScene = new RenderPass(scene, camera);
 
@@ -60,86 +61,77 @@ composer.addPass(afterImagePass);
 const control = new OrbitControls(camera, renderer.domElement);
 // Texture
 const loader = new THREE.TextureLoader();
-/* const texture = loader.load(
-  "../assets/textures/Metal/metal-with-leaks_albedo.png"
+const textureType = "Smooth";
+
+const texture = loader.load(
+  `../assets/textures/${textureType}/texture.jpg`,
+  function (texture) {
+    texture.wrapS = THREE.RepeatWrapping;
+    texture.wrapT = THREE.RepeatWrapping;
+    texture.repeat.x = 10;
+    texture.repeat.y = 6;
+  }
 );
 const textureNormal = loader.load(
-  "../assets/textures/Metal/metal-with-leaks_normal-ogl.png"
+  `../assets/textures/${textureType}/normal.jpg`,
+  function (texture) {
+    texture.wrapS = THREE.RepeatWrapping;
+    texture.wrapT = THREE.RepeatWrapping;
+    texture.repeat.x = 10;
+    texture.repeat.y = 6;
+  }
 );
-const textureao = loader.load("../assets/textures/Metal/metal-with_ao.png");
-const textureNormalHeight = loader.load(
-  "../assets/textures/Metal/metal-with-leaks_normal-ogl.png"
-);
-const textureMetalic = loader.load(
-  "../assets/textures/Metal/metal-with-leaks_albedo.png"
-); */
 
-/* const texture = loader.load(
-  "../assets/textures/Rusted/rusted-steel_albedo.png"
-);
-const textureNormal = loader.load(
-  "../assets/textures/Rusted/rusted-steel_normal-ogl.png"
-);
-const textureao = loader.load("../assets/textures/Rusted/rusted-steel_ao.png");
 const textureNormalHeight = loader.load(
-  "../assets/textures/Rusted/rusted-steel_normal-ogl.png"
+  `../assets/textures/${textureType}/bump.jpg`,
+  function (texture) {
+    texture.wrapS = THREE.RepeatWrapping;
+    texture.wrapT = THREE.RepeatWrapping;
+    texture.repeat.x = 10;
+    texture.repeat.y = 6;
+  }
 );
-const textureMetalic = loader.load(
-  "../assets/textures/Rusted/rusted-steel_albedo.png"
-); */
-const texture = loader.load("../assets/textures/Corroded/img.jpg");
-const textureNormal = loader.load("../assets/textures/Corroded/normal.jpg");
-
-const textureNormalHeight = loader.load("../assets/textures/Corroded/bump.jpg");
-/* texture.wrapS = THREE.RepeatWrapping;
-texture.wrapT = THREE.RepeatWrapping;
-texture.repeat.set(10, 10); */
 // Base Object
-const material = new THREE.MeshPhongMaterial({
-  color: 0xffffff,
-
-  map: texture,
+const material = new THREE.MeshPhysicalMaterial({
   normalMap: textureNormal,
+  normalScale: new THREE.Vector2(8, 8),
   displacementMap: textureNormalHeight,
-  displacementScale: 0.3,
-  /*   normalMap: textureNormal,
-  
- 
-  aoMap: textureao, */
+  displacementScale: 0.01,
+  clearcoat: 1,
+  clearcoatRoughness: 0.1,
+  metalness: 0.9,
+  roughness: 0.5,
 });
-const geoBaseObject = new THREE.SphereGeometry(1, 50, 50);
+/* const geoBaseObject = new THREE.SphereGeometry(1, 50, 50);
 const baseObject = new THREE.Mesh(geoBaseObject, material);
 baseObject.position.x = 4;
-/* scene.add(baseObject); */
-
-
+scene.add(baseObject); */
 
 // Lights
 const light = new THREE.AmbientLight(0xffffff, 0.05);
 scene.add(light);
 
-const dirLight = new THREE.DirectionalLight(0xffffff, 3);
+const dirLight = new THREE.DirectionalLight(0xffffff, 1);
 
 dirLight.position.y = 100;
 dirLight.castShadow = false;
 scene.add(dirLight);
- /* const helper = new THREE.DirectionalLightHelper(dirLight, 5);
+/* const helper = new THREE.DirectionalLightHelper(dirLight, 5);
 scene.add(helper); */
 
-const pointLight = new THREE.PointLight(0xffffff, 10, 20);
-pointLight.position.set(-3, 0, 10);
+const pointLight = new THREE.PointLight(0xffffff, 2);
+pointLight.position.set(3, 0, 50);
 pointLight.castShadow = true;
 scene.add(pointLight);
 
-const pointLight2 = new THREE.PointLight(0xffffff, 1, 20);
-pointLight2.position.set(5, 5, 10);
-pointLight2.castShadow = true;
+const pointLight2 = new THREE.PointLight(0xffffff, 1);
+pointLight2.position.set(200, 200, 200);
+/* pointLight2.castShadow = true; */
 scene.add(pointLight2);
 
 // Materials
 let colorSpectrumMaterials = [];
 let particleMaterialOpacity = 1;
-console.dir("particleMaterialOpacity: " + particleMaterialOpacity);
 
 const materialRoughness =
   1 -
@@ -149,7 +141,7 @@ const materialRoughness =
 
 const materialMetalness = 0.5 * audioFeatures.predictions.mood_sad;
 var emissiveIntensityColor = audioFeatures.emissiveIntensityColor;
-const material1 = new THREE.MeshStandardMaterial({
+const material1 = new THREE.MeshPhysicalMaterial({
   color: audioFeatures.color[0],
   emissive: audioFeatures.color[0],
   emissiveIntensity: emissiveIntensityColor,
@@ -159,7 +151,7 @@ const material1 = new THREE.MeshStandardMaterial({
   roughness: materialRoughness,
   metalness: materialMetalness,
 });
-const material2 = new THREE.MeshStandardMaterial({
+const material2 = new THREE.MeshPhysicalMaterial({
   color: audioFeatures.color[1],
   emissive: audioFeatures.color[1],
   emissiveIntensity: emissiveIntensityColor,
@@ -169,7 +161,7 @@ const material2 = new THREE.MeshStandardMaterial({
   roughness: materialRoughness,
   metalness: materialMetalness,
 });
-const material3 = new THREE.MeshStandardMaterial({
+const material3 = new THREE.MeshPhysicalMaterial({
   color: audioFeatures.color[2],
   emissive: audioFeatures.color[2],
   emissiveIntensity: emissiveIntensityColor,
@@ -179,7 +171,7 @@ const material3 = new THREE.MeshStandardMaterial({
   roughness: materialRoughness,
   metalness: materialMetalness,
 });
-const material4 = new THREE.MeshStandardMaterial({
+const material4 = new THREE.MeshPhysicalMaterial({
   color: audioFeatures.color[3],
   emissive: audioFeatures.color[3],
   emissiveIntensity: emissiveIntensityColor,
@@ -189,7 +181,7 @@ const material4 = new THREE.MeshStandardMaterial({
   roughness: materialRoughness,
   metalness: materialMetalness,
 });
-const material5 = new THREE.MeshStandardMaterial({
+const material5 = new THREE.MeshPhysicalMaterial({
   color: audioFeatures.color[5],
   emissive: audioFeatures.color[5],
   emissiveIntensity: emissiveIntensityColor,
@@ -199,7 +191,7 @@ const material5 = new THREE.MeshStandardMaterial({
   roughness: materialRoughness,
   metalness: materialMetalness,
 });
-const material6 = new THREE.MeshStandardMaterial({
+const material6 = new THREE.MeshPhysicalMaterial({
   color: audioFeatures.color[6],
   emissive: audioFeatures.color[6],
   emissiveIntensity: emissiveIntensityColor,
@@ -209,7 +201,7 @@ const material6 = new THREE.MeshStandardMaterial({
   roughness: materialRoughness,
   metalness: materialMetalness,
 });
-const material7 = new THREE.MeshStandardMaterial({
+const material7 = new THREE.MeshPhysicalMaterial({
   color: audioFeatures.color[7],
   emissive: audioFeatures.color[7],
   emissiveIntensity: emissiveIntensityColor,
@@ -219,7 +211,7 @@ const material7 = new THREE.MeshStandardMaterial({
   roughness: materialRoughness,
   metalness: materialMetalness,
 });
-const material8 = new THREE.MeshStandardMaterial({
+const material8 = new THREE.MeshPhysicalMaterial({
   color: audioFeatures.color[8],
   emissive: audioFeatures.color[8],
   emissiveIntensity: emissiveIntensityColor,
@@ -229,7 +221,7 @@ const material8 = new THREE.MeshStandardMaterial({
   roughness: materialRoughness,
   metalness: materialMetalness,
 });
-const material9 = new THREE.MeshStandardMaterial({
+const material9 = new THREE.MeshPhysicalMaterial({
   color: audioFeatures.color[9],
   emissive: audioFeatures.color[9],
   emissiveIntensity: emissiveIntensityColor,
@@ -239,7 +231,7 @@ const material9 = new THREE.MeshStandardMaterial({
   roughness: materialRoughness,
   metalness: materialMetalness,
 });
-const material10 = new THREE.MeshStandardMaterial({
+const material10 = new THREE.MeshPhysicalMaterial({
   color: audioFeatures.color[10],
   emissive: audioFeatures.color[10],
   emissiveIntensity: emissiveIntensityColor,
@@ -249,7 +241,7 @@ const material10 = new THREE.MeshStandardMaterial({
   roughness: materialRoughness,
   metalness: materialMetalness,
 });
-const material11 = new THREE.MeshStandardMaterial({
+const material11 = new THREE.MeshPhysicalMaterial({
   color: audioFeatures.color[11],
   emissive: audioFeatures.color[11],
   emissiveIntensity: emissiveIntensityColor,
@@ -259,7 +251,7 @@ const material11 = new THREE.MeshStandardMaterial({
   roughness: materialRoughness,
   metalness: materialMetalness,
 });
-const material12 = new THREE.MeshStandardMaterial({
+const material12 = new THREE.MeshPhysicalMaterial({
   color: audioFeatures.color[0],
   emissive: audioFeatures.color[0],
   emissiveIntensity: emissiveIntensityColor,
@@ -300,11 +292,7 @@ function createMaterial(color, emissive, emissiveIntensity, opacity) {
 // Color Functions
 function setRenderColor() {
   const darknessBias = -0.5;
-  /*  const positiveBias = audioFeatures.predictions.mood_happy / 6;
-  const negativeBias = audioFeatures.predictions.mood_sad;
-  let modifier = -negativeBias; */
   var color = shade(audioFeatures.color[13], darknessBias);
-
   scene.background = new THREE.Color(color);
 }
 
@@ -321,19 +309,33 @@ function createColorSpectrumMaterials() {
 }
 
 function updateColor() {
+  const materialRoughness =
+    1 -
+    audioFeatures.predictions.mood_aggressive / 2 -
+    audioFeatures.predictions.mood_sad / 2 +
+    audioFeatures.predictions.mood_happy / 2;
+
+  const materialMetalness = 0.5 * audioFeatures.predictions.mood_sad;
+  var emissiveIntensityColor = audioFeatures.emissiveIntensityColor;
+
   particleMaterialOpacity = 0.5 + 1 * audioFeatures.predictions.mood_aggressive;
+
   colorMaterial.forEach((material, index) => {
     material.color.setHex(colorToHexColor(audioFeatures.color[index]));
     material.emissive.setHex(colorToHexColor(audioFeatures.color[index]));
     material.opacity = particleMaterialOpacity;
-    /* material.displacementMap = textureNormalHeight;
-    material.displacementScale = 1; */
-/*     material.normalMap = textureNormal;
- */ /*    material.map = texture; */
-    /* map: texture,
-    normalMap: textureNormal,
-    displacementMap: textureNormalHeight,
-    displacementScale: 0.3, */
+
+    /* material.map = texture; */
+    material.displacementMap = textureNormalHeight;
+    material.displacementScale = 0.01;
+    material.normalMap = textureNormal;
+    material.normalScale = new THREE.Vector2(8, 8);
+    
+    /* material.emissiveIntensity = emissiveIntensityColor;
+    material.clearcoat = 1;
+    material.clearcoatRoughness = 0.1;
+    material.metalness = materialMetalness;
+    material.roughness = materialRoughness; */
   });
 }
 
@@ -381,10 +383,28 @@ function createEssenceShape() {
     metalness: 0.4,
     color: audioFeatures.color[13],
   });
-  /*   matEssenceShape.map = texture;
-  matEssenceShape.normalMap = textureNormal; */
+
+  const materialTest = new THREE.MeshPhysicalMaterial({
+    normalMap: textureNormal,
+    flatShading: false,
+    normalScale: new THREE.Vector2(5,5),
+   /*  displacementMap: textureNormalHeight,
+    displacementScale: 0.0, */
+
+    color: audioFeatures.color[12],
+    // Glass
+    /* metalness: 0,  
+   roughness: 1, */
+    metalness: 0.0,
+    roughness: 0.9,
+    reflectivity: 0,
+    clearcoat: 1,
+    clearcoatRoughness: 1,
+ 
+  });
+
   matEssenceShape.needsUpdate = true;
-  essenceShape = new THREE.Mesh(geoEssenceShape, matEssenceShape);
+  essenceShape = new THREE.Mesh(geoEssenceShape, materialTest);
   scene.add(essenceShape);
 
   noise = openSimplexNoise.makeNoise4D(
@@ -534,13 +554,13 @@ function moveCamera() {
     camera.position.z = 25;
     camera.position.x = 0;
     camera.position.y = 0;
-    console.dir("change to 15");
+
     cameraZoomedIn = false;
   } else {
     camera.position.z = 5;
     camera.position.x = 0;
     camera.position.y = 0;
-    console.dir("change to 5");
+
     cameraZoomedIn = true;
   }
 }
@@ -549,7 +569,6 @@ const camerabutton = document.querySelector(".cameraButton");
 
 camerabutton.onclick = function () {
   moveCamera();
-  console.dir("camera button clicked");
 };
 
 // Animate Variables
@@ -562,7 +581,7 @@ let morphTimeAmplifier =
   (audioFeatures.predictions.mood_aggressive +
     audioFeatures.predictions.danceability) /
   2;
-console.dir("morphTimeAmplifier: " + morphTimeAmplifier);
+
 var meanSplicedFrequencyList = [];
 var allMeanFrequency = [
   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -643,11 +662,9 @@ function animate(timeStamp) {
 
         // Direction of spiral
         if (audioFeatures.key == "major") {
-          console.dir(audioFeatures.key);
           radiationGroup.rotation.z +=
             audioFeatures.bpm / 100000 + (audioFeatures.rms * 1.5) / 300;
         } else {
-          console.dir(audioFeatures.key);
           radiationGroup.rotation.z -=
             audioFeatures.bpm / 100000 + (audioFeatures.rms * 1.5) / 300;
         }
@@ -677,12 +694,12 @@ function animate(timeStamp) {
   if (audioFeatures.ready) {
     createEssenceShape();
     audioFeatures["essenceShapeReady"] = true;
-    pointLight.color.setHex(colorToHexColor(audioFeatures.color[0]));
+    /* pointLight.color.setHex(colorToHexColor(audioFeatures.color[0])); */
     /*     pointLight2.color.setHex(colorToHexColor(audioFeatures.color[7]));
      */ defaultMoveSpeed = 0.01 + audioFeatures.bpm / 1500;
 
     fogDistance = fogDistance * audioFeatures.predictions.mood_sad;
-    console.dir("Fog Distance: " + fogDistance);
+
     scene.fog = new THREE.Fog(0x050505, 1, 200);
     emissiveIntensityColor = 0.75 + audioFeatures.predictions.mood_happy / 4;
 
