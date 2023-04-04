@@ -8,7 +8,7 @@ import {
 
 import { getColors } from "./getColors.js";
 import {
-  createColorSpectrumMaterials,
+
   firework,
   setRenderColor,
   updateColor,
@@ -229,7 +229,7 @@ function initThree() {
   setRenderColor();
   console.dir(audioFeatures);
 
-  createColorSpectrumMaterials();
+  /* createColorSpectrumMaterials(); */
   updateColor();
   audioFeatures["ready"] = true;
 }

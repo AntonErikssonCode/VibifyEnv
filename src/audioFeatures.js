@@ -34,7 +34,7 @@ activeChromaIndex: 0,
 };
 // Hurt
 
-let audioFeaturesz  = {
+let audioFeaturesz = {
   colorSpectrum: [],
   ready: false,
   essenceShapeReady: false, 
@@ -101,7 +101,7 @@ let audioFeaturesd= {
 
 // GIFT OF GUILT
 
-let audioFeatures = {
+let audioFeaturesxz= {
   ready: false,
   essenceShapeReady: false, 
   rms: 0,
@@ -140,7 +140,7 @@ let audioFeatures = {
 // SAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD
 // Min Sad
 // Cactus
-let audioFeaturesczx  = {
+let audioFeaturesxök   = {
   ready: false,
   essenceShapeReady: false, 
   rms: 0,
@@ -175,7 +175,7 @@ let audioFeaturesczx  = {
 
 // Max Sad
 // Moonlight sonata
-let audioFeaturescxd   = {
+let audioFeaturesba    = {
   ready: false,
   essenceShapeReady: false, 
   rms: 0,
@@ -216,7 +216,7 @@ let audioFeaturescxd   = {
 /// HAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPPY
 // Max Happy
 //Johnny B Goode
-let audioFeaturesx  = {
+let audioFeatures  = {
   ready: false,
   essenceShapeReady: false, 
   rms: 0,

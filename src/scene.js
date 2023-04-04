@@ -91,21 +91,6 @@ const textureNormalHeight = loader.load(
     texture.repeat.y = 6;
   }
 );
-// Base Object
-const material = new THREE.MeshPhysicalMaterial({
-  normalMap: textureNormal,
-  normalScale: new THREE.Vector2(8, 8),
-  displacementMap: textureNormalHeight,
-  displacementScale: 0.01,
-  clearcoat: 1,
-  clearcoatRoughness: 0.1,
-  metalness: 0.9,
-  roughness: 0.5,
-});
-/* const geoBaseObject = new THREE.SphereGeometry(1, 50, 50);
-const baseObject = new THREE.Mesh(geoBaseObject, material);
-baseObject.position.x = 4;
-scene.add(baseObject); */
 
 // Lights
 const light = new THREE.AmbientLight(0xffffff, 0.05);
@@ -126,156 +111,30 @@ scene.add(pointLight);
 
 const pointLight2 = new THREE.PointLight(0xffffff, 1);
 pointLight2.position.set(200, 200, 200);
-/* pointLight2.castShadow = true; */
+pointLight2.castShadow = true;
 scene.add(pointLight2);
 
 // Materials
-let colorSpectrumMaterials = [];
-let particleMaterialOpacity = 1;
-
-const materialRoughness =
-  1 -
-  audioFeatures.predictions.mood_aggressive / 2 -
-  audioFeatures.predictions.mood_sad / 2 +
-  audioFeatures.predictions.mood_happy / 2;
-
-const materialMetalness = 0.5 * audioFeatures.predictions.mood_sad;
-var emissiveIntensityColor = audioFeatures.emissiveIntensityColor;
-const material1 = new THREE.MeshPhysicalMaterial({
-  color: audioFeatures.color[0],
-  emissive: audioFeatures.color[0],
-  emissiveIntensity: emissiveIntensityColor,
-  opacity: particleMaterialOpacity,
-  transparent: true,
-
-  roughness: materialRoughness,
-  metalness: materialMetalness,
+const colorMaterial = [];
+for (let index = 0; index < 12; index++) {
+  const material = new THREE.MeshPhysicalMaterial({});
+  colorMaterial.push(material);
+}
+// Base Object
+const material = new THREE.MeshPhysicalMaterial({
+  normalMap: textureNormal,
+  normalScale: new THREE.Vector2(8, 8),
+  displacementMap: textureNormalHeight,
+  displacementScale: 0.01,
+  clearcoat: 1,
+  clearcoatRoughness: 0.1,
+  metalness: 0.9,
+  roughness: 0.5,
 });
-const material2 = new THREE.MeshPhysicalMaterial({
-  color: audioFeatures.color[1],
-  emissive: audioFeatures.color[1],
-  emissiveIntensity: emissiveIntensityColor,
-  opacity: particleMaterialOpacity,
-  transparent: true,
-
-  roughness: materialRoughness,
-  metalness: materialMetalness,
-});
-const material3 = new THREE.MeshPhysicalMaterial({
-  color: audioFeatures.color[2],
-  emissive: audioFeatures.color[2],
-  emissiveIntensity: emissiveIntensityColor,
-  opacity: particleMaterialOpacity,
-  transparent: true,
-
-  roughness: materialRoughness,
-  metalness: materialMetalness,
-});
-const material4 = new THREE.MeshPhysicalMaterial({
-  color: audioFeatures.color[3],
-  emissive: audioFeatures.color[3],
-  emissiveIntensity: emissiveIntensityColor,
-  opacity: particleMaterialOpacity,
-  transparent: true,
-
-  roughness: materialRoughness,
-  metalness: materialMetalness,
-});
-const material5 = new THREE.MeshPhysicalMaterial({
-  color: audioFeatures.color[5],
-  emissive: audioFeatures.color[5],
-  emissiveIntensity: emissiveIntensityColor,
-  opacity: particleMaterialOpacity,
-  transparent: true,
-
-  roughness: materialRoughness,
-  metalness: materialMetalness,
-});
-const material6 = new THREE.MeshPhysicalMaterial({
-  color: audioFeatures.color[6],
-  emissive: audioFeatures.color[6],
-  emissiveIntensity: emissiveIntensityColor,
-  opacity: particleMaterialOpacity,
-  transparent: true,
-
-  roughness: materialRoughness,
-  metalness: materialMetalness,
-});
-const material7 = new THREE.MeshPhysicalMaterial({
-  color: audioFeatures.color[7],
-  emissive: audioFeatures.color[7],
-  emissiveIntensity: emissiveIntensityColor,
-  opacity: particleMaterialOpacity,
-  transparent: true,
-
-  roughness: materialRoughness,
-  metalness: materialMetalness,
-});
-const material8 = new THREE.MeshPhysicalMaterial({
-  color: audioFeatures.color[8],
-  emissive: audioFeatures.color[8],
-  emissiveIntensity: emissiveIntensityColor,
-  opacity: particleMaterialOpacity,
-  transparent: true,
-
-  roughness: materialRoughness,
-  metalness: materialMetalness,
-});
-const material9 = new THREE.MeshPhysicalMaterial({
-  color: audioFeatures.color[9],
-  emissive: audioFeatures.color[9],
-  emissiveIntensity: emissiveIntensityColor,
-  opacity: particleMaterialOpacity,
-  transparent: true,
-
-  roughness: materialRoughness,
-  metalness: materialMetalness,
-});
-const material10 = new THREE.MeshPhysicalMaterial({
-  color: audioFeatures.color[10],
-  emissive: audioFeatures.color[10],
-  emissiveIntensity: emissiveIntensityColor,
-  opacity: particleMaterialOpacity,
-  transparent: true,
-
-  roughness: materialRoughness,
-  metalness: materialMetalness,
-});
-const material11 = new THREE.MeshPhysicalMaterial({
-  color: audioFeatures.color[11],
-  emissive: audioFeatures.color[11],
-  emissiveIntensity: emissiveIntensityColor,
-  opacity: particleMaterialOpacity,
-  transparent: true,
-
-  roughness: materialRoughness,
-  metalness: materialMetalness,
-});
-const material12 = new THREE.MeshPhysicalMaterial({
-  color: audioFeatures.color[0],
-  emissive: audioFeatures.color[0],
-  emissiveIntensity: emissiveIntensityColor,
-  opacity: particleMaterialOpacity,
-  transparent: true,
-
-  roughness: materialRoughness,
-  metalness: materialMetalness,
-});
-
-const colorMaterial = [
-  material1,
-  material2,
-  material3,
-  material4,
-  material5,
-  material6,
-  material7,
-  material8,
-  material9,
-  material10,
-  material11,
-  material12,
-];
+const geoBaseObject = new THREE.SphereGeometry(1, 50, 50);
+const baseObject = new THREE.Mesh(geoBaseObject, colorMaterial[0]);
+baseObject.position.x = 4;
+scene.add(baseObject);
 
 // Create New Material
 function createMaterial(color, emissive, emissiveIntensity, opacity) {
@@ -296,46 +155,40 @@ function setRenderColor() {
   scene.background = new THREE.Color(color);
 }
 
-function createColorSpectrumMaterials() {
-  for (let index = 0; index < 128; index++) {
-    let mat = new THREE.MeshStandardMaterial({
-      emissive: audioFeatures.colorSpectrum[index],
-      emissiveIntensity: 0.1,
-      color: audioFeatures.colorSpectrum[index],
-    });
-    colorSpectrumMaterials.push(mat);
-  }
-  audioFeatures["colorSpectrumMaterials"] = colorSpectrumMaterials;
+let metalness = 0;
+let roughness = 0;
+let reflectivity = 0;
+let clearcoat = 0;
+let clearcoatRoughness = 0;
+let emissiveIntensity = 0.0;
+
+function updateMaterial() {
+  metalness = 0;
+  roughness = 0;
+  reflectivity = 0;
+  clearcoat = 0;
+  clearcoatRoughness = 0;
+  emissiveIntensity = 0.0;
+
+  updateColor();
 }
 
 function updateColor() {
-  const materialRoughness =
-    1 -
-    audioFeatures.predictions.mood_aggressive / 2 -
-    audioFeatures.predictions.mood_sad / 2 +
-    audioFeatures.predictions.mood_happy / 2;
-
-  const materialMetalness = 0.5 * audioFeatures.predictions.mood_sad;
-  var emissiveIntensityColor = audioFeatures.emissiveIntensityColor;
-
-  particleMaterialOpacity = 0.5 + 1 * audioFeatures.predictions.mood_aggressive;
-
   colorMaterial.forEach((material, index) => {
     material.color.setHex(colorToHexColor(audioFeatures.color[index]));
     material.emissive.setHex(colorToHexColor(audioFeatures.color[index]));
-    material.opacity = particleMaterialOpacity;
+    /*    material.opacity = particleMaterialOpacity; */
 
-    /* material.map = texture; */
     material.displacementMap = textureNormalHeight;
     material.displacementScale = 0.01;
     material.normalMap = textureNormal;
     material.normalScale = new THREE.Vector2(8, 8);
 
-    /* material.emissiveIntensity = emissiveIntensityColor;
-    material.clearcoat = 1;
-    material.clearcoatRoughness = 0.1;
-    material.metalness = materialMetalness;
-    material.roughness = materialRoughness; */
+    material.metalness = metalness;
+    material.roughness = roughness;
+    material.reflectivity = reflectivity;
+    (material.clearcoat = clearcoat),
+      (material.clearcoatRoughness = clearcoatRoughness);
   });
 }
 
@@ -348,7 +201,7 @@ let radius = 1.2;
 let nPos = [];
 let pos;
 let resolutionShape;
-
+let emissiveIntensityColor;
 function createEssenceShape() {
   resolutionShape = Math.floor(
     (audioFeatures.predictions.mood_happy +
@@ -388,18 +241,16 @@ function createEssenceShape() {
     normalMap: textureNormal,
     flatShading: false,
     normalScale: new THREE.Vector2(5, 5),
-    /*  displacementMap: textureNormalHeight,
-    displacementScale: 0.0, */
 
-    color: audioFeatures.color[12],
-    // Glass
-    /* metalness: 0,  
-   roughness: 1, */
-    metalness: audioFeatures.predictions.mood_aggressive,
-    roughness: audioFeatures.predictions.mood_sad,
-    reflectivity: audioFeatures.predictions.mood_sad,
-    clearcoat: 0,
-    clearcoatRoughness: 0,
+    color: audioFeatures.color[0],
+    emissive: audioFeatures.color[0],
+    emissiveIntensity: emissiveIntensity,
+
+    metalness: metalness,
+    roughness: roughness,
+    reflectivity: reflectivity,
+    clearcoat: clearcoat,
+    clearcoatRoughness: clearcoatRoughness,
   });
 
   matEssenceShape.needsUpdate = true;
@@ -486,6 +337,7 @@ function spawnBeatBoom(angle, color, size) {
   scene.add(radiationCollection);
 }
 var fireworkModifier = 0;
+
 function firework() {
   var value = 0;
   var size = 6.5 * audioFeatures.rms;
@@ -693,6 +545,7 @@ function animate(timeStamp) {
 
   // When main has been initated
   if (audioFeatures.ready) {
+    updateMaterial();
     createEssenceShape();
     audioFeatures["essenceShapeReady"] = true;
     /* pointLight.color.setHex(colorToHexColor(audioFeatures.color[0])); */
@@ -806,6 +659,6 @@ export {
   setRenderColor,
   firework,
   updateColor,
-  createColorSpectrumMaterials,
+  /* createColorSpectrumMaterials, */
   moveCamera,
 };
