@@ -241,7 +241,7 @@ function createEssenceShape() {
       audioFeatures.predictions.mood_sad / 2 +
       audioFeatures.predictions.mood_happy / 2,
     metalness: 0.4,
-    color: audioFeatures.color[13],
+    color: audioFeatures.color[11],
   });
 
   const materialTest = new THREE.MeshPhysicalMaterial({
@@ -249,8 +249,8 @@ function createEssenceShape() {
     flatShading: false,
     normalScale: new THREE.Vector2(5, 5),
 
-    color: audioFeatures.color[0],
-    emissive: audioFeatures.color[0],
+    color: audioFeatures.color[13],
+    emissive: audioFeatures.color[13],
     emissiveIntensity: emissiveIntensity,
 
     metalness: metalness,

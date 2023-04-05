@@ -7,12 +7,7 @@ import {
 } from "./updateState.js";
 
 import { getColors } from "./getColors.js";
-import {
-
-  firework,
-  setRenderColor,
-  updateColor,
-} from "./scene.js";
+import { firework, setRenderColor, updateColor } from "./scene.js";
 import {
   calculateAverageOfArray,
   debounce,
@@ -35,7 +30,7 @@ const relaxe = document.querySelector("#relaxTag");
 const aggressive = document.querySelector("#aggressiveTag");
 const dance = document.querySelector("#danceTag");
 
-const beatContainer = document.querySelector("#beatContainer");  
+const beatContainer = document.querySelector("#beatContainer");
 
 const throttleFirework = throttle(() => {
   firework();
@@ -82,15 +77,14 @@ function initMeyda(file) {
         if (features.energy > 0.001) {
           lowPassEnergy.push(features.rms);
           var lowPassEnergyMean = calculateAverageOfArray(lowPassEnergy);
-    /*       console.dir("Peak Energy: " + lowPassEnergyMean);
+          /*       console.dir("Peak Energy: " + lowPassEnergyMean);
           console.dir("Energy: " + features.rms); */
 
           if (features.rms > energyPeak) {
             energyPeak = features.rms;
             throttleFirework();
-            
           }
-          if (features.rms > (energyPeak*0.90 +lowPassEnergyMean)/2) {
+          if (features.rms > (energyPeak * 0.9 + lowPassEnergyMean) / 2) {
             throttleFirework();
           }
         }
@@ -144,39 +138,32 @@ function initMeyda(file) {
         audioFeatures["activeChromaIndex"] = audioFeatures["chroma"].indexOf(
           Math.max(...audioFeatures["chroma"])
         );
-        
 
-        // Selects indexes based on chroma, relative to our active scale. 
-     /*    var chromaPrio = []; */
+        // Selects indexes based on chroma, relative to our active scale.
+        /*    var chromaPrio = []; */
         var activeIndexes = [];
         for (let index = 0; index < audioFeatures.chroma.length; index++) {
           const element = audioFeatures.chroma[index];
-          if(element > 0.95){
+          if (element > 0.95) {
             /* const obj = { chromaIndex: index, value: element, tone: keys[index] }; */
             /* chromaPrio.push(obj) */
-          /*   console.dir(keys[index]) */
-            audioFeatures.keysOrdered.forEach((key, index2)=>{
-              if(key==keys[index]){
-                activeIndexes.push(index2)
+            /*   console.dir(keys[index]) */
+            audioFeatures.keysOrdered.forEach((key, index2) => {
+              if (key == keys[index]) {
+                activeIndexes.push(index2);
               }
-            })
-
+            });
           }
-         
-
-          
         }
         audioFeatures["activeColorIndexes"] = activeIndexes;
-    /*     console.dir(activeIndexes)
+        /*     console.dir(activeIndexes)
         console.dir(" ") */
-       
-       /*  audioFeatures["activeHarmony"] = chromaPrio; */
-        
-        
-      /*   console.dir(chromaPrio)
- */
 
-        
+        /*  audioFeatures["activeHarmony"] = chromaPrio; */
+
+        /*   console.dir(chromaPrio)
+         */
+
         chromaHTML.innerHTML =
           "Chroma: " + keys[audioFeatures.activeChromaIndex];
       },
@@ -210,11 +197,11 @@ dropArea.addEventListener("drop", (e) => {
 
   // DEBUG MODE
 
-/*   initMeyda(uploadedFile);
+  /*   initMeyda(uploadedFile);
   console.dir(audioFeatures); */
 
   // UPLOAD MODE
-     processFileUpload(files);
+  processFileUpload(files);
 });
 dropArea.addEventListener("click", () => {
   dropInput.click();
@@ -243,7 +230,7 @@ function initThreeWithAffect() {
   getColors();
   setRenderColor();
   console.dir(audioFeatures);
-  
+
   createColorSpectrumMaterials();
   updateColor();
   audioFeatures["ready"] = true;

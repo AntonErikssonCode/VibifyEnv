@@ -185,16 +185,7 @@ function getColors() {
   let brightness = 5 * audioFeatures.predictions.mood_aggressive;
   console.dir("brightness: " + brightness);
 
-  const background = hslToHex(
-    mainAngle,
-    saturationBias + saturation,
-    brightnessBias + brightness
-  );
-  const essenceShapeColor = hslToHex(
-    mainAngle,
-    saturationBias + saturation - 2,
-    brightnessBias + brightness - 2
-  );
+  
   const c1 = hslToHex(
     mainAngle,
     saturationBias + saturation,
@@ -254,6 +245,17 @@ function getColors() {
   const c12 = hslToHex(
     secondaryAngle + colorStepMain,
     saturationBias + saturation,
+    brightnessBias + brightness
+  );
+
+  const background = hslToHex(
+    mainAngle,
+    saturationBias + saturation,
+    brightnessBias + brightness
+  );
+  const essenceShapeColor = hslToHex(
+    mainAngle,
+    60 + 40*audioFeatures.predictions.mood_happy,
     brightnessBias + brightness
   );
   audioFeatures.color = [

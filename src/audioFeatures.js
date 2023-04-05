@@ -34,7 +34,7 @@ activeChromaIndex: 0,
 };
 // Hurt
 
-let audioFeaturesz = {
+let audioFeatures1 = {
   colorSpectrum: [],
   ready: false,
   essenceShapeReady: false, 
@@ -70,7 +70,7 @@ activeChromaIndex: 0,
 // Dont stop me now song
 
 
-let audioFeaturesd= {
+let audioFeatures3x2= {
   rms: 0,
   loudness: 0,
   energy: 0,
@@ -101,7 +101,7 @@ let audioFeaturesd= {
 
 // GIFT OF GUILT
 
-let audioFeatures= {
+let audioFeatures1xz= {
   ready: false,
   essenceShapeReady: false, 
   rms: 0,
@@ -140,7 +140,7 @@ let audioFeatures= {
 // SAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD
 // Min Sad
 // Cactus
-let audioFeaturesxök   = {
+let audioFeatures23   = {
   ready: false,
   essenceShapeReady: false, 
   rms: 0,
@@ -175,7 +175,7 @@ let audioFeaturesxök   = {
 
 // Max Sad
 // Moonlight sonata
-let audioFeaturesba    = {
+let audioFeatures123   = {
   ready: false,
   essenceShapeReady: false, 
   rms: 0,
@@ -216,7 +216,7 @@ let audioFeaturesba    = {
 /// HAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPPY
 // Max Happy
 //Johnny B Goode
-let audioFeatures333  = {
+let audioFeatures1234= {
   ready: false,
   essenceShapeReady: false, 
   rms: 0,
@@ -291,7 +291,7 @@ let audioFeatures3 = {
 // REEEEEELAXXXXXAAAAD
 // Min Relax
 // Rock Co.Kane Flow
-let audioFeaturesx   = {
+let audioFeatures3122   = {
   ready: false,
   essenceShapeReady: false, 
   rms: 0,
@@ -326,7 +326,7 @@ let audioFeaturesx   = {
 
 // Max Relax
 // Moonlight sonata
-let audioFeatures3z    = {
+let audioFeatures3123123   = {
   ready: false,
   essenceShapeReady: false, 
   rms: 0,
@@ -401,7 +401,7 @@ let audioFeaturesza    = {
 
 
 // Crack the Sky 
-let audioFeaturesxa   = {
+let audioFeatures   = {
   ready: false,
   essenceShapeReady: false, 
   rms: 0,
