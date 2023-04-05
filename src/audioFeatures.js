@@ -101,7 +101,7 @@ let audioFeaturesd= {
 
 // GIFT OF GUILT
 
-let audioFeaturesxz= {
+let audioFeatures= {
   ready: false,
   essenceShapeReady: false, 
   rms: 0,
@@ -216,7 +216,7 @@ let audioFeaturesba    = {
 /// HAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPPY
 // Max Happy
 //Johnny B Goode
-let audioFeatures  = {
+let audioFeatures333  = {
   ready: false,
   essenceShapeReady: false, 
   rms: 0,
@@ -251,7 +251,7 @@ let audioFeatures  = {
 
 // Minimum Happy
 // Dance of the Knights
-let audioFeaturesc = {
+let audioFeatures3 = {
   ready: false,
   essenceShapeReady: false, 
   rms: 0,
@@ -291,7 +291,7 @@ let audioFeaturesc = {
 // REEEEEELAXXXXXAAAAD
 // Min Relax
 // Rock Co.Kane Flow
-let audioFeaturesö   = {
+let audioFeaturesx   = {
   ready: false,
   essenceShapeReady: false, 
   rms: 0,
@@ -326,7 +326,7 @@ let audioFeaturesö   = {
 
 // Max Relax
 // Moonlight sonata
-let audioFeatures2dsad   = {
+let audioFeatures3z    = {
   ready: false,
   essenceShapeReady: false, 
   rms: 0,
@@ -366,7 +366,7 @@ let audioFeatures2dsad   = {
 // AAAAAAAAAAAAAAAAAAAAAAGGGGGGGGGGREEEEEESIVEEEEEEEEEEO
 // Min Agressive
 // Love yourself
-let audioFeatures312s   = {
+let audioFeaturesza    = {
   ready: false,
   essenceShapeReady: false, 
   rms: 0,
@@ -401,7 +401,7 @@ let audioFeatures312s   = {
 
 
 // Crack the Sky 
-let audioFeatures21   = {
+let audioFeaturesxa   = {
   ready: false,
   essenceShapeReady: false, 
   rms: 0,

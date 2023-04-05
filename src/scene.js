@@ -131,10 +131,10 @@ const material = new THREE.MeshPhysicalMaterial({
   metalness: 0.9,
   roughness: 0.5,
 });
-const geoBaseObject = new THREE.SphereGeometry(1, 50, 50);
+/* const geoBaseObject = new THREE.SphereGeometry(1, 50, 50);
 const baseObject = new THREE.Mesh(geoBaseObject, colorMaterial[0]);
 baseObject.position.x = 4;
-scene.add(baseObject);
+scene.add(baseObject); */
 
 // Create New Material
 function createMaterial(color, emissive, emissiveIntensity, opacity) {
@@ -163,13 +163,20 @@ let clearcoatRoughness = 0;
 let emissiveIntensity = 0.0;
 
 function updateMaterial() {
-  metalness = 0;
-  roughness = 0;
-  reflectivity = 0;
-  clearcoat = 0;
-  clearcoatRoughness = 0;
-  emissiveIntensity = 0.0;
-
+  metalness = 0.6 - audioFeatures.predictions.mood_happy;
+  roughness = 0.3 + 0.7*audioFeatures.predictions.mood_happy;
+  reflectivity = audioFeatures.predictions.mood_happy;
+  clearcoat = 1;
+  clearcoatRoughness = audioFeatures.predictions.mood_sad;
+  emissiveIntensity = audioFeatures.predictions.mood_happy/10;
+  /* 
+  metalness = 1 - audioFeatures.predictions.mood_happy;
+  roughness = audioFeatures.predictions.mood_happy;
+  reflectivity = audioFeatures.predictions.mood_happy;
+  clearcoat = 1;
+  clearcoatRoughness = audioFeatures.predictions.mood_sad;
+  emissiveIntensity = audioFeatures.predictions.mood_happy/10;
+ */
   updateColor();
 }
 
@@ -177,7 +184,7 @@ function updateColor() {
   colorMaterial.forEach((material, index) => {
     material.color.setHex(colorToHexColor(audioFeatures.color[index]));
     material.emissive.setHex(colorToHexColor(audioFeatures.color[index]));
-    /*    material.opacity = particleMaterialOpacity; */
+    material.emissiveIntensity = emissiveIntensity;
 
     material.displacementMap = textureNormalHeight;
     material.displacementScale = 0.01;
@@ -631,16 +638,8 @@ function animate(timeStamp) {
       xDirection = "right";
     }
   }
-
-  if (cameraZoomedIn) {
-    if (audioFeatures.key == "major") {
-      camera.position.y += yModifier;
-      camera.position.x += xModifier;
-    } else {
-      camera.position.y -= yModifier;
-      camera.position.x -= xModifier;
-    }
-  }
+  camera.position.y += yModifier;
+  camera.position.x += xModifier;
 
   composer.render(scene, camera);
 }
