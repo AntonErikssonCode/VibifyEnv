@@ -93,12 +93,12 @@ const textureNormalHeight = loader.load(
 );
 
 // Lights
-const light = new THREE.AmbientLight(0xffffff, 0.05);
-scene.add(light);
+/* const light = new THREE.AmbientLight(0xffffff, 0.1);
+scene.add(light); */
 
 const dirLight = new THREE.DirectionalLight(0xffffff, 1);
 
-dirLight.position.y = 100;
+dirLight.position.y = 1000;
 dirLight.castShadow = false;
 scene.add(dirLight);
 /* const helper = new THREE.DirectionalLightHelper(dirLight, 5);
@@ -164,11 +164,11 @@ let emissiveIntensity = 0.0;
 
 function updateMaterial() {
   metalness = 0.6 - audioFeatures.predictions.mood_happy;
-  roughness = 0.3 + 0.7*audioFeatures.predictions.mood_happy;
+  roughness = 0.3 + 0.7 * audioFeatures.predictions.mood_happy;
   reflectivity = audioFeatures.predictions.mood_happy;
   clearcoat = 1;
   clearcoatRoughness = audioFeatures.predictions.mood_sad;
-  emissiveIntensity = audioFeatures.predictions.mood_happy/10;
+  emissiveIntensity = audioFeatures.predictions.mood_happy / 10;
   /* 
   metalness = 1 - audioFeatures.predictions.mood_happy;
   roughness = audioFeatures.predictions.mood_happy;
@@ -435,10 +435,7 @@ let particleSpawnSpeed = 2;
 var clock = new THREE.Clock();
 var delta = 0;
 let morphTime = 0;
-let morphTimeAmplifier =
-  (audioFeatures.predictions.mood_aggressive +
-    audioFeatures.predictions.danceability) /
-  2;
+let morphTimeAmplifier = 1;
 
 var meanSplicedFrequencyList = [];
 var allMeanFrequency = [
@@ -469,8 +466,16 @@ function animate(timeStamp) {
   let timeInSecond = timeStamp / 100;
 
   delta = clock.getDelta();
-  morphTime += audioFeatures.rms * morphTimeAmplifier;
-
+  let addMorph = audioFeatures.rms * morphTimeAmplifier;
+  if (addMorph > 0.12) {
+    addMorph = 0.12;
+  }
+/*   if (addMorph < 0.01) {
+    addMorph = 0.01;
+  } */
+  morphTime += addMorph;
+  /*   console.dir("morphTime: " + morphTime)
+   */
   // Spawn Paricles
   if (timeInSecond - last >= particleSpawnSpeed) {
     last = timeInSecond;
@@ -507,11 +512,20 @@ function animate(timeStamp) {
           audioFeatures.predictions.mood_happy
       ) {
         // Triangle
-        mesh.position.y = 1 - Math.abs((mesh.position.x % 3) - 1) + 2;
+
+        if (audioFeatures.key == "major") {
+          mesh.position.y = 1 - Math.abs((mesh.position.x % 3) - 1) + 2;
+        } else {
+          mesh.position.y = 2 - Math.abs((mesh.position.x % 6) - 1) + 2;
+        }
       } else {
         // Sine
 
-        mesh.position.y = 1 * Math.sin(1 * mesh.position.x) + 2;
+        if (audioFeatures.key == "major") {
+          mesh.position.y = 1.2 * Math.sin(1.2 * mesh.position.x) + 2;
+        } else {
+          mesh.position.y = 1 * Math.sin(1 * mesh.position.x) + 2;
+        }
       }
     } else {
       if (audioFeatures.energy < 0.01) {
@@ -563,8 +577,12 @@ function animate(timeStamp) {
 
     scene.fog = new THREE.Fog(0x050505, 1, 200);
     emissiveIntensityColor = 0.75 + audioFeatures.predictions.mood_happy / 4;
-
-    audioFeatures["ready"] = false;
+    morphTimeAmplifier =
+      (audioFeatures.predictions.mood_aggressive +
+        audioFeatures.predictions.danceability) /
+      2;
+    /*     console.dir("morphTimeAmplifier: " + morphTimeAmplifier)
+     */ audioFeatures["ready"] = false;
   }
 
   // When essence shape is initated

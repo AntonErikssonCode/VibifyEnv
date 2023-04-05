@@ -34,7 +34,7 @@ activeChromaIndex: 0,
 };
 // Hurt
 
-let audioFeatures1 = {
+let audioFeatures3123 = {
   colorSpectrum: [],
   ready: false,
   essenceShapeReady: false, 
@@ -70,7 +70,7 @@ activeChromaIndex: 0,
 // Dont stop me now song
 
 
-let audioFeatures3x2= {
+let audioFeatures= {
   rms: 0,
   loudness: 0,
   energy: 0,
@@ -101,7 +101,7 @@ let audioFeatures3x2= {
 
 // GIFT OF GUILT
 
-let audioFeatures1xz= {
+let audioFeatures2x13= {
   ready: false,
   essenceShapeReady: false, 
   rms: 0,
@@ -140,7 +140,7 @@ let audioFeatures1xz= {
 // SAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD
 // Min Sad
 // Cactus
-let audioFeatures23   = {
+let audioFeaturesdasd   = {
   ready: false,
   essenceShapeReady: false, 
   rms: 0,
@@ -175,7 +175,7 @@ let audioFeatures23   = {
 
 // Max Sad
 // Moonlight sonata
-let audioFeatures123   = {
+let audioFeaturesö  = {
   ready: false,
   essenceShapeReady: false, 
   rms: 0,
@@ -216,7 +216,7 @@ let audioFeatures123   = {
 /// HAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPPY
 // Max Happy
 //Johnny B Goode
-let audioFeatures1234= {
+let audioFeatures12= {
   ready: false,
   essenceShapeReady: false, 
   rms: 0,
@@ -401,7 +401,7 @@ let audioFeaturesza    = {
 
 
 // Crack the Sky 
-let audioFeatures   = {
+let audioFeatures2   = {
   ready: false,
   essenceShapeReady: false, 
   rms: 0,
@@ -439,7 +439,7 @@ let audioFeatures   = {
 // Danceability
 // Min Danceability
 // Heartbeats
-let audioFeatures3s = {
+let audioFeatures21 = {
   ready: false,
   essenceShapeReady: false, 
   rms: 0,
@@ -474,7 +474,7 @@ let audioFeatures3s = {
 
 // Max Danceability
 // Dark Age
-let audioFeatures2daa   = {
+let audioFeatures213   = {
   ready: false,
   essenceShapeReady: false, 
   rms: 0,
