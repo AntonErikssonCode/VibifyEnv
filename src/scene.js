@@ -45,7 +45,7 @@ const bloomPass = new UnrealBloomPass(new THREE.Vector2(w, h), 1.5, 0.4, 0.85);
 const afterImagePass = new AfterimagePass();
 const effectVignette = new ShaderPass(VignetteShader);
 
-afterImagePass.uniforms["damp"].value = 0.7;
+afterImagePass.uniforms["damp"].value = 0.8;
 effectVignette.uniforms["offset"].value =
   audioFeatures.predictions.mood_sad / 4 +
   0.4 -
@@ -63,13 +63,15 @@ const control = new OrbitControls(camera, renderer.domElement);
 const loader = new THREE.TextureLoader();
 const textureType = "Paper";
 
+const repeatX = 3
+const repeatY =  2; 
 const texture = loader.load(
   `../assets/textures/${textureType}/texture.jpg`,
   function (texture) {
     texture.wrapS = THREE.RepeatWrapping;
     texture.wrapT = THREE.RepeatWrapping;
-    texture.repeat.x = 10;
-    texture.repeat.y = 6;
+    texture.repeat.x = repeatX;
+    texture.repeat.y = repeatY;
   }
 );
 const textureNormal = loader.load(
@@ -77,8 +79,8 @@ const textureNormal = loader.load(
   function (texture) {
     texture.wrapS = THREE.RepeatWrapping;
     texture.wrapT = THREE.RepeatWrapping;
-    texture.repeat.x = 10;
-    texture.repeat.y = 6;
+    texture.repeat.x = repeatX;
+    texture.repeat.y = repeatY;
   }
 );
 
@@ -87,8 +89,8 @@ const textureNormalHeight = loader.load(
   function (texture) {
     texture.wrapS = THREE.RepeatWrapping;
     texture.wrapT = THREE.RepeatWrapping;
-    texture.repeat.x = 10;
-    texture.repeat.y = 6;
+    texture.repeat.x = repeatX;
+    texture.repeat.y = repeatY;
   }
 );
 
@@ -161,6 +163,7 @@ let reflectivity = 0;
 let clearcoat = 0;
 let clearcoatRoughness = 0;
 let emissiveIntensity = 0.0;
+let opacity = 1;
 
 function updateMaterial() {
   metalness = 0.6 - audioFeatures.predictions.mood_happy;
@@ -169,6 +172,11 @@ function updateMaterial() {
   clearcoat = 1;
   clearcoatRoughness = audioFeatures.predictions.mood_sad;
   emissiveIntensity = audioFeatures.predictions.mood_happy / 10;
+  
+  if(audioFeatures.predictions.mood_relaxed > 0.60 && audioFeatures.predictions.mood_happy > 0.40){
+    opacity =  0.5;
+    console.dir("dasdaskdm")
+  }
   /* 
   metalness = 1 - audioFeatures.predictions.mood_happy;
   roughness = audioFeatures.predictions.mood_happy;
@@ -185,12 +193,17 @@ function updateColor() {
     material.color.setHex(colorToHexColor(audioFeatures.color[index]));
     material.emissive.setHex(colorToHexColor(audioFeatures.color[index]));
     material.emissiveIntensity = emissiveIntensity;
-
+    material.opacity = opacity;
+    material.transparent = true;
     material.displacementMap = textureNormalHeight;
     material.displacementScale = 0.01;
     material.normalMap = textureNormal;
     material.normalScale = new THREE.Vector2(8, 8);
+/* 
 
+    material.displacementMap= textureNormalHeight;
+    material.displacementScale= 1; */
+    
     material.metalness = metalness;
     material.roughness = roughness;
     material.reflectivity = reflectivity;
@@ -247,7 +260,9 @@ function createEssenceShape() {
   const materialTest = new THREE.MeshPhysicalMaterial({
     normalMap: textureNormal,
     flatShading: false,
-    normalScale: new THREE.Vector2(5, 5),
+    normalScale: new THREE.Vector2(10,10),
+    
+   
 
     color: audioFeatures.color[13],
     emissive: audioFeatures.color[13],
@@ -467,8 +482,8 @@ function animate(timeStamp) {
 
   delta = clock.getDelta();
   let addMorph = audioFeatures.rms * morphTimeAmplifier;
-  if (addMorph > 0.12) {
-    addMorph = 0.12;
+  if (addMorph > 0.1) {
+    addMorph = 0.1;
   }
 /*   if (addMorph < 0.01) {
     addMorph = 0.01;

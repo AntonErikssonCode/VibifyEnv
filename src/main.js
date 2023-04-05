@@ -216,7 +216,6 @@ function initThree() {
   setRenderColor();
   console.dir(audioFeatures);
 
-  /* createColorSpectrumMaterials(); */
   updateColor();
   audioFeatures["ready"] = true;
 }
@@ -231,7 +230,6 @@ function initThreeWithAffect() {
   setRenderColor();
   console.dir(audioFeatures);
 
-  createColorSpectrumMaterials();
   updateColor();
   audioFeatures["ready"] = true;
 }
