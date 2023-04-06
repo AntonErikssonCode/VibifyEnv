@@ -27,7 +27,7 @@ const h = window.innerHeight;
 // Camera
 let scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(90, w /* *0.7 */ / h, 0.1, 1000);
-camera.position.z = 5;
+camera.position.z = 6;
 
 // Renderer
 const renderer = new THREE.WebGLRenderer({
@@ -37,6 +37,9 @@ const renderer = new THREE.WebGLRenderer({
 });
 renderer.outputEncoding = THREE.RGBADepthPacking;
 renderer.setSize(w, h);
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.BasicShadowMap;
+
 const renderScene = new RenderPass(scene, camera);
 
 // Post Processing
@@ -95,27 +98,31 @@ const textureNormalHeight = loader.load(
 );
 
 // Lights
-/* const light = new THREE.AmbientLight(0xffffff, 0.1);
-scene.add(light); */
+const light = new THREE.AmbientLight(0xffffff, 0.1);
+scene.add(light);
 
 const dirLight = new THREE.DirectionalLight(0xffffff, 1);
 
 dirLight.position.y = 1000;
-dirLight.castShadow = false;
+dirLight.castShadow = true;
 scene.add(dirLight);
 /* const helper = new THREE.DirectionalLightHelper(dirLight, 5);
 scene.add(helper); */
 
-const pointLight = new THREE.PointLight(0xffffff, 1);
+const pointLight = new THREE.PointLight(0xffffff, 1.7);
 pointLight.position.set(3, 0, 50);
 pointLight.castShadow = true;
 scene.add(pointLight);
 
-const pointLight2 = new THREE.PointLight(0xffffff, 1);
+const pointLight2 = new THREE.PointLight(0xffffff, 2);
 pointLight2.position.set(200, 200, 200);
 pointLight2.castShadow = true;
-scene.add(pointLight2);
+/* scene.add(pointLight2); */
 
+const centerLight = new THREE.PointLight(0xffffff, 2);
+centerLight.position.set(0, 0, 0);
+centerLight.castShadow = true;
+scene.add(centerLight);
 // Materials
 const colorMaterial = [];
 for (let index = 0; index < 12; index++) {
@@ -293,14 +300,14 @@ var matParticle = new THREE.MeshStandardMaterial({
   emissive: 0xffffff,
 });
 
-function spawnParticle() {
+function spawnParticle(particleZPos) {
   var geoParticle = new THREE.PlaneBufferGeometry(0.12, 0.1, 1, 1);
   var travelParticle = new THREE.Mesh(geoParticle, matParticle);
   var particleXPos = getRndInteger(-50, 50);
   var particleYPos = getRndInteger(-20, 20);
   var particleRotation = getRndInteger(0, 45);
 
-  travelParticle.position.set(particleXPos, particleYPos, 5);
+  travelParticle.position.set(particleXPos, particleYPos, particleZPos);
   travelParticle.rotateZ(particleRotation);
   groupTravelParticle.add(travelParticle);
 }
@@ -355,7 +362,8 @@ function spawnBeatBoom(angle, color, size) {
   spawnedGroupRadiation.rotateZ(angle);
   spawnedGroupRadiation.add(spawnedSphereRadiation);
   spawnedGroupRadiation.position.x = 0;
-
+  /*  spawnedGroupRadiation.castShadow = true;
+  spawnedGroupRadiation.receiveShadow = true; */
   radiationCollection.add(spawnedGroupRadiation);
   scene.add(radiationCollection);
 }
@@ -386,22 +394,24 @@ function firework() {
 // Camera Zoom
 let cameraZoomedIn = true;
 function moveCamera() {
-  if (camera.position.z <= 6) {
-    camera.position.z = 25;
+  if (camera.position.z <= 7) {
+    camera.position.z = 35;
     camera.position.x = 0;
     camera.position.y = 0;
 
     cameraZoomedIn = false;
+    particleZPos = 35;
   } else {
-    camera.position.z = 5;
+    camera.position.z = 6;
     camera.position.x = 0;
     camera.position.y = 0;
 
     cameraZoomedIn = true;
+    particleZPos = 5;
   }
 }
-moveCamera();
-
+/* moveCamera();
+ */
 const camerabutton = document.querySelector(".cameraButton");
 
 camerabutton.onclick = function () {
@@ -409,17 +419,32 @@ camerabutton.onclick = function () {
 };
 
 // Power Spectrum
-let powerSpectrumGroup = new THREE.Group();
-powerSpectrumGroup.position.x = -38;
-powerSpectrumGroup.position.y = -20;
-scene.add(powerSpectrumGroup);
-var geoPowerSpectrumInstance = new THREE.SphereGeometry(0.1, 5, 5);
-var powerSpectrumInstance = new THREE.Mesh(geoPowerSpectrumInstance, material);
+let orbitCollection = new THREE.Group();
+function spawnOrbit() {
+  for (let index = 0; index < 3; index++) {
+    let orbitGroup = new THREE.Group();
+    let geoOrbit = new THREE.SphereGeometry(0.1, 5, 5);
+    var color = shade(audioFeatures.color[index], 0.1);
+    const matOrbit = new THREE.MeshPhysicalMaterial({
+      normalMap: textureNormal,
+      normalScale: new THREE.Vector2(8, 8),
+      displacementMap: textureNormalHeight,
+      displacementScale: 0.01,
+      clearcoat: 1,
+      clearcoatRoughness: 0.1,
+      metalness: 0.9,
+      roughness: 0.5,
+      color: color,
+      emissive: color,
+      emissiveIntensity: 1,
+    });
 
-for (let index = 0; index < 256/2; index++) {
-  var powerSpectrumInstanceClone = powerSpectrumInstance.clone();
-  powerSpectrumInstanceClone.position.x = index * 0.3;
-  powerSpectrumGroup.add(powerSpectrumInstanceClone);
+    let orbit = new THREE.Mesh(geoOrbit, matOrbit);
+
+    orbitGroup.add(orbit);
+    orbitCollection.add(orbitGroup);
+  }
+  scene.add(orbitCollection);
 }
 
 // Animate Variables
@@ -441,6 +466,8 @@ var xDirection = "right";
 var zDirection = "out";
 var peakLoudness = 0;
 
+var lastPowerSpectrum;
+let particleZPos = 5;
 // ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE
 // ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE
 // ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE
@@ -467,7 +494,7 @@ function animate(timeStamp) {
   // Spawn Paricles
   if (timeInSecond - last >= particleSpawnSpeed) {
     last = timeInSecond;
-    spawnParticle();
+    spawnParticle(particleZPos);
   }
 
   // Particle Loop
@@ -480,62 +507,70 @@ function animate(timeStamp) {
       groupTravelParticle.remove(particle);
     }
   });
-
+  const distanceFromTheCenter = 5;
   // Radiation Loop
   radiationCollection.children.forEach((radiationGroup) => {
     var mesh = radiationGroup.children[0];
 
     // Radiation Movment
-    if (mesh.position.x < 25) {
-      mesh.position.x +=
-        audioFeatures.bpm / 10000 +
-        audioFeatures.rms * audioFeatures.predictions.danceability;
-      mesh.rotation.x += audioFeatures.bpm / 10000 + audioFeatures.rms / 15;
-      mesh.rotation.y -= audioFeatures.bpm / 10000 + audioFeatures.rms / 20;
-      mesh.rotation.z += audioFeatures.bpm / 10000 + audioFeatures.rms / 10;
+    if (audioFeatures.energy > 0.001) {
+      if (mesh.position.x < 35) {
+        mesh.position.x +=
+          audioFeatures.bpm / 10000 +
+          audioFeatures.rms * audioFeatures.predictions.danceability;
 
-      if (
-        audioFeatures.predictions.mood_aggressive > 0.6 &&
-        audioFeatures.predictions.mood_sad >
-          audioFeatures.predictions.mood_happy
-      ) {
-        // Triangle
-
-        if (audioFeatures.key == "major") {
-          mesh.position.y = 1 - Math.abs((mesh.position.x % 3) - 1) + 2;
-        } else {
-          mesh.position.y = 2 - Math.abs((mesh.position.x % 6) - 1) + 2;
-        }
-      } else {
-        // Sine
-
-        if (audioFeatures.key == "major") {
-          mesh.position.y = 1.2 * Math.sin(1.2 * mesh.position.x) + 2;
-        } else {
-          mesh.position.y = 1 * Math.sin(1 * mesh.position.x) + 2;
-        }
-      }
-    } else {
-      if (audioFeatures.energy < 0.01) {
+        mesh.rotation.x += audioFeatures.bpm / 10000 + audioFeatures.rms / 15;
+        mesh.rotation.y -= audioFeatures.bpm / 10000 + audioFeatures.rms / 20;
+        mesh.rotation.z += audioFeatures.bpm / 10000 + audioFeatures.rms / 10;
         mesh.position.z -= 0.01;
-      } else {
-        mesh.position.z -= audioFeatures.bpm / 100000 + audioFeatures.rms * 1.5;
-        mesh.position.x += 0.01;
+        if (
+          audioFeatures.predictions.mood_aggressive > 0.6 &&
+          audioFeatures.predictions.mood_sad >
+            audioFeatures.predictions.mood_happy
+        ) {
+          // Triangle
 
-        // Direction of spiral
-        if (audioFeatures.key == "major") {
-          radiationGroup.rotation.z +=
-            audioFeatures.bpm / 100000 + (audioFeatures.rms * 1.5) / 300;
+          if (audioFeatures.key == "major") {
+            mesh.position.y =
+              1 - Math.abs((mesh.position.x % 3) - 1) + distanceFromTheCenter;
+          } else {
+            mesh.position.y =
+              2 - Math.abs((mesh.position.x % 6) - 1) + distanceFromTheCenter;
+          }
         } else {
-          radiationGroup.rotation.z -=
-            audioFeatures.bpm / 100000 + (audioFeatures.rms * 1.5) / 300;
+          // Sine
+
+          if (audioFeatures.key == "major") {
+            mesh.position.y =
+              1.2 * Math.sin(1.2 * mesh.position.x) + distanceFromTheCenter;
+          } else {
+            mesh.position.y =
+              1 * Math.sin(1 * mesh.position.x) + distanceFromTheCenter;
+          }
+        }
+      } else {
+        if (audioFeatures.energy < 0.01) {
+          mesh.position.z -= 0.01;
+        } else {
+          mesh.position.z -=
+            audioFeatures.bpm / 100000 + audioFeatures.rms * 1.5;
+          mesh.position.x += 0.01;
+
+          // Direction of spiral
+          if (audioFeatures.key == "major") {
+            radiationGroup.rotation.z +=
+              audioFeatures.bpm / 100000 + (audioFeatures.rms * 1.5) / 300;
+          } else {
+            radiationGroup.rotation.z -=
+              audioFeatures.bpm / 100000 + (audioFeatures.rms * 1.5) / 300;
+          }
         }
       }
-    }
 
-    // Remove Radiation
-    if (mesh.position.z < -200 /* fogDistance-50 */) {
-      radiationCollection.remove(radiationGroup);
+      // Remove Radiation
+      if (mesh.position.z < -200 /* fogDistance-50 */) {
+        radiationCollection.remove(radiationGroup);
+      }
     }
   });
 
@@ -543,11 +578,15 @@ function animate(timeStamp) {
   if (audioFeatures.ready) {
     updateMaterial();
     createEssenceShape();
+    spawnOrbit();
 
     audioFeatures["essenceShapeReady"] = true;
     defaultMoveSpeed = 0.01 + audioFeatures.bpm / 1500;
     fogDistance = fogDistance * audioFeatures.predictions.mood_sad;
     scene.fog = new THREE.Fog(0x050505, 1, 200);
+    centerLight.intensity =
+      centerLight.intensity * audioFeatures.predictions.mood_happy;
+    pointLight.intensity = 1.2 + 0.5 * audioFeatures.predictions.mood_happy;
     emissiveIntensityColor = 0.75 + audioFeatures.predictions.mood_happy / 4;
     morphTimeAmplifier =
       (audioFeatures.predictions.mood_aggressive +
@@ -578,19 +617,45 @@ function animate(timeStamp) {
     rmsList.push(audioFeatures.rms);
     rmsMean = calculateAverageOfArray(rmsList);
     if (audioFeatures.rms > rmsMean * 2.2) {
-      /* spawnRadiation(undefined, audioFeatures.activeChromaIndex); */
     }
     if (audioFeatures.loudness > peakLoudness) {
       peakLoudness = audioFeatures.loudness;
-      /*        spawnPlanet(audioFeatures.activeChromaIndex, audioFeatures.loudness/50 );
-       */
     } else {
       peakLoudness -= 0.001;
     }
 
-    /* powerSpectrumGroup.children.forEach((ball, index) => {
-      ball.position.y = audioFeatures.powerSpectrum[index] / 100;
-    }); */
+    const powerSpectrumBands = sliceIntoChunks(audioFeatures.powerSpectrum, 15);
+    const band = [
+      calculateAverageOfArray(powerSpectrumBands[0]),
+      calculateAverageOfArray(powerSpectrumBands[1]),
+      calculateAverageOfArray(powerSpectrumBands[2]),
+      calculateAverageOfArray(powerSpectrumBands[3]),
+      calculateAverageOfArray(powerSpectrumBands[4]),
+    ];
+    /*     console.dir(band);
+     */
+    /*  powerSpectrumGroup.children.forEach((ball, index) => {
+      ball.scale.y = band.bass;
+      ball.scale.y = band.lowMid;
+      ball.scale.y = band.mid;
+      ball.scale.y = band.highMid;
+      ball.scale.y = band.high;
+    });
+    lastPowerSpectrum = band; */
+
+    orbitCollection.children.forEach((orbitGroup, index) => {
+      var mesh = orbitGroup.children[0];
+      var r = 2.5;
+      var bandMorhTime = morphTime + index * 10;
+      orbitGroup.rotation.x = bandMorhTime / 2;
+      orbitGroup.rotation.y = bandMorhTime;
+      /*       orbitGroup.rotation.y  = bandMorhTime;
+       */ /*    orbitGroup.rotation.x  = bandMorhTime;
+      orbitGroup.rotation.y  = bandMorhTime;
+      orbitGroup.rotation.z  = bandMorhTime; */
+      mesh.position.x = r * Math.sin(bandMorhTime);
+      mesh.position.y = r * Math.cos(bandMorhTime);
+    });
   }
 
   var rangePos = 1.5;
@@ -630,8 +695,10 @@ function animate(timeStamp) {
       xDirection = "right";
     }
   }
-  camera.position.y += yModifier;
-  camera.position.x += xModifier;
+  if (cameraZoomedIn) {
+    camera.position.y += yModifier;
+    camera.position.x += xModifier;
+  }
 
   composer.render(scene, camera);
 }
