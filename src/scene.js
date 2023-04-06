@@ -37,14 +37,12 @@ const renderer = new THREE.WebGLRenderer({
 });
 renderer.outputEncoding = THREE.RGBADepthPacking;
 renderer.setSize(w, h);
-renderer.shadowMap.enabled = true;
-renderer.shadowMap.type = THREE.BasicShadowMap;
 
 const renderScene = new RenderPass(scene, camera);
 
 // Post Processing
 const composer = new EffectComposer(renderer);
-const bloomPass = new UnrealBloomPass(new THREE.Vector2(w, h), 1.5, 0.4, 0.85);
+const bloomPass = new UnrealBloomPass(new THREE.Vector2(w, h), 0.4, 0.5, 0.5);
 const afterImagePass = new AfterimagePass();
 const effectVignette = new ShaderPass(VignetteShader);
 
@@ -104,24 +102,20 @@ scene.add(light);
 const dirLight = new THREE.DirectionalLight(0xffffff, 1);
 
 dirLight.position.y = 1000;
-dirLight.castShadow = true;
 scene.add(dirLight);
 /* const helper = new THREE.DirectionalLightHelper(dirLight, 5);
 scene.add(helper); */
 
 const pointLight = new THREE.PointLight(0xffffff, 1.7);
 pointLight.position.set(3, 0, 50);
-pointLight.castShadow = true;
 scene.add(pointLight);
 
 const pointLight2 = new THREE.PointLight(0xffffff, 2);
 pointLight2.position.set(200, 200, 200);
-pointLight2.castShadow = true;
 /* scene.add(pointLight2); */
 
 const centerLight = new THREE.PointLight(0xffffff, 2);
 centerLight.position.set(0, 0, 0);
-centerLight.castShadow = true;
 scene.add(centerLight);
 // Materials
 const colorMaterial = [];
@@ -358,12 +352,11 @@ function spawnBeatBoom(angle, color, size) {
     geoSphereRadiation,
     colorMaterial[color]
   );
-  spawnedSphereRadiation.position.z = -2;
+  spawnedSphereRadiation.position.z = -4;
   spawnedGroupRadiation.rotateZ(angle);
   spawnedGroupRadiation.add(spawnedSphereRadiation);
   spawnedGroupRadiation.position.x = 0;
-  /*  spawnedGroupRadiation.castShadow = true;
-  spawnedGroupRadiation.receiveShadow = true; */
+
   radiationCollection.add(spawnedGroupRadiation);
   scene.add(radiationCollection);
 }
@@ -400,7 +393,7 @@ function moveCamera() {
     camera.position.y = 0;
 
     cameraZoomedIn = false;
-    particleZPos = 35;
+    particleZPos = 37;
   } else {
     camera.position.z = 6;
     camera.position.x = 0;
@@ -421,7 +414,7 @@ camerabutton.onclick = function () {
 // Power Spectrum
 let orbitCollection = new THREE.Group();
 function spawnOrbit() {
-  for (let index = 0; index < 3; index++) {
+  for (let index = 0; index < 1; index++) {
     let orbitGroup = new THREE.Group();
     let geoOrbit = new THREE.SphereGeometry(0.1, 5, 5);
     var color = shade(audioFeatures.color[index], 0.1);
@@ -434,13 +427,17 @@ function spawnOrbit() {
       clearcoatRoughness: 0.1,
       metalness: 0.9,
       roughness: 0.5,
-      color: color,
+      color: 0xffffff,
       emissive: color,
       emissiveIntensity: 1,
     });
 
     let orbit = new THREE.Mesh(geoOrbit, matOrbit);
 
+    const pointLight = new THREE.PointLight(0xffffff, 1);
+    pointLight.position.set(3, 0, 50);
+
+    orbitGroup.add(pointLight);
     orbitGroup.add(orbit);
     orbitCollection.add(orbitGroup);
   }
@@ -466,7 +463,7 @@ var xDirection = "right";
 var zDirection = "out";
 var peakLoudness = 0;
 
-var lastPowerSpectrum;
+var lastBand = [0, 0, 0];
 let particleZPos = 5;
 // ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE
 // ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE
@@ -507,7 +504,7 @@ function animate(timeStamp) {
       groupTravelParticle.remove(particle);
     }
   });
-  const distanceFromTheCenter = 5;
+  const distanceFromTheCenter = 4;
   // Radiation Loop
   radiationCollection.children.forEach((radiationGroup) => {
     var mesh = radiationGroup.children[0];
@@ -522,7 +519,7 @@ function animate(timeStamp) {
         mesh.rotation.x += audioFeatures.bpm / 10000 + audioFeatures.rms / 15;
         mesh.rotation.y -= audioFeatures.bpm / 10000 + audioFeatures.rms / 20;
         mesh.rotation.z += audioFeatures.bpm / 10000 + audioFeatures.rms / 10;
-        mesh.position.z -= 0.01;
+        mesh.position.z += 0.02;
         if (
           audioFeatures.predictions.mood_aggressive > 0.6 &&
           audioFeatures.predictions.mood_sad >
@@ -613,7 +610,7 @@ function animate(timeStamp) {
   }
 
   // While song is playing do this
-  if (audioFeatures.loudness > 1) {
+  if (audioFeatures.loudness > 3) {
     rmsList.push(audioFeatures.rms);
     rmsMean = calculateAverageOfArray(rmsList);
     if (audioFeatures.rms > rmsMean * 2.2) {
@@ -624,13 +621,22 @@ function animate(timeStamp) {
       peakLoudness -= 0.001;
     }
 
-    const powerSpectrumBands = sliceIntoChunks(audioFeatures.powerSpectrum, 15);
+    const powerSpectrumBands = sliceIntoChunks(audioFeatures.powerSpectrum, 50);
     const band = [
       calculateAverageOfArray(powerSpectrumBands[0]),
       calculateAverageOfArray(powerSpectrumBands[1]),
       calculateAverageOfArray(powerSpectrumBands[2]),
       calculateAverageOfArray(powerSpectrumBands[3]),
       calculateAverageOfArray(powerSpectrumBands[4]),
+      /* 
+     
+      calculateAverageOfArray(powerSpectrumBands[5]),
+      calculateAverageOfArray(powerSpectrumBands[6]),
+      calculateAverageOfArray(powerSpectrumBands[7]),
+      calculateAverageOfArray(powerSpectrumBands[8]),
+      calculateAverageOfArray(powerSpectrumBands[9]),
+      calculateAverageOfArray(powerSpectrumBands[10]),
+      calculateAverageOfArray(powerSpectrumBands[11]), */
     ];
     /*     console.dir(band);
      */
@@ -641,21 +647,36 @@ function animate(timeStamp) {
       ball.scale.y = band.highMid;
       ball.scale.y = band.high;
     });
-    lastPowerSpectrum = band; */
+    */
 
     orbitCollection.children.forEach((orbitGroup, index) => {
       var mesh = orbitGroup.children[0];
+      var light = orbitGroup.children[1];
       var r = 2.5;
-      var bandMorhTime = morphTime + index * 10;
-      orbitGroup.rotation.x = bandMorhTime / 2;
-      orbitGroup.rotation.y = bandMorhTime;
-      /*       orbitGroup.rotation.y  = bandMorhTime;
-       */ /*    orbitGroup.rotation.x  = bandMorhTime;
-      orbitGroup.rotation.y  = bandMorhTime;
-      orbitGroup.rotation.z  = bandMorhTime; */
+      var bandMorhTime = morphTime / 3 + 10 * audioFeatures.danceability;
+      /* var bandRatio = lastBand[index] / band[index];
+      var moveRation;
+      if(bandRatio > 1){
+        moveRation = -0.1;
+      }
+      else{
+        moveRation = 0.0001;
+      }
+      console.dir(bandRatio)
+      
+
+      orbitGroup.position.y = moveRation - 2; */
+      orbitGroup.rotation.x = bandMorhTime / 10;
+      orbitGroup.rotation.y = bandMorhTime / 11;
+      orbitGroup.rotation.z = bandMorhTime / 9;
+
       mesh.position.x = r * Math.sin(bandMorhTime);
-      mesh.position.y = r * Math.cos(bandMorhTime);
+      mesh.position.z = r * Math.cos(bandMorhTime);
+      light.position.x = r * Math.sin(bandMorhTime);
+      light.position.z = r * Math.cos(bandMorhTime);
+      light.intensity = audioFeatures.spectralCentroid;
     });
+    lastBand = band;
   }
 
   var rangePos = 1.5;
