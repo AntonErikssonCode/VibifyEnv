@@ -63,8 +63,8 @@ const control = new OrbitControls(camera, renderer.domElement);
 const loader = new THREE.TextureLoader();
 const textureType = "Paper";
 
-const repeatX = 3
-const repeatY =  2; 
+const repeatX = 3;
+const repeatY = 2;
 const texture = loader.load(
   `../assets/textures/${textureType}/texture.jpg`,
   function (texture) {
@@ -172,10 +172,13 @@ function updateMaterial() {
   clearcoat = 1;
   clearcoatRoughness = audioFeatures.predictions.mood_sad;
   emissiveIntensity = audioFeatures.predictions.mood_happy / 10;
-  
-  if(audioFeatures.predictions.mood_relaxed > 0.60 && audioFeatures.predictions.mood_happy > 0.40){
-    opacity =  0.5;
-    console.dir("dasdaskdm")
+
+  if (
+    audioFeatures.predictions.mood_relaxed > 0.6 &&
+    audioFeatures.predictions.mood_happy > 0.4
+  ) {
+    opacity = 0.5;
+    console.dir("dasdaskdm");
   }
   /* 
   metalness = 1 - audioFeatures.predictions.mood_happy;
@@ -199,11 +202,11 @@ function updateColor() {
     material.displacementScale = 0.01;
     material.normalMap = textureNormal;
     material.normalScale = new THREE.Vector2(8, 8);
-/* 
+    /* 
 
     material.displacementMap= textureNormalHeight;
     material.displacementScale= 1; */
-    
+
     material.metalness = metalness;
     material.roughness = roughness;
     material.reflectivity = reflectivity;
@@ -260,9 +263,7 @@ function createEssenceShape() {
   const materialTest = new THREE.MeshPhysicalMaterial({
     normalMap: textureNormal,
     flatShading: false,
-    normalScale: new THREE.Vector2(10,10),
-    
-   
+    normalScale: new THREE.Vector2(10, 10),
 
     color: audioFeatures.color[13],
     emissive: audioFeatures.color[13],
@@ -382,45 +383,7 @@ function firework() {
   }
 }
 
-/* var interval = setInterval(firework, 2000); */
-
-// Planets
-
-const groupPlanets = new THREE.Group();
-
-function spawnPlanet(colorIndex, size) {
-  var actualSize = size * 3;
-  var planetMat = createMaterial(
-    audioFeatures.color[colorIndex],
-    audioFeatures.color[colorIndex],
-    0.2,
-    1
-  );
-  var shape = resolutionShape;
-  if (shape <= 2) {
-    shape = 2;
-  }
-  var geoPlanet = new THREE.SphereGeometry(actualSize, shape, shape);
-  var planet = new THREE.Mesh(geoPlanet, planetMat);
-
-  var maxValue = 20;
-  var getRandomPositionX = getRndInteger(-maxValue, maxValue);
-  var getRandomPositionY = getRndInteger(-maxValue, maxValue);
-
-  while (getRandomPositionX >= -4 && getRandomPositionX <= 4) {
-    getRandomPositionX = getRndInteger(-maxValue, maxValue);
-  }
-
-  while (getRandomPositionY >= -2 && getRandomPositionY <= 2) {
-    getRandomPositionY = getRndInteger(-maxValue, maxValue);
-  }
-
-  planet.position.set(getRandomPositionX, getRandomPositionY, 2);
-
-  groupPlanets.add(planet);
-  scene.add(groupPlanets);
-}
-
+// Camera Zoom
 let cameraZoomedIn = true;
 function moveCamera() {
   if (camera.position.z <= 6) {
@@ -437,12 +400,27 @@ function moveCamera() {
     cameraZoomedIn = true;
   }
 }
+moveCamera();
 
 const camerabutton = document.querySelector(".cameraButton");
 
 camerabutton.onclick = function () {
   moveCamera();
 };
+
+// Power Spectrum
+let powerSpectrumGroup = new THREE.Group();
+powerSpectrumGroup.position.x = -38;
+powerSpectrumGroup.position.y = -20;
+scene.add(powerSpectrumGroup);
+var geoPowerSpectrumInstance = new THREE.SphereGeometry(0.1, 5, 5);
+var powerSpectrumInstance = new THREE.Mesh(geoPowerSpectrumInstance, material);
+
+for (let index = 0; index < 256/2; index++) {
+  var powerSpectrumInstanceClone = powerSpectrumInstance.clone();
+  powerSpectrumInstanceClone.position.x = index * 0.3;
+  powerSpectrumGroup.add(powerSpectrumInstanceClone);
+}
 
 // Animate Variables
 let last = 0;
@@ -451,12 +429,6 @@ var clock = new THREE.Clock();
 var delta = 0;
 let morphTime = 0;
 let morphTimeAmplifier = 1;
-
-var meanSplicedFrequencyList = [];
-var allMeanFrequency = [
-  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-];
 var rmsList = [];
 var rmsMean = 0;
 var defaultMoveSpeed = 0.01;
@@ -468,6 +440,7 @@ var yDirection = "up";
 var xDirection = "right";
 var zDirection = "out";
 var peakLoudness = 0;
+
 // ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE
 // ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE
 // ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE
@@ -485,7 +458,7 @@ function animate(timeStamp) {
   if (addMorph > 0.1) {
     addMorph = 0.1;
   }
-/*   if (addMorph < 0.01) {
+  /*   if (addMorph < 0.01) {
     addMorph = 0.01;
   } */
   morphTime += addMorph;
@@ -566,38 +539,22 @@ function animate(timeStamp) {
     }
   });
 
-  // Planet Loop
-
-  groupPlanets.children.forEach((planet) => {
-    // Particle Movment
-    planet.position.z -= defaultMoveSpeed;
-    planet.rotation.y -= defaultMoveSpeed / 10;
-    planet.rotation.z -= defaultMoveSpeed / 10;
-    // Remove Particle
-    if (planet.position.z < -fogDistance) {
-      groupPlanets.remove(planet);
-    }
-  });
-
   // When main has been initated
   if (audioFeatures.ready) {
     updateMaterial();
     createEssenceShape();
+
     audioFeatures["essenceShapeReady"] = true;
-    /* pointLight.color.setHex(colorToHexColor(audioFeatures.color[0])); */
-    /*     pointLight2.color.setHex(colorToHexColor(audioFeatures.color[7]));
-     */ defaultMoveSpeed = 0.01 + audioFeatures.bpm / 1500;
-
+    defaultMoveSpeed = 0.01 + audioFeatures.bpm / 1500;
     fogDistance = fogDistance * audioFeatures.predictions.mood_sad;
-
     scene.fog = new THREE.Fog(0x050505, 1, 200);
     emissiveIntensityColor = 0.75 + audioFeatures.predictions.mood_happy / 4;
     morphTimeAmplifier =
       (audioFeatures.predictions.mood_aggressive +
         audioFeatures.predictions.danceability) /
       2;
-    /*     console.dir("morphTimeAmplifier: " + morphTimeAmplifier)
-     */ audioFeatures["ready"] = false;
+
+    audioFeatures["ready"] = false;
   }
 
   // When essence shape is initated
@@ -631,7 +588,9 @@ function animate(timeStamp) {
       peakLoudness -= 0.001;
     }
 
-    /*   console.log(audioFeatures.beatSwitch) */
+    /* powerSpectrumGroup.children.forEach((ball, index) => {
+      ball.position.y = audioFeatures.powerSpectrum[index] / 100;
+    }); */
   }
 
   var rangePos = 1.5;
@@ -687,10 +646,4 @@ function onWindowResize() {
 window.addEventListener("resize", onWindowResize, false);
 
 //Export funktions
-export {
-  setRenderColor,
-  firework,
-  updateColor,
-  /* createColorSpectrumMaterials, */
-  moveCamera,
-};
+export { setRenderColor, firework, updateColor, moveCamera };

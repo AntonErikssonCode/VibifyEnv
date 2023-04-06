@@ -128,6 +128,7 @@ function initMeyda(file) {
         audioFeatures["mfcc"] = features.mfcc;
         audioFeatures["perceptualSpread"] = features.perceptualSpread;
         audioFeatures["perceptualSharpness"] = features.perceptualSharpness;
+        audioFeatures["powerSpectrum"] = features.powerSpectrum;
 
         loudnessHTML.innerHTML =
           "Loudness: " + audioFeatures["loudness"].toFixed(2);
@@ -145,9 +146,6 @@ function initMeyda(file) {
         for (let index = 0; index < audioFeatures.chroma.length; index++) {
           const element = audioFeatures.chroma[index];
           if (element > 0.95) {
-            /* const obj = { chromaIndex: index, value: element, tone: keys[index] }; */
-            /* chromaPrio.push(obj) */
-            /*   console.dir(keys[index]) */
             audioFeatures.keysOrdered.forEach((key, index2) => {
               if (key == keys[index]) {
                 activeIndexes.push(index2);
@@ -156,17 +154,11 @@ function initMeyda(file) {
           }
         }
         audioFeatures["activeColorIndexes"] = activeIndexes;
-        /*     console.dir(activeIndexes)
-        console.dir(" ") */
-
-        /*  audioFeatures["activeHarmony"] = chromaPrio; */
-
-        /*   console.dir(chromaPrio)
-         */
-
         chromaHTML.innerHTML =
           "Chroma: " + keys[audioFeatures.activeChromaIndex];
-      },
+
+/*         console.dir(audioFeatures);
+ */      },
     });
     analyzer.start();
   }
@@ -197,12 +189,13 @@ dropArea.addEventListener("drop", (e) => {
 
   // DEBUG MODE
 
-    initMeyda(uploadedFile);
+  initMeyda(uploadedFile);
   console.dir(audioFeatures);
 
   // UPLOAD MODE
-/*   processFileUpload(files);
- */});
+  /*   processFileUpload(files);
+   */
+});
 dropArea.addEventListener("click", () => {
   dropInput.click();
 });

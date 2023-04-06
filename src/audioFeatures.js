@@ -70,7 +70,7 @@ activeChromaIndex: 0,
 // Dont stop me now song
 
 
-let audioFeaturesd= {
+let audioFeatures= {
   rms: 0,
   loudness: 0,
   energy: 0,
@@ -95,6 +95,7 @@ let audioFeaturesd= {
   mainColor: "0xffffff",
   secondaryColor: "0xffffff",
   colorDifference: 0,
+  powerSpectrum:  [],
   color : ["#ffffff", "#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff","#ffffff"],
   
 };
@@ -140,7 +141,7 @@ let audioFeatures123= {
 // SAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD
 // Min Sad
 // Cactus
-let audioFeatures  = {
+let audioFeaturesdasd  = {
   ready: false,
   essenceShapeReady: false, 
   rms: 0,
@@ -216,7 +217,7 @@ let audioFeaturesö  = {
 /// HAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPPY
 // Max Happy
 //Johnny B Goode
-let audioFeatureseeqweqw= {
+let audioFeaturesdas= {
   ready: false,
   essenceShapeReady: false, 
   rms: 0,
