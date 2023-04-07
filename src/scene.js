@@ -388,7 +388,7 @@ function firework() {
 let cameraZoomedIn = true;
 function moveCamera() {
   if (camera.position.z <= 7) {
-    camera.position.z = 35;
+    camera.position.z = 40;
     camera.position.x = 0;
     camera.position.y = 0;
 
@@ -437,11 +437,31 @@ function spawnOrbit() {
     const pointLight = new THREE.PointLight(0xffffff, 1);
     pointLight.position.set(3, 0, 50);
 
-    orbitGroup.add(pointLight);
     orbitGroup.add(orbit);
+    orbitGroup.add(pointLight);
     orbitCollection.add(orbitGroup);
   }
   scene.add(orbitCollection);
+}
+const numBand = 200;
+const bandStart = 39;
+var bufferGroup = new THREE.Group();
+scene.add(bufferGroup);
+function spawnBuffer() {
+  for (let index = 0; index < numBand; index++) {
+    var size = 0.2;
+    var geoBufferBand = new THREE.SphereGeometry(size, 1, 1);
+    var bufferBand = new THREE.Mesh(geoBufferBand, material);
+    bufferBand.position.x = index * size * 4;
+    bufferGroup.position.x = -80;
+    if (index % 2 == 0) {
+      bufferBand.position.y = bandStart;
+    } else {
+      bufferBand.position.y = -bandStart;
+    }
+
+    bufferGroup.add(bufferBand);
+  }
 }
 
 // Animate Variables
@@ -462,9 +482,17 @@ var yDirection = "up";
 var xDirection = "right";
 var zDirection = "out";
 var peakLoudness = 0;
-
-var lastBand = [0, 0, 0];
+var bandMeans = {
+  low: 0,
+  lowMid: 0,
+  mid: 0,
+  highMid: 0,
+  high: 0,
+};
+var lastBand = [0, 0, 0, 0, 0];
 let particleZPos = 5;
+moveCamera();
+
 // ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE
 // ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE
 // ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE
@@ -511,7 +539,7 @@ function animate(timeStamp) {
 
     // Radiation Movment
     if (audioFeatures.energy > 0.001) {
-      if (mesh.position.x < 35) {
+      if (mesh.position.x < 32) {
         mesh.position.x +=
           audioFeatures.bpm / 10000 +
           audioFeatures.rms * audioFeatures.predictions.danceability;
@@ -519,7 +547,7 @@ function animate(timeStamp) {
         mesh.rotation.x += audioFeatures.bpm / 10000 + audioFeatures.rms / 15;
         mesh.rotation.y -= audioFeatures.bpm / 10000 + audioFeatures.rms / 20;
         mesh.rotation.z += audioFeatures.bpm / 10000 + audioFeatures.rms / 10;
-        mesh.position.z += 0.02;
+        /* mesh.position.z += audioFeatures.bpm / 100000; */
         if (
           audioFeatures.predictions.mood_aggressive > 0.6 &&
           audioFeatures.predictions.mood_sad >
@@ -576,6 +604,7 @@ function animate(timeStamp) {
     updateMaterial();
     createEssenceShape();
     spawnOrbit();
+    spawnBuffer();
 
     audioFeatures["essenceShapeReady"] = true;
     defaultMoveSpeed = 0.01 + audioFeatures.bpm / 1500;
@@ -621,23 +650,34 @@ function animate(timeStamp) {
       peakLoudness -= 0.001;
     }
 
-    const powerSpectrumBands = sliceIntoChunks(audioFeatures.powerSpectrum, 50);
-    const band = [
-      calculateAverageOfArray(powerSpectrumBands[0]),
-      calculateAverageOfArray(powerSpectrumBands[1]),
-      calculateAverageOfArray(powerSpectrumBands[2]),
-      calculateAverageOfArray(powerSpectrumBands[3]),
-      calculateAverageOfArray(powerSpectrumBands[4]),
-      /* 
-     
-      calculateAverageOfArray(powerSpectrumBands[5]),
-      calculateAverageOfArray(powerSpectrumBands[6]),
-      calculateAverageOfArray(powerSpectrumBands[7]),
-      calculateAverageOfArray(powerSpectrumBands[8]),
-      calculateAverageOfArray(powerSpectrumBands[9]),
-      calculateAverageOfArray(powerSpectrumBands[10]),
-      calculateAverageOfArray(powerSpectrumBands[11]), */
-    ];
+    const powerSpectrumBands = sliceIntoChunks(
+      audioFeatures.buffer,
+      Math.floor(audioFeatures.buffer.length / numBand)
+    );
+    const band = [];
+    for (let index = 0; index < numBand; index++) {
+      const element = calculateAverageOfArray(powerSpectrumBands[index]);
+      band.push(element);
+    }
+    const bandMovment = 15;
+    bufferGroup.children.forEach((buffer, index) => {
+      if (index % 2 == 0) {
+        buffer.position.y = band[index] * bandMovment + bandStart;
+      } else {
+        buffer.position.y = band[index] * bandMovment - bandStart;
+      }
+      /*   buffer.position.y = band[index] *7; */
+    });
+
+    console.dir(band);
+    bandMeans["low"] = bandMeans.low + lastBand[0] / band[0] / 2;
+    bandMeans["lowMid"] = bandMeans.lowMid + lastBand[1] / band[1] / 2;
+    bandMeans["mid"] = bandMeans.mid + lastBand[2] / band[2] / 2;
+    bandMeans["highMid"] = bandMeans.highMid + lastBand[3] / band[3] / 2;
+    bandMeans["high"] = bandMeans.high + lastBand[4] / band[4] / 2;
+    /*     console.dir(bandMeans); */
+
+    lastBand = band;
     /*     console.dir(band);
      */
     /*  powerSpectrumGroup.children.forEach((ball, index) => {
@@ -648,12 +688,32 @@ function animate(timeStamp) {
       ball.scale.y = band.high;
     });
     */
+    const keysSorted = Object.keys(bandMeans).sort(function (a, b) {
+      return bandMeans[a] - bandMeans[b];
+    });
+    var orbitLightIntensity;
+    if (keysSorted[0] == "low") {
+      orbitLightIntensity = 0.2;
+    }
+    if (keysSorted[0] == "lowMid") {
+      orbitLightIntensity = 0.4;
+    }
+    if (keysSorted[0] == "mid") {
+      orbitLightIntensity = 0.6;
+    }
+    if (keysSorted[0] == "highMid") {
+      orbitLightIntensity = 0.8;
+    }
+    if (keysSorted[0] == "high") {
+      orbitLightIntensity = 1;
+    }
 
-    orbitCollection.children.forEach((orbitGroup, index) => {
+    /*     console.log(audioFeatures.buffer);
+     */ orbitCollection.children.forEach((orbitGroup, index) => {
       var mesh = orbitGroup.children[0];
       var light = orbitGroup.children[1];
       var r = 2.5;
-      var bandMorhTime = morphTime / 3 + 10 * audioFeatures.danceability;
+      var bandMorhTime = morphTime / 3;
       /* var bandRatio = lastBand[index] / band[index];
       var moveRation;
       if(bandRatio > 1){
@@ -674,9 +734,8 @@ function animate(timeStamp) {
       mesh.position.z = r * Math.cos(bandMorhTime);
       light.position.x = r * Math.sin(bandMorhTime);
       light.position.z = r * Math.cos(bandMorhTime);
-      light.intensity = audioFeatures.spectralCentroid;
+      light.intensity = orbitLightIntensity;
     });
-    lastBand = band;
   }
 
   var rangePos = 1.5;

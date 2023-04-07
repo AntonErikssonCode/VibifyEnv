@@ -116,6 +116,7 @@ function initMeyda(file) {
         "perceptualSharpness",
         "mfcc",
         "complexSpectrum",
+        "buffer"
       ],
       callback: (features) => {
         audioFeatures["loudness"] = features.loudness.total;
@@ -129,6 +130,7 @@ function initMeyda(file) {
         audioFeatures["perceptualSpread"] = features.perceptualSpread;
         audioFeatures["perceptualSharpness"] = features.perceptualSharpness;
         audioFeatures["powerSpectrum"] = features.powerSpectrum;
+        audioFeatures["buffer"] = features.buffer;
 
         loudnessHTML.innerHTML =
           "Loudness: " + audioFeatures["loudness"].toFixed(2);
