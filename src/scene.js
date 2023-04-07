@@ -179,7 +179,6 @@ function updateMaterial() {
     audioFeatures.predictions.mood_happy > 0.4
   ) {
     opacity = 0.5;
-    console.dir("dasdaskdm");
   }
   /* 
   metalness = 1 - audioFeatures.predictions.mood_happy;
@@ -405,11 +404,8 @@ function moveCamera() {
 }
 /* moveCamera();
  */
-const camerabutton = document.querySelector(".cameraButton");
 
-camerabutton.onclick = function () {
-  moveCamera();
-};
+
 
 // Power Spectrum
 let orbitCollection = new THREE.Group();
@@ -443,17 +439,25 @@ function spawnOrbit() {
   }
   scene.add(orbitCollection);
 }
-const numBand = 200;
-const bandStart = 39;
+const numBand = 500;
+const bandStart = 40;
+var matBuffer = new THREE.MeshStandardMaterial({
+  color: "#FFF0FF",
+  emissive: "#FFFFFF",
+  opacity: 0.5,
+  transparent: true,
+});
 var bufferGroup = new THREE.Group();
+let bufferToggle = true;
 scene.add(bufferGroup);
+
 function spawnBuffer() {
   for (let index = 0; index < numBand; index++) {
     var size = 0.2;
     var geoBufferBand = new THREE.SphereGeometry(size, 1, 1);
-    var bufferBand = new THREE.Mesh(geoBufferBand, material);
-    bufferBand.position.x = index * size * 4;
-    bufferGroup.position.x = -80;
+    var bufferBand = new THREE.Mesh(geoBufferBand, matBuffer);
+    bufferBand.position.x = index * size * 2;
+    bufferGroup.position.x = -100;
     if (index % 2 == 0) {
       bufferBand.position.y = bandStart;
     } else {
@@ -463,6 +467,25 @@ function spawnBuffer() {
     bufferGroup.add(bufferBand);
   }
 }
+function hideBuffer() {
+  if (bufferToggle) {
+    bufferGroup.visible = false;
+    bufferToggle = false;
+  } else {
+    bufferGroup.visible = true;
+    bufferToggle = true;
+  }
+}
+
+const camerabutton = document.querySelector(".cameraButton");
+const bufferButton = document.querySelector(".bufferButton");
+
+camerabutton.onclick = function () {
+  moveCamera();
+};
+bufferButton.onclick = function () {
+  hideBuffer() 
+};
 
 // Animate Variables
 let last = 0;
@@ -659,7 +682,7 @@ function animate(timeStamp) {
       const element = calculateAverageOfArray(powerSpectrumBands[index]);
       band.push(element);
     }
-    const bandMovment = 15;
+    const bandMovment = 20;
     bufferGroup.children.forEach((buffer, index) => {
       if (index % 2 == 0) {
         buffer.position.y = band[index] * bandMovment + bandStart;
@@ -669,7 +692,6 @@ function animate(timeStamp) {
       /*   buffer.position.y = band[index] *7; */
     });
 
-    console.dir(band);
     bandMeans["low"] = bandMeans.low + lastBand[0] / band[0] / 2;
     bandMeans["lowMid"] = bandMeans.lowMid + lastBand[1] / band[1] / 2;
     bandMeans["mid"] = bandMeans.mid + lastBand[2] / band[2] / 2;
@@ -793,4 +815,4 @@ function onWindowResize() {
 window.addEventListener("resize", onWindowResize, false);
 
 //Export funktions
-export { setRenderColor, firework, updateColor, moveCamera };
+export { setRenderColor, firework, updateColor, moveCamera, hideBuffer };

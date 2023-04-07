@@ -69,6 +69,11 @@ h2 {
   top: 3rem;
   right:   0.5rem;
 }
+.bufferButton{
+  top: 5.5rem;
+  right:   0.5rem;
+}
+
 
 .optionsButton {
   position: absolute;
@@ -80,6 +85,7 @@ h2 {
   width: 70px;
   height: 2rem;
   z-index: 5;
+  border-radius: 0.2rem;
 }
 
 /* FILE UPLOAD AREA */
