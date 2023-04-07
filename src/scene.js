@@ -412,7 +412,7 @@ let orbitCollection = new THREE.Group();
 function spawnOrbit() {
   for (let index = 0; index < 1; index++) {
     let orbitGroup = new THREE.Group();
-    let geoOrbit = new THREE.SphereGeometry(0.1, 5, 5);
+    let geoOrbit = new THREE.SphereGeometry(0.1, 15 , 15);
     var color = shade(audioFeatures.color[index], 0.1);
     const matOrbit = new THREE.MeshPhysicalMaterial({
       normalMap: textureNormal,
@@ -551,7 +551,7 @@ function animate(timeStamp) {
     particle.position.z -= defaultMoveSpeed;
 
     // Remove Particle
-    if (particle.position.z < -fogDistance) {
+    if (particle.position.z < -300) {
       groupTravelParticle.remove(particle);
     }
   });
@@ -616,7 +616,7 @@ function animate(timeStamp) {
       }
 
       // Remove Radiation
-      if (mesh.position.z < -200 /* fogDistance-50 */) {
+      if (mesh.position.z < -300 /* fogDistance-50 */) {
         radiationCollection.remove(radiationGroup);
       }
     }
@@ -631,10 +631,10 @@ function animate(timeStamp) {
 
     audioFeatures["essenceShapeReady"] = true;
     defaultMoveSpeed = 0.01 + audioFeatures.bpm / 1500;
-    fogDistance = fogDistance * audioFeatures.predictions.mood_sad;
-    scene.fog = new THREE.Fog(0x050505, 1, 200);
+  /*   fogDistance = fogDistance * audioFeatures.predictions.mood_sad; */
+    scene.fog = new THREE.Fog(0x050505, 1, 300);
     centerLight.intensity =
-      centerLight.intensity * audioFeatures.predictions.mood_happy;
+      centerLight.intensity * audioFeatures.predictions.mood_happy/3;
     pointLight.intensity = 1.2 + 0.5 * audioFeatures.predictions.mood_happy;
     emissiveIntensityColor = 0.75 + audioFeatures.predictions.mood_happy / 4;
     morphTimeAmplifier =
@@ -682,7 +682,7 @@ function animate(timeStamp) {
       const element = calculateAverageOfArray(powerSpectrumBands[index]);
       band.push(element);
     }
-    const bandMovment = 20;
+    const bandMovment = 15;
     bufferGroup.children.forEach((buffer, index) => {
       if (index % 2 == 0) {
         buffer.position.y = band[index] * bandMovment + bandStart;
@@ -714,20 +714,21 @@ function animate(timeStamp) {
       return bandMeans[a] - bandMeans[b];
     });
     var orbitLightIntensity;
+    var lightMax = 5;
     if (keysSorted[0] == "low") {
-      orbitLightIntensity = 0.2;
+      orbitLightIntensity = lightMax/5 *1;
     }
     if (keysSorted[0] == "lowMid") {
-      orbitLightIntensity = 0.4;
+      orbitLightIntensity = lightMax/5 *2;
     }
     if (keysSorted[0] == "mid") {
-      orbitLightIntensity = 0.6;
+      orbitLightIntensity = lightMax/5 *3;
     }
     if (keysSorted[0] == "highMid") {
-      orbitLightIntensity = 0.8;
+      orbitLightIntensity = lightMax/5 *4;
     }
     if (keysSorted[0] == "high") {
-      orbitLightIntensity = 1;
+      orbitLightIntensity = lightMax/5 *5;
     }
 
     /*     console.log(audioFeatures.buffer);
@@ -735,7 +736,7 @@ function animate(timeStamp) {
       var mesh = orbitGroup.children[0];
       var light = orbitGroup.children[1];
       var r = 2.5;
-      var bandMorhTime = morphTime / 3;
+      var bandMorhTime = morphTime / 1.5;
       /* var bandRatio = lastBand[index] / band[index];
       var moveRation;
       if(bandRatio > 1){
@@ -805,6 +806,40 @@ function animate(timeStamp) {
   composer.render(scene, camera);
 }
 animate();
+
+
+function idleLogout() {
+  var t;
+  window.onload = resetTimer;
+  window.onmousemove = resetTimer;
+  window.onmousedown = resetTimer;  // catches touchscreen presses as well      
+  window.ontouchstart = resetTimer; // catches touchscreen swipes as well      
+  window.ontouchmove = resetTimer;  // required by some devices 
+  window.onclick = resetTimer;      // catches touchpad clicks as well
+  window.onkeydown = resetTimer;   
+  window.addEventListener('scroll', resetTimer, true); // improved; see comments
+
+  const buttonList = document.querySelectorAll(".optionsButton");
+  function yourFunction() {
+    console.dir(buttonList)
+    buttonList.forEach((button)=>{
+      button.style.display ="none";
+    })
+  };
+
+  function resetTimer() {
+      clearTimeout(t);
+      t = setTimeout(yourFunction, 5000);  // time is in milliseconds
+  }
+}
+idleLogout();
+document.addEventListener("mousemove", ()=>{
+  const buttonList = document.querySelectorAll(".optionsButton");
+  buttonList.forEach((button)=>{
+    button.style.display ="block";
+  })
+});
+
 
 // Resize Window
 function onWindowResize() {

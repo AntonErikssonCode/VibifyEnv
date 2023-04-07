@@ -102,7 +102,7 @@ let audioFeatures12x3= {
 
 // GIFT OF GUILT
 
-let audioFeatures= {
+let audioFeaturesasd= {
   ready: false,
   essenceShapeReady: false, 
   rms: 0,
@@ -217,7 +217,7 @@ let audioFeaturesda = {
 /// HAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPPY
 // Max Happy
 //Johnny B Goode
-let audioFeaturesdasd= {
+let audioFeaturesd= {
   ready: false,
   essenceShapeReady: false, 
   rms: 0,
@@ -327,7 +327,7 @@ let audioFeatures123ad   = {
 
 // Max Relax
 // Moonlight sonata
-let audioFeaturesd   = {
+let audioFeaturesdas   = {
   ready: false,
   essenceShapeReady: false, 
   rms: 0,
@@ -475,7 +475,7 @@ let audioFeatures21 = {
 
 // Max Danceability
 // Dark Age
-let audioFeatures213   = {
+let audioFeatures   = {
   ready: false,
   essenceShapeReady: false, 
   rms: 0,
