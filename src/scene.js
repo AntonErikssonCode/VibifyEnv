@@ -1,8 +1,5 @@
-/* import * as THREE from "../modules/three.module.js";
- */
 import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.125/build/three.module.js";
 import { OrbitControls } from "../modules/OrbitControls.js";
-
 import {
   normalize,
   hslToHex,
@@ -20,25 +17,29 @@ import { ShaderPass } from "https://cdn.jsdelivr.net/npm/three@0.125/examples/js
 import { VignetteShader } from "https://cdn.jsdelivr.net/npm/three@0.125/examples/jsm/shaders/VignetteShader.js";
 import openSimplexNoise from "https://cdn.skypack.dev/open-simplex-noise";
 
-// Constants
+// Window
 const w = window.innerWidth;
 const h = window.innerHeight;
 
 // Camera
 let scene = new THREE.Scene();
-const camera = new THREE.PerspectiveCamera(90, w /* *0.7 */ / h, 0.1, 1000);
+const camera = new THREE.PerspectiveCamera(90, w / h, 0.1, 1000);
 camera.position.z = 6;
 
 // Renderer
 const renderer = new THREE.WebGLRenderer({
-  /*  antialias: true, */
   canvas: myCanvasId,
-  /* alpha: true, */
 });
+const renderScene = new RenderPass(scene, camera);
 renderer.outputEncoding = THREE.RGBADepthPacking;
 renderer.setSize(w, h);
 
-const renderScene = new RenderPass(scene, camera);
+// Change Scene Color
+function setRenderColor() {
+  const darknessBias = -0.5;
+  var color = shade(audioFeatures.color[13], darknessBias);
+  scene.background = new THREE.Color(color);
+}
 
 // Post Processing
 const composer = new EffectComposer(renderer);
@@ -60,12 +61,13 @@ composer.addPass(afterImagePass);
 
 // Controls
 const control = new OrbitControls(camera, renderer.domElement);
+
 // Texture
 const loader = new THREE.TextureLoader();
 const textureType = "Paper";
+const repeatX = 4;
+const repeatY = 3;
 
-const repeatX = 3;
-const repeatY = 2;
 const texture = loader.load(
   `../assets/textures/${textureType}/texture.jpg`,
   function (texture) {
@@ -75,6 +77,7 @@ const texture = loader.load(
     texture.repeat.y = repeatY;
   }
 );
+
 const textureNormal = loader.load(
   `../assets/textures/${textureType}/normal.jpg`,
   function (texture) {
@@ -97,26 +100,23 @@ const textureNormalHeight = loader.load(
 
 // Lights
 const light = new THREE.AmbientLight(0xffffff, 0.1);
-scene.add(light);
-
-const dirLight = new THREE.DirectionalLight(0xffffff, 1);
-
-dirLight.position.y = 1000;
-scene.add(dirLight);
-/* const helper = new THREE.DirectionalLightHelper(dirLight, 5);
-scene.add(helper); */
-
 const pointLight = new THREE.PointLight(0xffffff, 1.7);
-pointLight.position.set(3, 0, 50);
-scene.add(pointLight);
-
 const pointLight2 = new THREE.PointLight(0xffffff, 2);
-pointLight2.position.set(200, 200, 200);
-/* scene.add(pointLight2); */
-
+const dirLight = new THREE.DirectionalLight(0xffffff, 1);
 const centerLight = new THREE.PointLight(0xffffff, 2);
+
+// Change Lights
+pointLight.position.set(3, 0, 50);
+pointLight2.position.set(200, 200, 200);
+dirLight.position.y = 1000;
 centerLight.position.set(0, 0, 0);
+
+// Add Lights
+scene.add(light);
+scene.add(pointLight);
+scene.add(dirLight);
 scene.add(centerLight);
+
 // Materials
 const colorMaterial = [];
 for (let index = 0; index < 12; index++) {
@@ -128,16 +128,15 @@ const material = new THREE.MeshPhysicalMaterial({
   normalMap: textureNormal,
   normalScale: new THREE.Vector2(8, 8),
   displacementMap: textureNormalHeight,
-  displacementScale: 0.01,
+  displacementScale: 0.2,
   clearcoat: 1,
   clearcoatRoughness: 0.1,
   metalness: 0.9,
   roughness: 0.5,
 });
-/* const geoBaseObject = new THREE.SphereGeometry(1, 50, 50);
-const baseObject = new THREE.Mesh(geoBaseObject, colorMaterial[0]);
-baseObject.position.x = 4;
-scene.add(baseObject); */
+const geoBaseObject = new THREE.SphereGeometry(0.2, 10, 10);
+const baseObject = new THREE.Mesh(geoBaseObject, material);
+scene.add(baseObject);
 
 // Create New Material
 function createMaterial(color, emissive, emissiveIntensity, opacity) {
@@ -151,13 +150,7 @@ function createMaterial(color, emissive, emissiveIntensity, opacity) {
   return newMaterial;
 }
 
-// Color Functions
-function setRenderColor() {
-  const darknessBias = -0.5;
-  var color = shade(audioFeatures.color[13], darknessBias);
-  scene.background = new THREE.Color(color);
-}
-
+// Material values
 let metalness = 0;
 let roughness = 0;
 let reflectivity = 0;
@@ -166,6 +159,7 @@ let clearcoatRoughness = 0;
 let emissiveIntensity = 0.0;
 let opacity = 1;
 
+// Update material values based on mood predictions.
 function updateMaterial() {
   metalness = 0.6 - audioFeatures.predictions.mood_happy;
   roughness = 0.3 + 0.7 * audioFeatures.predictions.mood_happy;
@@ -180,18 +174,11 @@ function updateMaterial() {
   ) {
     opacity = 0.5;
   }
-  /* 
-  metalness = 1 - audioFeatures.predictions.mood_happy;
-  roughness = audioFeatures.predictions.mood_happy;
-  reflectivity = audioFeatures.predictions.mood_happy;
-  clearcoat = 1;
-  clearcoatRoughness = audioFeatures.predictions.mood_sad;
-  emissiveIntensity = audioFeatures.predictions.mood_happy/10;
- */
-  updateColor();
+  setMaterial();
 }
 
-function updateColor() {
+// Update the new colorMaterials array with the current material values.
+function setMaterial() {
   colorMaterial.forEach((material, index) => {
     material.color.setHex(colorToHexColor(audioFeatures.color[index]));
     material.emissive.setHex(colorToHexColor(audioFeatures.color[index]));
@@ -199,14 +186,9 @@ function updateColor() {
     material.opacity = opacity;
     material.transparent = true;
     material.displacementMap = textureNormalHeight;
-    material.displacementScale = 0.01;
+    material.displacementScale = 1;
     material.normalMap = textureNormal;
-    material.normalScale = new THREE.Vector2(8, 8);
-    /* 
-
-    material.displacementMap= textureNormalHeight;
-    material.displacementScale= 1; */
-
+    material.normalScale = new THREE.Vector2(15, 15);
     material.metalness = metalness;
     material.roughness = roughness;
     material.reflectivity = reflectivity;
@@ -224,7 +206,7 @@ let radius = 1.2;
 let nPos = [];
 let pos;
 let resolutionShape;
-let emissiveIntensityColor;
+
 function createEssenceShape() {
   resolutionShape = Math.floor(
     (audioFeatures.predictions.mood_happy +
@@ -264,11 +246,9 @@ function createEssenceShape() {
     normalMap: textureNormal,
     flatShading: false,
     normalScale: new THREE.Vector2(10, 10),
-
     color: audioFeatures.color[13],
     emissive: audioFeatures.color[13],
     emissiveIntensity: emissiveIntensity,
-
     metalness: metalness,
     roughness: roughness,
     reflectivity: reflectivity,
@@ -281,7 +261,7 @@ function createEssenceShape() {
   scene.add(essenceShape);
 
   noise = openSimplexNoise.makeNoise4D(
-    audioFeatures.predictions.danceability * 100 /* Date.now() */
+    audioFeatures.predictions.danceability * 100
   );
 }
 
@@ -363,7 +343,7 @@ var fireworkModifier = 0;
 
 function firework() {
   var value = 0;
-  var size = 6.5 * audioFeatures.rms;
+  var size = 6.5 * audioFeatures.rmsMean;
 
   fireworkModifier = 1;
   var colorIndexLength = audioFeatures.activeColorIndexes.length;
@@ -405,20 +385,18 @@ function moveCamera() {
 /* moveCamera();
  */
 
-
-
 // Power Spectrum
 let orbitCollection = new THREE.Group();
 function spawnOrbit() {
   for (let index = 0; index < 1; index++) {
     let orbitGroup = new THREE.Group();
-    let geoOrbit = new THREE.SphereGeometry(0.1, 15 , 15);
+    let geoOrbit = new THREE.SphereGeometry(0.05, 15, 15);
     var color = shade(audioFeatures.color[index], 0.1);
     const matOrbit = new THREE.MeshPhysicalMaterial({
       normalMap: textureNormal,
       normalScale: new THREE.Vector2(8, 8),
       displacementMap: textureNormalHeight,
-      displacementScale: 0.2,
+      displacementScale: 0.1,
       clearcoat: 1,
       clearcoatRoughness: 0.1,
       metalness: 0.9,
@@ -484,7 +462,7 @@ camerabutton.onclick = function () {
   moveCamera();
 };
 bufferButton.onclick = function () {
-  hideBuffer() 
+  hideBuffer();
 };
 
 // Animate Variables
@@ -494,8 +472,7 @@ var clock = new THREE.Clock();
 var delta = 0;
 let morphTime = 0;
 let morphTimeAmplifier = 1;
-var rmsList = [];
-var rmsMean = 0;
+
 var defaultMoveSpeed = 0.01;
 var fogDistance = 150;
 var xModifier = 0.05;
@@ -527,9 +504,10 @@ function animate(timeStamp) {
 
   let t = clock.getElapsedTime();
   let timeInSecond = timeStamp / 100;
+  let rmsType = audioFeatures.rmsMean;
 
   delta = clock.getDelta();
-  let addMorph = audioFeatures.rms * morphTimeAmplifier;
+  let addMorph = audioFeatures.rmsMean * morphTimeAmplifier;
   if (addMorph > 0.1) {
     addMorph = 0.1;
   }
@@ -565,11 +543,11 @@ function animate(timeStamp) {
       if (mesh.position.x < 32) {
         mesh.position.x +=
           audioFeatures.bpm / 10000 +
-          audioFeatures.rms * audioFeatures.predictions.danceability;
+          rmsType * audioFeatures.predictions.danceability;
 
-        mesh.rotation.x += audioFeatures.bpm / 10000 + audioFeatures.rms / 15;
-        mesh.rotation.y -= audioFeatures.bpm / 10000 + audioFeatures.rms / 20;
-        mesh.rotation.z += audioFeatures.bpm / 10000 + audioFeatures.rms / 10;
+        mesh.rotation.x += audioFeatures.bpm / 10000 + rmsType / 15;
+        mesh.rotation.y -= audioFeatures.bpm / 10000 + rmsType / 20;
+        mesh.rotation.z += audioFeatures.bpm / 10000 + rmsType / 10;
         /* mesh.position.z += audioFeatures.bpm / 100000; */
         if (
           audioFeatures.predictions.mood_aggressive > 0.6 &&
@@ -600,17 +578,16 @@ function animate(timeStamp) {
         if (audioFeatures.energy < 0.01) {
           mesh.position.z -= 0.01;
         } else {
-          mesh.position.z -=
-            audioFeatures.bpm / 100000 + audioFeatures.rms * 1.5;
+          mesh.position.z -= audioFeatures.bpm / 100000 + rmsType * 1.5;
           mesh.position.x += 0.01;
 
           // Direction of spiral
           if (audioFeatures.key == "major") {
             radiationGroup.rotation.z +=
-              audioFeatures.bpm / 100000 + (audioFeatures.rms * 1.5) / 300;
+              audioFeatures.bpm / 100000 + (rmsType * 1.5) / 300;
           } else {
             radiationGroup.rotation.z -=
-              audioFeatures.bpm / 100000 + (audioFeatures.rms * 1.5) / 300;
+              audioFeatures.bpm / 100000 + (rmsType * 1.5) / 300;
           }
         }
       }
@@ -631,10 +608,10 @@ function animate(timeStamp) {
 
     audioFeatures["essenceShapeReady"] = true;
     defaultMoveSpeed = 0.01 + audioFeatures.bpm / 1500;
-  /*   fogDistance = fogDistance * audioFeatures.predictions.mood_sad; */
+    /*   fogDistance = fogDistance * audioFeatures.predictions.mood_sad; */
     scene.fog = new THREE.Fog(0x050505, 1, 300);
     centerLight.intensity =
-      centerLight.intensity * audioFeatures.predictions.mood_happy/6;
+      (centerLight.intensity * audioFeatures.predictions.mood_happy) / 6;
     pointLight.intensity = 1.2 + 0.5 * audioFeatures.predictions.mood_happy;
     emissiveIntensityColor = 0.65 + audioFeatures.predictions.mood_happy / 4;
     morphTimeAmplifier =
@@ -651,7 +628,7 @@ function animate(timeStamp) {
     geoEssenceShape.userData.nPos.forEach((p, idx) => {
       let ns = noise(p.x, p.y, p.z, morphTime);
       v3.copy(p)
-        .multiplyScalar(radius + audioFeatures.rms * 1.15)
+        .multiplyScalar(radius + audioFeatures.rmsMean * 1.15)
         .addScaledVector(p, ns);
       pos.setXYZ(idx, v3.x, v3.y, v3.z);
     });
@@ -663,16 +640,6 @@ function animate(timeStamp) {
 
   // While song is playing do this
   if (audioFeatures.loudness > 3) {
-    rmsList.push(audioFeatures.rms);
-    rmsMean = calculateAverageOfArray(rmsList);
-    if (audioFeatures.rms > rmsMean * 2.2) {
-    }
-    if (audioFeatures.loudness > peakLoudness) {
-      peakLoudness = audioFeatures.loudness;
-    } else {
-      peakLoudness -= 0.001;
-    }
-
     const powerSpectrumBands = sliceIntoChunks(
       audioFeatures.buffer,
       Math.floor(audioFeatures.buffer.length / numBand)
@@ -697,38 +664,28 @@ function animate(timeStamp) {
     bandMeans["mid"] = bandMeans.mid + lastBand[2] / band[2] / 2;
     bandMeans["highMid"] = bandMeans.highMid + lastBand[3] / band[3] / 2;
     bandMeans["high"] = bandMeans.high + lastBand[4] / band[4] / 2;
-    /*     console.dir(bandMeans); */
 
     lastBand = band;
-    /*     console.dir(band);
-     */
-    /*  powerSpectrumGroup.children.forEach((ball, index) => {
-      ball.scale.y = band.bass;
-      ball.scale.y = band.lowMid;
-      ball.scale.y = band.mid;
-      ball.scale.y = band.highMid;
-      ball.scale.y = band.high;
-    });
-    */
+
     const keysSorted = Object.keys(bandMeans).sort(function (a, b) {
       return bandMeans[a] - bandMeans[b];
     });
     var orbitLightIntensity;
     var lightMax = 5;
     if (keysSorted[0] == "low") {
-      orbitLightIntensity = lightMax/5 *1;
+      orbitLightIntensity = (lightMax / 5) * 1;
     }
     if (keysSorted[0] == "lowMid") {
-      orbitLightIntensity = lightMax/5 *2;
+      orbitLightIntensity = (lightMax / 5) * 2;
     }
     if (keysSorted[0] == "mid") {
-      orbitLightIntensity = lightMax/5 *3;
+      orbitLightIntensity = (lightMax / 5) * 3;
     }
     if (keysSorted[0] == "highMid") {
-      orbitLightIntensity = lightMax/5 *4;
+      orbitLightIntensity = (lightMax / 5) * 4;
     }
     if (keysSorted[0] == "high") {
-      orbitLightIntensity = lightMax/5 *5;
+      orbitLightIntensity = (lightMax / 5) * 5;
     }
 
     /*     console.log(audioFeatures.buffer);
@@ -763,9 +720,9 @@ function animate(timeStamp) {
 
   var rangePos = 1.5;
   var rangeNeg = -1.5;
-  var yModifierSpeed = audioFeatures.rms / 10;
-  var xModifierSpeed = audioFeatures.rms / 20;
-  var zModifierSpeed = audioFeatures.rms;
+  var yModifierSpeed = rmsType / 10;
+  var xModifierSpeed = rmsType / 20;
+  var zModifierSpeed = rmsType;
   if (yDirection === "up") {
     if (camera.position.y <= rangePos) {
       yModifier = yModifierSpeed;
@@ -807,39 +764,37 @@ function animate(timeStamp) {
 }
 animate();
 
-
 function idleLogout() {
   var t;
   window.onload = resetTimer;
   window.onmousemove = resetTimer;
-  window.onmousedown = resetTimer;  // catches touchscreen presses as well      
-  window.ontouchstart = resetTimer; // catches touchscreen swipes as well      
-  window.ontouchmove = resetTimer;  // required by some devices 
-  window.onclick = resetTimer;      // catches touchpad clicks as well
-  window.onkeydown = resetTimer;   
-  window.addEventListener('scroll', resetTimer, true); // improved; see comments
+  window.onmousedown = resetTimer; // catches touchscreen presses as well
+  window.ontouchstart = resetTimer; // catches touchscreen swipes as well
+  window.ontouchmove = resetTimer; // required by some devices
+  window.onclick = resetTimer; // catches touchpad clicks as well
+  window.onkeydown = resetTimer;
+  window.addEventListener("scroll", resetTimer, true); // improved; see comments
 
   const buttonList = document.querySelectorAll(".optionsButton");
   function yourFunction() {
-    console.dir(buttonList)
-    buttonList.forEach((button)=>{
-      button.style.display ="none";
-    })
-  };
+    console.dir(buttonList);
+    buttonList.forEach((button) => {
+      button.style.display = "none";
+    });
+  }
 
   function resetTimer() {
-      clearTimeout(t);
-      t = setTimeout(yourFunction, 5000);  // time is in milliseconds
+    clearTimeout(t);
+    t = setTimeout(yourFunction, 5000); // time is in milliseconds
   }
 }
 idleLogout();
-document.addEventListener("mousemove", ()=>{
+document.addEventListener("mousemove", () => {
   const buttonList = document.querySelectorAll(".optionsButton");
-  buttonList.forEach((button)=>{
-    button.style.display ="block";
-  })
+  buttonList.forEach((button) => {
+    button.style.display = "block";
+  });
 });
-
 
 // Resize Window
 function onWindowResize() {
@@ -850,4 +805,4 @@ function onWindowResize() {
 window.addEventListener("resize", onWindowResize, false);
 
 //Export funktions
-export { setRenderColor, firework, updateColor, moveCamera, hideBuffer };
+export { setRenderColor, firework, updateMaterial, moveCamera, hideBuffer };

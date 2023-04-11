@@ -1,11 +1,7 @@
 import { preprocess, shortenAudio } from "./audioUtils.js";
-import {
-  fetchLabeledData,
-  fetchBpmAndKey,
-  emotionalModelUpdate,
-} from "./updateState.js";
+import { fetchLabeledData, fetchBpmAndKey } from "./updateState.js";
 import { getColors } from "./getColors.js";
-import { firework, setRenderColor, updateColor } from "./scene.js";
+import { firework, setRenderColor, updateMaterial } from "./scene.js";
 import { calculateAverageOfArray, throttle } from "./utilityFunctions.js";
 
 const loudnessHTML = document.querySelector("#loudnessTag");
@@ -21,7 +17,7 @@ const throttleFirework = throttle(() => {
   firework();
 });
 const keys = ["C", "C♯", "D", "D♯", "E", "F", "F♯", "G", "G♯", "A", "A♯", "B"];
-
+var rmsList = [];
 var lowPassEnergy = [];
 
 function initMeyda(file) {
@@ -141,8 +137,19 @@ function initMeyda(file) {
         audioFeatures["activeColorIndexes"] = activeIndexes;
         chromaHTML.innerHTML =
           "Chroma: " + keys[audioFeatures.activeChromaIndex];
-
-      
+        
+        const rmsListLength = 5;
+        if (rmsList.length < rmsListLength) {
+          rmsList.push(audioFeatures.rms);
+        }
+        if (rmsList.length >= rmsListLength) {
+          var theRemovedElement = rmsList.shift();
+          rmsList.push(audioFeatures.rms);
+        }
+        audioFeatures["rmsMean"] = calculateAverageOfArray(rmsList);
+   /*      console.dir("VALUES");
+        console.dir(audioFeatures.rms);
+        console.dir(audioFeatures.rmsMean); */
       },
     });
     analyzer.start();
@@ -162,55 +169,51 @@ const modelNames = [
   "danceability",
 ];
 let inferenceResultPromises = [];
-
 let uploadedFile;
+
 dropArea.addEventListener("dragover", (e) => {
   e.preventDefault();
 });
+
 dropArea.addEventListener("drop", (e) => {
   e.preventDefault();
   const files = e.dataTransfer.files;
   uploadedFile = e.dataTransfer.files[0];
 
   // DEBUG MODE
-  
   initMeyda(uploadedFile);
   console.dir(audioFeatures);
 
   // UPLOAD MODE
   /* processFileUpload(files); */
 });
+
 dropArea.addEventListener("click", () => {
   dropInput.click();
 });
 
-// Debug Init
+// Debug init, only works if audiofeatures are preloaded in the audiofeatures file. 
 function initThree() {
   fetchLabeledData();
-
-  emotionalModelUpdate();
   getColors();
   setRenderColor();
-  console.dir(audioFeatures);
-
-  updateColor();
+  updateMaterial();
   audioFeatures["ready"] = true;
 }
 initThree();
 
-// Init
+// Init the three.js visualization
 function initThreeWithAffect() {
   fetchLabeledData();
   initMeyda(uploadedFile);
   emotionalModelUpdate();
   getColors();
   setRenderColor();
-  console.dir(audioFeatures);
-
-  updateColor();
+  updateMaterial();
   audioFeatures["ready"] = true;
 }
 
+// Essentia.js code
 function processFileUpload(files) {
   if (files.length > 1) {
     alert("Only single-file uploads are supported currently");
@@ -222,29 +225,25 @@ function processFileUpload(files) {
   }
 }
 
+// Essentia.js code
 function decodeFile(arrayBuffer) {
   audioCtx.resume().then(() => {
     audioCtx
       .decodeAudioData(arrayBuffer)
       .then(async function handleDecodedAudio(audioBuffer) {
         console.info("Done decoding audio!");
-
         const prepocessedAudio = preprocess(audioBuffer);
         await audioCtx.suspend();
-
         if (essentia) {
           essentiaAnalysis = computeKeyBPM(prepocessedAudio);
-          /*           console.dir(essentiaAnalysis);
-           */ audioFeatures["bpm"] = essentiaAnalysis.bpm;
+          audioFeatures["bpm"] = essentiaAnalysis.bpm;
           audioFeatures["key"] = essentiaAnalysis.keyData.key;
           audioFeatures["scale"] = essentiaAnalysis.keyData.scale;
           fetchBpmAndKey();
         }
 
         let audioData = shortenAudio(prepocessedAudio, KEEP_PERCENTAGE, true);
-
         createFeatureExtractionWorker();
-
         featureExtractionWorker.postMessage(
           {
             audio: audioData.buffer,
@@ -256,6 +255,7 @@ function decodeFile(arrayBuffer) {
   });
 }
 
+// Essentia.js code
 function computeKeyBPM(audioSignal) {
   let vectorSignal = essentia.arrayToVector(audioSignal);
   const keyData = essentia.KeyExtractor(
@@ -292,6 +292,7 @@ function computeKeyBPM(audioSignal) {
   };
 }
 
+// Essentia.js code
 function createFeatureExtractionWorker() {
   featureExtractionWorker = new Worker("./src/featureExtraction.js");
   featureExtractionWorker.onmessage = function listenToFeatureExtractionWorker(
@@ -312,6 +313,7 @@ function createFeatureExtractionWorker() {
   };
 }
 
+// Essentia.js code
 function createInferenceWorkers() {
   modelNames.forEach((n) => {
     inferenceWorkers[n] = new Worker("./src/inference.js");
@@ -328,13 +330,14 @@ function createInferenceWorkers() {
             res({ [n]: preds });
           })
         );
-        collectPredictions();
+   
         console.log(`${n} predictions: `, preds);
       }
     };
   });
 }
 
+// Essentia.js code
 function collectPredictions() {
   if (inferenceResultPromises.length == modelNames.length) {
     Promise.all(inferenceResultPromises).then((predictions) => {
@@ -343,14 +346,16 @@ function collectPredictions() {
       audioFeatures["predictions"] = allPredictions;
       inferenceResultPromises = []; // clear array
       audioFeatures["ready"] = true;
+
+      // Init three.js vizualisation
       initThreeWithAffect();
     });
   }
 }
 
+// Essentia.js code
 window.onload = () => {
   createInferenceWorkers();
-
   EssentiaWASM().then((wasmModule) => {
     essentia = new wasmModule.EssentiaJS(false);
     essentia.arrayToVector = wasmModule.arrayToVector;

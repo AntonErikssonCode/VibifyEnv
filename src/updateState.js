@@ -26,21 +26,7 @@ function fetchBpmAndKey() {
   bpm.innerHTML += " " + audioFeatures["bpm"].toFixed(2);
 }
 
-function emotionalModelUpdate() {
-  const valensTag = document.querySelector("#valensTag");
-  const arousalTag = document.querySelector("#arousalTag");
 
-  audioFeatures["arousal"] =
-    audioFeatures.predictions["mood_aggressive"] -
-    audioFeatures.predictions["mood_relaxed"];
-
-  audioFeatures["valens"] =
-    audioFeatures.predictions["mood_happy"] -
-    audioFeatures.predictions["mood_sad"];
-
-  valensTag.innerHTML += " " + audioFeatures["valens"];
-  arousalTag.innerHTML += " " + audioFeatures["arousal"];
-}
 
 function getColorsOld() {
   const testColorDiv1 = document.querySelector("#testColor1");
@@ -99,4 +85,4 @@ function getColorsOld() {
   audioFeatures["colorDifference"] = Math.abs(mainValues / secondaryValues);
 }
 
-export { fetchLabeledData, fetchBpmAndKey, emotionalModelUpdate, getColorsOld };
+export { fetchLabeledData, fetchBpmAndKey, getColorsOld };
