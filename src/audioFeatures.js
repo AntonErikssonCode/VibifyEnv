@@ -217,7 +217,7 @@ let audioFeaturesda = {
 /// HAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPPY
 // Max Happy
 //Johnny B Goode
-let audioFeaturesd= {
+let audioFeatures= {
   ready: false,
   essenceShapeReady: false, 
   rms: 0,
@@ -475,7 +475,7 @@ let audioFeatures21 = {
 
 // Max Danceability
 // Dark Age
-let audioFeatures   = {
+let audioFeatures312   = {
   ready: false,
   essenceShapeReady: false, 
   rms: 0,

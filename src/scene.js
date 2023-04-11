@@ -42,7 +42,7 @@ const renderScene = new RenderPass(scene, camera);
 
 // Post Processing
 const composer = new EffectComposer(renderer);
-const bloomPass = new UnrealBloomPass(new THREE.Vector2(w, h), 0.4, 0.5, 0.5);
+const bloomPass = new UnrealBloomPass(new THREE.Vector2(w, h), 0.4, 0.4, 0.4);
 const afterImagePass = new AfterimagePass();
 const effectVignette = new ShaderPass(VignetteShader);
 
@@ -634,9 +634,9 @@ function animate(timeStamp) {
   /*   fogDistance = fogDistance * audioFeatures.predictions.mood_sad; */
     scene.fog = new THREE.Fog(0x050505, 1, 300);
     centerLight.intensity =
-      centerLight.intensity * audioFeatures.predictions.mood_happy/3;
+      centerLight.intensity * audioFeatures.predictions.mood_happy/6;
     pointLight.intensity = 1.2 + 0.5 * audioFeatures.predictions.mood_happy;
-    emissiveIntensityColor = 0.75 + audioFeatures.predictions.mood_happy / 4;
+    emissiveIntensityColor = 0.65 + audioFeatures.predictions.mood_happy / 4;
     morphTimeAmplifier =
       (audioFeatures.predictions.mood_aggressive +
         audioFeatures.predictions.danceability) /
@@ -682,7 +682,7 @@ function animate(timeStamp) {
       const element = calculateAverageOfArray(powerSpectrumBands[index]);
       band.push(element);
     }
-    const bandMovment = 15;
+    const bandMovment = 8;
     bufferGroup.children.forEach((buffer, index) => {
       if (index % 2 == 0) {
         buffer.position.y = band[index] * bandMovment + bandStart;
