@@ -102,7 +102,7 @@ let audioFeatures12x3= {
 
 // GIFT OF GUILT
 
-let audioFeaturesasd= {
+let audioFeaturesdasd= {
   ready: false,
   essenceShapeReady: false, 
   rms: 0,
@@ -176,7 +176,7 @@ let audioFeaturesdasda  = {
 
 // Max Sad
 // Moonlight sonata
-let audioFeaturesda = {
+let audioFeaturesdasxxd = {
   ready: false,
   essenceShapeReady: false, 
   rms: 0,
@@ -217,7 +217,7 @@ let audioFeaturesda = {
 /// HAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPPY
 // Max Happy
 //Johnny B Goode
-let audioFeatures= {
+let audioFeatures = {
   ready: false,
   essenceShapeReady: false, 
   rms: 0,

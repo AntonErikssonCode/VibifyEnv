@@ -3,40 +3,27 @@ import {
   fetchLabeledData,
   fetchBpmAndKey,
   emotionalModelUpdate,
-  getColorsOld,
 } from "./updateState.js";
-
 import { getColors } from "./getColors.js";
 import { firework, setRenderColor, updateColor } from "./scene.js";
-import {
-  calculateAverageOfArray,
-  debounce,
-  throttle,
-} from "./utilityFunctions.js";
+import { calculateAverageOfArray, throttle } from "./utilityFunctions.js";
+
 const loudnessHTML = document.querySelector("#loudnessTag");
 const chromaHTML = document.querySelector("#chromaTag");
 const rmsHTML = document.querySelector("#rmsTag");
 const spectralCentroidHTML = document.querySelector("#spectralCentroidTag");
 const energyHTML = document.querySelector("#energyTag");
-
 const AudioContext = window.AudioContext || window.webkitAudioContext;
 const audioCtx = new AudioContext();
 const dropArea = document.querySelector("#file-drop-area");
 const audioTag = document.querySelector("#audioTag");
-
-const sad = document.querySelector("#sadTag");
-const happy = document.querySelector("#happyTag");
-const relaxe = document.querySelector("#relaxTag");
-const aggressive = document.querySelector("#aggressiveTag");
-const dance = document.querySelector("#danceTag");
-
-const beatContainer = document.querySelector("#beatContainer");
-
 const throttleFirework = throttle(() => {
   firework();
 });
 const keys = ["C", "C♯", "D", "D♯", "E", "F", "F♯", "G", "G♯", "A", "A♯", "B"];
+
 var lowPassEnergy = [];
+
 function initMeyda(file) {
   const meydaContext = new AudioContext();
   const reader = new FileReader();
@@ -77,9 +64,6 @@ function initMeyda(file) {
         if (features.energy > 0.001) {
           lowPassEnergy.push(features.rms);
           var lowPassEnergyMean = calculateAverageOfArray(lowPassEnergy);
-          /*       console.dir("Peak Energy: " + lowPassEnergyMean);
-          console.dir("Energy: " + features.rms); */
-
           if (features.rms > energyPeak) {
             energyPeak = features.rms;
             throttleFirework();
@@ -116,7 +100,7 @@ function initMeyda(file) {
         "perceptualSharpness",
         "mfcc",
         "complexSpectrum",
-        "buffer"
+        "buffer",
       ],
       callback: (features) => {
         audioFeatures["loudness"] = features.loudness.total;
@@ -143,14 +127,13 @@ function initMeyda(file) {
         );
 
         // Selects indexes based on chroma, relative to our active scale.
-        /*    var chromaPrio = []; */
         var activeIndexes = [];
         for (let index = 0; index < audioFeatures.chroma.length; index++) {
           const element = audioFeatures.chroma[index];
           if (element > 0.95) {
-            audioFeatures.keysOrdered.forEach((key, index2) => {
+            audioFeatures.keysOrdered.forEach((key, keyIndex) => {
               if (key == keys[index]) {
-                activeIndexes.push(index2);
+                activeIndexes.push(keyIndex);
               }
             });
           }
@@ -159,8 +142,8 @@ function initMeyda(file) {
         chromaHTML.innerHTML =
           "Chroma: " + keys[audioFeatures.activeChromaIndex];
 
-/*         console.dir(audioFeatures);
- */      },
+      
+      },
     });
     analyzer.start();
   }
@@ -190,13 +173,12 @@ dropArea.addEventListener("drop", (e) => {
   uploadedFile = e.dataTransfer.files[0];
 
   // DEBUG MODE
-
+  
   initMeyda(uploadedFile);
   console.dir(audioFeatures);
 
   // UPLOAD MODE
-   /*  processFileUpload(files); */
-  
+  /* processFileUpload(files); */
 });
 dropArea.addEventListener("click", () => {
   dropInput.click();

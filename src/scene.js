@@ -418,7 +418,7 @@ function spawnOrbit() {
       normalMap: textureNormal,
       normalScale: new THREE.Vector2(8, 8),
       displacementMap: textureNormalHeight,
-      displacementScale: 0.01,
+      displacementScale: 0.2,
       clearcoat: 1,
       clearcoatRoughness: 0.1,
       metalness: 0.9,
