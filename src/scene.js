@@ -197,7 +197,7 @@ function setMaterial() {
   });
 }
 
-// Essence Shape
+// Essence Shape Variabels
 let geoEssenceShape;
 let essenceShape;
 let noise;
@@ -207,6 +207,7 @@ let nPos = [];
 let pos;
 let resolutionShape;
 
+// Essence Shape Creation
 function createEssenceShape() {
   resolutionShape = Math.floor(
     (audioFeatures.predictions.mood_happy +
@@ -222,27 +223,16 @@ function createEssenceShape() {
   }
 
   geoEssenceShape = new THREE.IcosahedronGeometry(radius, shape);
-
   pos = geoEssenceShape.attributes.position;
+
   for (let i = 0; i < pos.count; i++) {
     v3.fromBufferAttribute(pos, i).normalize();
     nPos.push(v3.clone());
   }
+
   geoEssenceShape.userData.nPos = nPos;
 
-  let matEssenceShape = new THREE.MeshStandardMaterial({
-    wireframe: false,
-    flatShading: false,
-    roughness:
-      1 -
-      audioFeatures.predictions.mood_aggressive / 2 -
-      audioFeatures.predictions.mood_sad / 2 +
-      audioFeatures.predictions.mood_happy / 2,
-    metalness: 0.4,
-    color: audioFeatures.color[11],
-  });
-
-  const materialTest = new THREE.MeshPhysicalMaterial({
+  const matEssenceShape = new THREE.MeshPhysicalMaterial({
     normalMap: textureNormal,
     flatShading: false,
     normalScale: new THREE.Vector2(10, 10),
@@ -257,7 +247,7 @@ function createEssenceShape() {
   });
 
   matEssenceShape.needsUpdate = true;
-  essenceShape = new THREE.Mesh(geoEssenceShape, materialTest);
+  essenceShape = new THREE.Mesh(geoEssenceShape, matEssenceShape);
   scene.add(essenceShape);
 
   noise = openSimplexNoise.makeNoise4D(
@@ -267,7 +257,8 @@ function createEssenceShape() {
 
 // Particles
 const groupTravelParticle = new THREE.Group();
-var geoParticle = new THREE.PlaneBufferGeometry(0.12, 0.1, 1, 1);
+scene.add(groupTravelParticle);
+
 var matParticle = new THREE.MeshStandardMaterial({
   color: 0xffffff,
   emissive: 0xffffff,
@@ -284,75 +275,46 @@ function spawnParticle(particleZPos) {
   travelParticle.rotateZ(particleRotation);
   groupTravelParticle.add(travelParticle);
 }
-scene.add(groupTravelParticle);
 
 // Radiation
 const groupRadiation = new THREE.Group();
 const radiationCollection = new THREE.Group();
-
-function spawnRadiation(angle, index) {
-  var shape = resolutionShape;
-  if (shape <= 2) {
-    shape = 2;
-  }
-  let selectedAngle;
-  var randomColor = getRndInteger(0, 8);
-  var spawnedGroupRadiation = groupRadiation.clone();
-  var geoSphereRadiation = new THREE.SphereGeometry(0.05, shape, shape);
-
-  var spawnedSphereRadiation = new THREE.Mesh(
-    geoSphereRadiation,
-    audioFeatures.color[index]
-  );
-
-  if (angle === undefined) {
-    selectedAngle = getRndInteger(0, 225);
-  } else {
-    selectedAngle = angle;
-  }
-  spawnedGroupRadiation.rotateX(getRndInteger(0, 360));
-  spawnedGroupRadiation.rotateY(getRndInteger(0, 360));
-  spawnedGroupRadiation.rotateZ(getRndInteger(0, 360));
-
-  spawnedGroupRadiation.add(spawnedSphereRadiation);
-  radiationCollection.add(spawnedGroupRadiation);
-  scene.add(radiationCollection);
-}
 var geoSphereRadiation;
-// Firework Function
-function spawnBeatBoom(angle, color, size) {
+
+function spawnRadiation(angle, color, size) {
   var shape = resolutionShape - 4;
   if (shape <= 3) {
     shape = 3;
   }
   var spawnedGroupRadiation = groupRadiation.clone();
   geoSphereRadiation = new THREE.SphereGeometry(size, shape + 1, shape);
+
   var spawnedSphereRadiation = new THREE.Mesh(
     geoSphereRadiation,
     colorMaterial[color]
   );
+
   spawnedSphereRadiation.position.z = -4;
   spawnedGroupRadiation.rotateZ(angle);
   spawnedGroupRadiation.add(spawnedSphereRadiation);
   spawnedGroupRadiation.position.x = 0;
-
   radiationCollection.add(spawnedGroupRadiation);
   scene.add(radiationCollection);
 }
-var fireworkModifier = 0;
 
+// Span 
+var fireworkModifier = 0;
 function firework() {
   var value = 0;
   var size = 6.5 * audioFeatures.rmsMean;
-
-  fireworkModifier = 1;
   var colorIndexLength = audioFeatures.activeColorIndexes.length;
   var colorIndex = 0;
   var count = 0;
+  fireworkModifier = 1;
 
   for (let index = 0; index < 54; index++) {
     if (index % 3 == 0) {
-      spawnBeatBoom(value, audioFeatures.activeColorIndexes[colorIndex], size);
+      spawnRadiation(value, audioFeatures.activeColorIndexes[colorIndex], size);
       value += 0.35 * fireworkModifier;
       count++;
       colorIndex++;
@@ -613,7 +575,7 @@ function animate(timeStamp) {
     centerLight.intensity =
       (centerLight.intensity * audioFeatures.predictions.mood_happy) / 6;
     pointLight.intensity = 1.2 + 0.5 * audioFeatures.predictions.mood_happy;
-    emissiveIntensityColor = 0.65 + audioFeatures.predictions.mood_happy / 4;
+
     morphTimeAmplifier =
       (audioFeatures.predictions.mood_aggressive +
         audioFeatures.predictions.danceability) /
