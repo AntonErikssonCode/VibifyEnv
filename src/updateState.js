@@ -26,8 +26,6 @@ function fetchBpmAndKey() {
   bpm.innerHTML += " " + audioFeatures["bpm"].toFixed(2);
 }
 
-
-
 function getColorsOld() {
   const testColorDiv1 = document.querySelector("#testColor1");
   const testColorDiv2 = document.querySelector("#testColor2");
@@ -56,7 +54,6 @@ function getColorsOld() {
       ? audioFeatures.predictions.mood_happy
       : audioFeatures.predictions.mood_sad -
         audioFeatures.predictions.mood_sad * 2;
-
 
   let mainAngle = (Math.atan2(mainValens, mainArousal) * 180) / Math.PI;
   if (mainAngle < 0) {

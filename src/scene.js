@@ -606,7 +606,7 @@ function animate(timeStamp) {
       }
     });
 
-    // Calculating band ratio means
+    // Calculating band ratio means, not currently in use
     /* bandMeans["low"] = bandMeans.low + lastBand[0] / band[0] / 2;
     bandMeans["lowMid"] = bandMeans.lowMid + lastBand[1] / band[1] / 2;
     bandMeans["mid"] = bandMeans.mid + lastBand[2] / band[2] / 2;
@@ -636,7 +636,7 @@ function animate(timeStamp) {
     if (keysSorted[0] == "high") {
       orbitLightIntensity = (lightMax / 5) * 5;
     } */
-/*     var orbitLightIntensity = 1; */
+    /*     var orbitLightIntensity = 1; */
     orbitCollection.children.forEach((orbitGroup, index) => {
       var mesh = orbitGroup.children[0];
       var orbitLight = orbitGroup.children[1];
@@ -652,7 +652,6 @@ function animate(timeStamp) {
 
       orbitLight.position.x = r * Math.sin(bandMorhTime);
       orbitLight.position.z = r * Math.cos(bandMorhTime);
-      /* orbitLight.intensity = orbitLightIntensity; */
     });
   }
 
@@ -703,7 +702,6 @@ function animate(timeStamp) {
 }
 animate();
 
-
 // Remove hud buttons if idle for 3 seconds
 function idle() {
   var t;
@@ -718,7 +716,6 @@ function idle() {
 
   const buttonList = document.querySelectorAll(".optionsButton");
   function yourFunction() {
-    console.dir(buttonList);
     buttonList.forEach((button) => {
       button.style.display = "none";
     });

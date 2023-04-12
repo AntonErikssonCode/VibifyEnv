@@ -4,10 +4,9 @@
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <title>VibifyEnv</title>
-
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="stylesheet" href="style.css" />
-    <link rel="shortcut icon" href="#">
+    <link rel="shortcut icon" href="#" />
     <script
       src="https://code.jquery.com/jquery-3.1.1.min.js"
       integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="
@@ -27,10 +26,10 @@
       <div class="audio-container hiddable">
         <div id="file-select-area">
           <div id="file-drop-area">
-            <span>Drop file here or click to upload</span>
+            <span>Drop File Here To Start The Visualization</span>
           </div>
         </div>
-        <audio id="audioTag" controls autoplay>aa</audio>
+        <audio id="audioTag" controls autoplay></audio>
         <div class="features">
           <div class="features-div">
             <h2>Affect Estimation (Essentia)</h2>
@@ -73,21 +72,27 @@
         <div id="testColor12" class="testColor"></div>
       </div>
 
-
-      <button class="hideButton optionsButton" id="hideButton" onclick="hideShowDisplay()">
+      <button
+        class="hideButton optionsButton"
+        id="hideButton"
+        onclick="hideShowDisplay()"
+      >
         Hide
       </button>
       <button class="cameraButton optionsButton" id="cameraButton">Move</button>
-      <button class="bufferButton optionsButton" id="bufferButton">Buffer</button>
+      <button class="bufferButton optionsButton" id="bufferButton">
+        Buffer
+      </button>
       <canvas id="myCanvasId"></canvas>
       <div class="loading-container">
         <h3>Loading...</h3>
-        <div>
-          </div>
-
+        <div class="loading-bar-outside">
+          <div class="loading-bar-inside"></div>
+        </div>
       </div>
     </main>
   </body>
+
   <script src="https://cdn.jsdelivr.net/npm/essentia.js@0.1.0/dist/essentia-wasm.web.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/essentia.js@0.1.0/dist/essentia.js-core.js"></script>
   <script
@@ -96,7 +101,5 @@
   ></script>
 
   <script src="src/main.js" type="module" async defer></script>
-  <script>
-  
-  </script>
+  <script></script>
 </html>

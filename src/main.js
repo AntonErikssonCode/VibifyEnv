@@ -20,6 +20,21 @@ const keys = ["C", "C♯", "D", "D♯", "E", "F", "F♯", "G", "G♯", "A", "A�
 var rmsList = [];
 var lowPassEnergy = [];
 
+// Loading bar
+let loadingbarUpdates = 1;
+const loadingBar = document.querySelector(".loading-bar-inside");
+const loadingContainer = document.querySelector(".loading-container");
+function increaseLoadingBar(){
+  loadingContainer.style.display= "block";
+  var width = 7.692 * loadingbarUpdates + "%";
+    loadingBar.style.width = width;
+    loadingbarUpdates++;
+    if (7.692* loadingbarUpdates > 99 ) {
+      loadingContainer.style.display= "none"
+      
+    }
+}
+
 function initMeyda(file) {
   const meydaContext = new AudioContext();
   const reader = new FileReader();
@@ -195,11 +210,12 @@ dropArea.addEventListener("drop", (e) => {
   uploadedFile = e.dataTransfer.files[0];
 
   // DEBUG MODE
-  initMeyda(uploadedFile);
-  initThree();
+  /* initMeyda(uploadedFile);
+  initThree(); */
 
   // UPLOAD MODE
-  /* processFileUpload(files); */
+  increaseLoadingBar();
+  processFileUpload(files);
 });
 
 dropArea.addEventListener("click", () => {
@@ -220,7 +236,6 @@ function initThree() {
 // Init the three.js visualization
 function initThreeWithAffect() {
   fetchLabeledData();
-  fetchBpmAndKey();
   getColors();
   setRenderColor();
   updateMaterial();
@@ -290,6 +305,7 @@ function computeKeyBPM(audioSignal) {
     "cosine",
     "hann"
   );
+  increaseLoadingBar();
   const bpm = essentia.PercivalBpmEstimator(
     vectorSignal,
     1024,
@@ -300,7 +316,7 @@ function computeKeyBPM(audioSignal) {
     50,
     16000
   ).bpm;
-
+  increaseLoadingBar();
   return {
     keyData: keyData,
     bpm: bpm,
@@ -320,6 +336,7 @@ function createFeatureExtractionWorker() {
         inferenceWorkers[n].postMessage({
           features: msg.data.features,
         });
+        increaseLoadingBar();
       });
       msg.data.features = null;
     }
@@ -343,9 +360,10 @@ function createInferenceWorkers() {
         inferenceResultPromises.push(
           new Promise((res) => {
             res({ [n]: preds });
+            increaseLoadingBar()
           })
         );
-   
+        collectPredictions();
         console.log(`${n} predictions: `, preds);
       }
     };
