@@ -263,8 +263,8 @@ var matParticle = new THREE.MeshStandardMaterial({
   color: 0xffffff,
   emissive: 0xffffff,
 });
-
-function spawnParticle(particleZPos) {
+var particleZPos = 6;
+function spawnParticle() {
   var geoParticle = new THREE.PlaneBufferGeometry(0.12, 0.1, 1, 1);
   var travelParticle = new THREE.Mesh(geoParticle, matParticle);
   var particleXPos = getRndInteger(-50, 50);
@@ -276,7 +276,7 @@ function spawnParticle(particleZPos) {
   groupTravelParticle.add(travelParticle);
 }
 
-// Radiation
+// Spawn Radiation
 const groupRadiation = new THREE.Group();
 const radiationCollection = new THREE.Group();
 var geoSphereRadiation;
@@ -302,7 +302,7 @@ function spawnRadiation(angle, color, size) {
   scene.add(radiationCollection);
 }
 
-// Span 
+// Spawn radiation in a circle
 var fireworkModifier = 0;
 function firework() {
   var value = 0;
@@ -341,19 +341,19 @@ function moveCamera() {
     camera.position.y = 0;
 
     cameraZoomedIn = true;
-    particleZPos = 5;
+    particleZPos = 6;
   }
 }
-/* moveCamera();
- */
+moveCamera();
 
-// Power Spectrum
+// Spawn moon object orbiting the essence shape.
 let orbitCollection = new THREE.Group();
 function spawnOrbit() {
   for (let index = 0; index < 1; index++) {
     let orbitGroup = new THREE.Group();
     let geoOrbit = new THREE.SphereGeometry(0.05, 15, 15);
     var color = shade(audioFeatures.color[index], 0.1);
+
     const matOrbit = new THREE.MeshPhysicalMaterial({
       normalMap: textureNormal,
       normalScale: new THREE.Vector2(8, 8),
@@ -369,16 +369,18 @@ function spawnOrbit() {
     });
 
     let orbit = new THREE.Mesh(geoOrbit, matOrbit);
-
     const pointLight = new THREE.PointLight(0xffffff, 1);
-    pointLight.position.set(3, 0, 50);
 
+    pointLight.position.set(0, 0, 0);
     orbitGroup.add(orbit);
     orbitGroup.add(pointLight);
     orbitCollection.add(orbitGroup);
   }
+
   scene.add(orbitCollection);
 }
+
+// Buffer Wave Variabels
 const numBand = 500;
 const bandStart = 40;
 var matBuffer = new THREE.MeshStandardMaterial({
@@ -391,6 +393,7 @@ var bufferGroup = new THREE.Group();
 let bufferToggle = true;
 scene.add(bufferGroup);
 
+// Spawn Buffer Wave
 function spawnBuffer() {
   for (let index = 0; index < numBand; index++) {
     var size = 0.2;
@@ -407,6 +410,11 @@ function spawnBuffer() {
     bufferGroup.add(bufferBand);
   }
 }
+
+// Show and hide buffer toggle
+const camerabutton = document.querySelector(".cameraButton");
+const bufferButton = document.querySelector(".bufferButton");
+
 function hideBuffer() {
   if (bufferToggle) {
     bufferGroup.visible = false;
@@ -416,9 +424,6 @@ function hideBuffer() {
     bufferToggle = true;
   }
 }
-
-const camerabutton = document.querySelector(".cameraButton");
-const bufferButton = document.querySelector(".bufferButton");
 
 camerabutton.onclick = function () {
   moveCamera();
@@ -431,19 +436,13 @@ bufferButton.onclick = function () {
 let last = 0;
 let particleSpawnSpeed = 2;
 var clock = new THREE.Clock();
-var delta = 0;
 let morphTime = 0;
 let morphTimeAmplifier = 1;
-
 var defaultMoveSpeed = 0.01;
-var fogDistance = 150;
 var xModifier = 0.05;
 var yModifier = 0.05;
-var zModifier = 0.05;
 var yDirection = "up";
 var xDirection = "right";
-var zDirection = "out";
-var peakLoudness = 0;
 var bandMeans = {
   low: 0,
   lowMid: 0,
@@ -452,37 +451,26 @@ var bandMeans = {
   high: 0,
 };
 var lastBand = [0, 0, 0, 0, 0];
-let particleZPos = 5;
-moveCamera();
 
-// ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE
-// ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE
-// ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE
-// ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE
-// ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE ANIMATE
+// Animate
 function animate(timeStamp) {
   requestAnimationFrame(animate);
   control.update();
 
-  let t = clock.getElapsedTime();
+  const distanceFromTheCenter = 4;
   let timeInSecond = timeStamp / 100;
   let rmsType = audioFeatures.rmsMean;
-
-  delta = clock.getDelta();
   let addMorph = audioFeatures.rmsMean * morphTimeAmplifier;
+
   if (addMorph > 0.1) {
     addMorph = 0.1;
   }
-  /*   if (addMorph < 0.01) {
-    addMorph = 0.01;
-  } */
   morphTime += addMorph;
-  /*   console.dir("morphTime: " + morphTime)
-   */
+
   // Spawn Paricles
   if (timeInSecond - last >= particleSpawnSpeed) {
     last = timeInSecond;
-    spawnParticle(particleZPos);
+    spawnParticle();
   }
 
   // Particle Loop
@@ -495,13 +483,14 @@ function animate(timeStamp) {
       groupTravelParticle.remove(particle);
     }
   });
-  const distanceFromTheCenter = 4;
+
   // Radiation Loop
   radiationCollection.children.forEach((radiationGroup) => {
     var mesh = radiationGroup.children[0];
 
     // Radiation Movment
     if (audioFeatures.energy > 0.001) {
+      // if song plays
       if (mesh.position.x < 32) {
         mesh.position.x +=
           audioFeatures.bpm / 10000 +
@@ -510,14 +499,13 @@ function animate(timeStamp) {
         mesh.rotation.x += audioFeatures.bpm / 10000 + rmsType / 15;
         mesh.rotation.y -= audioFeatures.bpm / 10000 + rmsType / 20;
         mesh.rotation.z += audioFeatures.bpm / 10000 + rmsType / 10;
-        /* mesh.position.z += audioFeatures.bpm / 100000; */
+
         if (
           audioFeatures.predictions.mood_aggressive > 0.6 &&
           audioFeatures.predictions.mood_sad >
             audioFeatures.predictions.mood_happy
         ) {
-          // Triangle
-
+          // Triangle Wave
           if (audioFeatures.key == "major") {
             mesh.position.y =
               1 - Math.abs((mesh.position.x % 3) - 1) + distanceFromTheCenter;
@@ -526,8 +514,7 @@ function animate(timeStamp) {
               2 - Math.abs((mesh.position.x % 6) - 1) + distanceFromTheCenter;
           }
         } else {
-          // Sine
-
+          // Sine Wave
           if (audioFeatures.key == "major") {
             mesh.position.y =
               1.2 * Math.sin(1.2 * mesh.position.x) + distanceFromTheCenter;
@@ -543,7 +530,7 @@ function animate(timeStamp) {
           mesh.position.z -= audioFeatures.bpm / 100000 + rmsType * 1.5;
           mesh.position.x += 0.01;
 
-          // Direction of spiral
+          // Direction of Spiral
           if (audioFeatures.key == "major") {
             radiationGroup.rotation.z +=
               audioFeatures.bpm / 100000 + (rmsType * 1.5) / 300;
@@ -555,13 +542,13 @@ function animate(timeStamp) {
       }
 
       // Remove Radiation
-      if (mesh.position.z < -300 /* fogDistance-50 */) {
+      if (mesh.position.z < -300) {
         radiationCollection.remove(radiationGroup);
       }
     }
   });
 
-  // When main has been initated
+  // When main has been initated, setup and init parameters unique for this song.
   if (audioFeatures.ready) {
     updateMaterial();
     createEssenceShape();
@@ -570,7 +557,6 @@ function animate(timeStamp) {
 
     audioFeatures["essenceShapeReady"] = true;
     defaultMoveSpeed = 0.01 + audioFeatures.bpm / 1500;
-    /*   fogDistance = fogDistance * audioFeatures.predictions.mood_sad; */
     scene.fog = new THREE.Fog(0x050505, 1, 300);
     centerLight.intensity =
       (centerLight.intensity * audioFeatures.predictions.mood_happy) / 6;
@@ -581,7 +567,7 @@ function animate(timeStamp) {
         audioFeatures.predictions.danceability) /
       2;
 
-    audioFeatures["ready"] = false;
+    audioFeatures["ready"] = false; // dont run this block again
   }
 
   // When essence shape is initated
@@ -600,8 +586,9 @@ function animate(timeStamp) {
     essenceShape.rotation.y += 0.003;
   }
 
-  // While song is playing do this
-  if (audioFeatures.loudness > 3) {
+  // While song is playing
+  if (audioFeatures.loudness > 1) {
+    // Buffer Wave Movements
     const powerSpectrumBands = sliceIntoChunks(
       audioFeatures.buffer,
       Math.floor(audioFeatures.buffer.length / numBand)
@@ -618,9 +605,9 @@ function animate(timeStamp) {
       } else {
         buffer.position.y = band[index] * bandMovment - bandStart;
       }
-      /*   buffer.position.y = band[index] *7; */
     });
 
+    // Calculating band ratio means
     bandMeans["low"] = bandMeans.low + lastBand[0] / band[0] / 2;
     bandMeans["lowMid"] = bandMeans.lowMid + lastBand[1] / band[1] / 2;
     bandMeans["mid"] = bandMeans.mid + lastBand[2] / band[2] / 2;
@@ -633,7 +620,8 @@ function animate(timeStamp) {
       return bandMeans[a] - bandMeans[b];
     });
     var orbitLightIntensity;
-    var lightMax = 5;
+    var lightMax = 3;
+
     if (keysSorted[0] == "low") {
       orbitLightIntensity = (lightMax / 5) * 1;
     }
@@ -650,41 +638,31 @@ function animate(timeStamp) {
       orbitLightIntensity = (lightMax / 5) * 5;
     }
 
-    /*     console.log(audioFeatures.buffer);
-     */ orbitCollection.children.forEach((orbitGroup, index) => {
+    orbitCollection.children.forEach((orbitGroup, index) => {
       var mesh = orbitGroup.children[0];
-      var light = orbitGroup.children[1];
+      var orbitLight = orbitGroup.children[1];
       var r = 2.5;
       var bandMorhTime = morphTime / 1.5;
-      /* var bandRatio = lastBand[index] / band[index];
-      var moveRation;
-      if(bandRatio > 1){
-        moveRation = -0.1;
-      }
-      else{
-        moveRation = 0.0001;
-      }
-      console.dir(bandRatio)
-      
 
-      orbitGroup.position.y = moveRation - 2; */
       orbitGroup.rotation.x = bandMorhTime / 10;
       orbitGroup.rotation.y = bandMorhTime / 11;
       orbitGroup.rotation.z = bandMorhTime / 9;
 
       mesh.position.x = r * Math.sin(bandMorhTime);
       mesh.position.z = r * Math.cos(bandMorhTime);
-      light.position.x = r * Math.sin(bandMorhTime);
-      light.position.z = r * Math.cos(bandMorhTime);
-      light.intensity = orbitLightIntensity;
+
+      orbitLight.position.x = r * Math.sin(bandMorhTime);
+      orbitLight.position.z = r * Math.cos(bandMorhTime);
+      orbitLight.intensity = orbitLightIntensity;
     });
   }
 
+  // Animated Camera Movement
   var rangePos = 1.5;
   var rangeNeg = -1.5;
   var yModifierSpeed = rmsType / 10;
   var xModifierSpeed = rmsType / 20;
-  var zModifierSpeed = rmsType;
+
   if (yDirection === "up") {
     if (camera.position.y <= rangePos) {
       yModifier = yModifierSpeed;
@@ -726,7 +704,9 @@ function animate(timeStamp) {
 }
 animate();
 
-function idleLogout() {
+
+// Remove hud buttons if idle for 3 seconds
+function idle() {
   var t;
   window.onload = resetTimer;
   window.onmousemove = resetTimer;
@@ -750,7 +730,9 @@ function idleLogout() {
     t = setTimeout(yourFunction, 5000); // time is in milliseconds
   }
 }
-idleLogout();
+idle();
+
+// Show hud buttons if mouse is moved
 document.addEventListener("mousemove", () => {
   const buttonList = document.querySelectorAll(".optionsButton");
   buttonList.forEach((button) => {

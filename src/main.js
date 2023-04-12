@@ -9,10 +9,10 @@ const chromaHTML = document.querySelector("#chromaTag");
 const rmsHTML = document.querySelector("#rmsTag");
 const spectralCentroidHTML = document.querySelector("#spectralCentroidTag");
 const energyHTML = document.querySelector("#energyTag");
-const AudioContext = window.AudioContext || window.webkitAudioContext;
-const audioCtx = new AudioContext();
 const dropArea = document.querySelector("#file-drop-area");
 const audioTag = document.querySelector("#audioTag");
+const AudioContext = window.AudioContext || window.webkitAudioContext;
+const audioCtx = new AudioContext();
 const throttleFirework = throttle(() => {
   firework();
 });
@@ -38,28 +38,40 @@ function initMeyda(file) {
   }
 
   const source = meydaContext.createMediaElementSource(audioTag);
-
   let filter = meydaContext.createBiquadFilter();
+
   filter.type = "lowpass";
   filter.frequency.setValueAtTime(50, meydaContext.currentTime, 0);
 
   source.connect(filter);
   source.connect(meydaContext.destination);
+
   var energyPeak = 0;
   if (typeof Meyda === "undefined") {
     console.log("Meyda could not be found! Have you included it?");
   } else {
     console.log("Meyda exist!");
-    let beatUsed = false;
+    
+    // Beat tracker, uses audio signal with lowpass filter
     const lowPassAnalyzer = Meyda.createMeydaAnalyzer({
       audioContext: meydaContext,
       source: filter,
       bufferSize: 512,
       featureExtractors: ["energy", "rms"],
       callback: (features) => {
+
         if (features.energy > 0.001) {
-          lowPassEnergy.push(features.rms);
+          // Uses the mean of the 1000 lates rms values
+          if (lowPassEnergy.length < 1000) {
+            lowPassEnergy.push(features.rms);
+          }
+          if (lowPassEnergy.length >= 1000) {
+            var theRemovedElement = lowPassEnergy.shift();
+            lowPassEnergy.push(features.rms);
+          }
+        
           var lowPassEnergyMean = calculateAverageOfArray(lowPassEnergy);
+
           if (features.rms > energyPeak) {
             energyPeak = features.rms;
             throttleFirework();
@@ -72,6 +84,7 @@ function initMeyda(file) {
     });
     lowPassAnalyzer.start();
 
+    // General audio processor, uses unaltered audio signal 
     const analyzer = Meyda.createMeydaAnalyzer({
       audioContext: meydaContext,
       source: source,
@@ -99,6 +112,7 @@ function initMeyda(file) {
         "buffer",
       ],
       callback: (features) => {
+        // Update audioFeatures object
         audioFeatures["loudness"] = features.loudness.total;
         audioFeatures["energy"] = features.energy;
         audioFeatures["chroma"] = features.chroma;
@@ -112,6 +126,7 @@ function initMeyda(file) {
         audioFeatures["powerSpectrum"] = features.powerSpectrum;
         audioFeatures["buffer"] = features.buffer;
 
+        // Display values on hud
         loudnessHTML.innerHTML =
           "Loudness: " + audioFeatures["loudness"].toFixed(2);
         spectralCentroidHTML.innerHTML =
@@ -138,6 +153,7 @@ function initMeyda(file) {
         chromaHTML.innerHTML =
           "Chroma: " + keys[audioFeatures.activeChromaIndex];
         
+        // Uses the mean of the 5 lates rms values
         const rmsListLength = 5;
         if (rmsList.length < rmsListLength) {
           rmsList.push(audioFeatures.rms);
@@ -147,9 +163,7 @@ function initMeyda(file) {
           rmsList.push(audioFeatures.rms);
         }
         audioFeatures["rmsMean"] = calculateAverageOfArray(rmsList);
-   /*      console.dir("VALUES");
-        console.dir(audioFeatures.rms);
-        console.dir(audioFeatures.rmsMean); */
+
       },
     });
     analyzer.start();

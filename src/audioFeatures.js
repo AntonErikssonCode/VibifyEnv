@@ -1,10 +1,13 @@
-// Test
+// The audioFeatures object will be manipulated when running the program.  
+// Preloaded objects was used when debugging and devloping. 
 
+// Test
 let audioFeaturesl = {
   colorSpectrum: [],
   ready: false,
   essenceShapeReady: false,
   rms: 0,
+  rmsMean: 0,
   loudness: 0,
   energy: 0,
   spectralCentroid: 0,
@@ -46,7 +49,7 @@ let audioFeaturesl = {
 };
 // Hurt
 
-let audioFeatures  = {
+let audioFeatures3213  = {
   colorSpectrum: [],
   ready: false,
   essenceShapeReady: false,
@@ -94,7 +97,7 @@ let audioFeatures  = {
 
 // Dont stop me now song
 
-let audioFeaturesx  = {
+let audioFeaturesc  = {
   rms: 0,
   rmsMean: 0,
   loudness: 0,
@@ -140,7 +143,7 @@ let audioFeaturesx  = {
 
 // GIFT OF GUILT
 
-let audioFeatures3123 = {
+let audioFeatures = {
   ready: false,
   essenceShapeReady: false,
   rms: 0,
@@ -238,7 +241,7 @@ let audioFeaturesdasda = {
 
 // Max Sad
 // Moonlight sonata
-let audioFeaturesdasxxd = {
+let audioFeaturesz  = {
   ready: false,
   essenceShapeReady: false,
   rms: 0,
