@@ -196,7 +196,7 @@ dropArea.addEventListener("drop", (e) => {
 
   // DEBUG MODE
   initMeyda(uploadedFile);
-  console.dir(audioFeatures);
+  initThree();
 
   // UPLOAD MODE
   /* processFileUpload(files); */
@@ -209,21 +209,22 @@ dropArea.addEventListener("click", () => {
 // Debug init, only works if audiofeatures are preloaded in the audiofeatures file. 
 function initThree() {
   fetchLabeledData();
+  fetchBpmAndKey();
   getColors();
   setRenderColor();
   updateMaterial();
   audioFeatures["ready"] = true;
 }
-initThree();
+
 
 // Init the three.js visualization
 function initThreeWithAffect() {
   fetchLabeledData();
-  initMeyda(uploadedFile);
-  emotionalModelUpdate();
+  fetchBpmAndKey();
   getColors();
   setRenderColor();
   updateMaterial();
+  initMeyda(uploadedFile);
   audioFeatures["ready"] = true;
 }
 

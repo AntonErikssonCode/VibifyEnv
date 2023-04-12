@@ -369,7 +369,7 @@ function spawnOrbit() {
     });
 
     let orbit = new THREE.Mesh(geoOrbit, matOrbit);
-    const pointLight = new THREE.PointLight(0xffffff, 1);
+    const pointLight = new THREE.PointLight(0xffffff, 0.8);
 
     pointLight.position.set(0, 0, 0);
     orbitGroup.add(orbit);
@@ -435,7 +435,6 @@ bufferButton.onclick = function () {
 // Animate Variables
 let last = 0;
 let particleSpawnSpeed = 2;
-var clock = new THREE.Clock();
 let morphTime = 0;
 let morphTimeAmplifier = 1;
 var defaultMoveSpeed = 0.01;
@@ -479,7 +478,7 @@ function animate(timeStamp) {
     particle.position.z -= defaultMoveSpeed;
 
     // Remove Particle
-    if (particle.position.z < -300) {
+    if (particle.position.z < -200) {
       groupTravelParticle.remove(particle);
     }
   });
@@ -608,7 +607,7 @@ function animate(timeStamp) {
     });
 
     // Calculating band ratio means
-    bandMeans["low"] = bandMeans.low + lastBand[0] / band[0] / 2;
+    /* bandMeans["low"] = bandMeans.low + lastBand[0] / band[0] / 2;
     bandMeans["lowMid"] = bandMeans.lowMid + lastBand[1] / band[1] / 2;
     bandMeans["mid"] = bandMeans.mid + lastBand[2] / band[2] / 2;
     bandMeans["highMid"] = bandMeans.highMid + lastBand[3] / band[3] / 2;
@@ -636,8 +635,8 @@ function animate(timeStamp) {
     }
     if (keysSorted[0] == "high") {
       orbitLightIntensity = (lightMax / 5) * 5;
-    }
-
+    } */
+/*     var orbitLightIntensity = 1; */
     orbitCollection.children.forEach((orbitGroup, index) => {
       var mesh = orbitGroup.children[0];
       var orbitLight = orbitGroup.children[1];
@@ -653,7 +652,7 @@ function animate(timeStamp) {
 
       orbitLight.position.x = r * Math.sin(bandMorhTime);
       orbitLight.position.z = r * Math.cos(bandMorhTime);
-      orbitLight.intensity = orbitLightIntensity;
+      /* orbitLight.intensity = orbitLightIntensity; */
     });
   }
 

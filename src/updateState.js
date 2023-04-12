@@ -57,14 +57,7 @@ function getColorsOld() {
       : audioFeatures.predictions.mood_sad -
         audioFeatures.predictions.mood_sad * 2;
 
-/*   console.dir(audioFeatures);
-  console.dir(" ");
-  console.dir("mainArousal: " + mainArousal);
-  console.dir("secondaryArousal: " + secondaryArousal);
-  console.dir("mainValens: " + mainValens);
-  console.dir("secondaryValens: " + secondaryValens);
-  console.dir(" ");
- */
+
   let mainAngle = (Math.atan2(mainValens, mainArousal) * 180) / Math.PI;
   if (mainAngle < 0) {
     mainAngle += 360;
