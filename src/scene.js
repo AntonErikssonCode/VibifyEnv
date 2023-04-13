@@ -43,7 +43,7 @@ function setRenderColor() {
 
 // Post Processing
 const composer = new EffectComposer(renderer);
-const bloomPass = new UnrealBloomPass(new THREE.Vector2(w, h), 0.4, 0.4, 0.4);
+const bloomPass = new UnrealBloomPass(new THREE.Vector2(w, h), 0.3, 0.4, 0.4);
 const afterImagePass = new AfterimagePass();
 const effectVignette = new ShaderPass(VignetteShader);
 
@@ -541,7 +541,7 @@ function animate(timeStamp) {
       }
 
       // Remove Radiation
-      if (mesh.position.z < -300) {
+      if (mesh.position.z < -200) {
         radiationCollection.remove(radiationGroup);
       }
     }
@@ -556,10 +556,10 @@ function animate(timeStamp) {
 
     audioFeatures["essenceShapeReady"] = true;
     defaultMoveSpeed = 0.01 + audioFeatures.bpm / 1500;
-    scene.fog = new THREE.Fog(0x050505, 1, 300);
+    scene.fog = new THREE.Fog(0x050505, 1, 200);
     centerLight.intensity =
-      (centerLight.intensity * audioFeatures.predictions.mood_happy) / 6;
-    pointLight.intensity = 1.2 + 0.5 * audioFeatures.predictions.mood_happy;
+      (centerLight.intensity * audioFeatures.predictions.mood_happy/3) /* / 6 */;
+    pointLight.intensity = 1 + 0.3 * audioFeatures.predictions.mood_happy;
 
     morphTimeAmplifier =
       (audioFeatures.predictions.mood_aggressive +

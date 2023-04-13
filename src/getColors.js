@@ -58,7 +58,7 @@ function getColors() {
       audioFeatures.predictions.mood_relaxed >
         audioFeatures.predictions.mood_aggressive 
     ) {
-      spin = -170;
+      spin = -100;
     }
   }
   let mainAngle = (Math.atan2(mainValens, mainArousal) * 180 + spin) / Math.PI;
