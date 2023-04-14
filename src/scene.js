@@ -264,12 +264,13 @@ var matParticle = new THREE.MeshStandardMaterial({
   emissive: 0xffffff,
 });
 var particleZPos = 6;
+
 function spawnParticle() {
-  var geoParticle = new THREE.PlaneBufferGeometry(0.12, 0.1, 1, 1);
+  var geoParticle = new THREE.PlaneBufferGeometry(0.08, 0.1, 1, 1);
   var travelParticle = new THREE.Mesh(geoParticle, matParticle);
   var particleXPos = getRndInteger(-50, 50);
   var particleYPos = getRndInteger(-20, 20);
-  var particleRotation = getRndInteger(0, 45);
+  var particleRotation = getRndInteger(0, 360);
 
   travelParticle.position.set(particleXPos, particleYPos, particleZPos);
   travelParticle.rotateZ(particleRotation);
@@ -474,7 +475,7 @@ function animate(timeStamp) {
 
   // Particle Loop
   groupTravelParticle.children.forEach((particle) => {
-    // Particle Movment
+    // Particle Movement
     particle.position.z -= defaultMoveSpeed;
 
     // Remove Particle
@@ -526,7 +527,7 @@ function animate(timeStamp) {
         if (audioFeatures.energy < 0.01) {
           mesh.position.z -= 0.01;
         } else {
-          mesh.position.z -= audioFeatures.bpm / 100000 + rmsType * 1.5;
+          mesh.position.z -=  audioFeatures.bpm / 100000 + rmsType * 1.5;
           mesh.position.x += 0.01;
 
           // Direction of Spiral

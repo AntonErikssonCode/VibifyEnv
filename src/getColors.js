@@ -117,8 +117,7 @@ function getColors() {
   let newKeysOrder = [];
   let lastKeys = [];
   let foundKeys = false;
-  console.dir(audioFeatures.scale);
-  console.dir(audioFeatures.key);
+
 
   for (let index = 0; index < keys.length; index++) {
     const element = keys[index];
@@ -135,7 +134,6 @@ function getColors() {
 
   newKeysOrder = newKeysOrder.concat(lastKeys);
   audioFeatures["keysOrdered"] = newKeysOrder;
-  console.dir(newKeysOrder);
 
   /* 
   const color1 = hslToHex(mainAngle, 75 + saturation, 25 + brightness);
@@ -180,10 +178,9 @@ function getColors() {
   const brightnessBias = 20;
 
   let saturation = 50 * audioFeatures.predictions.mood_happy;
-  console.dir("saturation: " + saturation);
+
 
   let brightness = 5 * audioFeatures.predictions.mood_aggressive;
-  console.dir("brightness: " + brightness);
 
   
   const c1 = hslToHex(
