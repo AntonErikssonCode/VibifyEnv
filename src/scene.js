@@ -527,7 +527,7 @@ function animate(timeStamp) {
         if (audioFeatures.energy < 0.01) {
           mesh.position.z -= 0.01;
         } else {
-          mesh.position.z -=  audioFeatures.bpm / 100000 + rmsType * 1.5;
+          mesh.position.z -= audioFeatures.bpm / 100000 + rmsType * 1.5;
           mesh.position.x += 0.01;
 
           // Direction of Spiral
@@ -559,13 +559,18 @@ function animate(timeStamp) {
     defaultMoveSpeed = 0.01 + audioFeatures.bpm / 1500;
     scene.fog = new THREE.Fog(0x050505, 1, 200);
     centerLight.intensity =
-      (centerLight.intensity * audioFeatures.predictions.mood_happy/3) /* / 6 */;
+      (centerLight.intensity * audioFeatures.predictions.mood_happy) /
+      3 /* / 6 */;
     pointLight.intensity = 1 + 0.3 * audioFeatures.predictions.mood_happy;
 
     morphTimeAmplifier =
       (audioFeatures.predictions.mood_aggressive +
         audioFeatures.predictions.danceability) /
       2;
+    effectVignette.uniforms["offset"].value =
+      audioFeatures.predictions.mood_sad / 4 +
+      0.4 -
+      audioFeatures.predictions.mood_happy / 4;
 
     audioFeatures["ready"] = false; // dont run this block again
   }

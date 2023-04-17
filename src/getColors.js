@@ -174,20 +174,17 @@ function getColors() {
   // 7 true
 
   const saturationBias = 25;
-
   const brightnessBias = 20;
 
   let saturation = 50 * audioFeatures.predictions.mood_happy;
-
-
   let brightness = 5 * audioFeatures.predictions.mood_aggressive;
 
-  
   const c1 = hslToHex(
     mainAngle,
     saturationBias + saturation,
     brightnessBias + brightness
   );
+  
   const c2 = hslToHex(
     mainAngle + colorStepMain * 1 - colorRangeHalf,
     saturationBias + saturation,
