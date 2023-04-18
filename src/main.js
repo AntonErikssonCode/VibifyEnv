@@ -168,7 +168,7 @@ function initMeyda(file) {
         chromaHTML.innerHTML =
           "Chroma: " + keys[audioFeatures.activeChromaIndex];
         
-        // Uses the mean of the 5 lates rms values
+        // Uses the mean of the x lates rms values
         const rmsListLength = 20 * audioFeatures.predictions.mood_relaxed;
         if (rmsList.length < rmsListLength) {
           rmsList.push(audioFeatures.rms);
