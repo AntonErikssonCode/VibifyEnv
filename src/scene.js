@@ -557,7 +557,7 @@ function animate(timeStamp) {
 
     audioFeatures["essenceShapeReady"] = true;
     defaultMoveSpeed = 0.01 + audioFeatures.bpm / 1500;
-    scene.fog = new THREE.Fog(0x050505, 1, 160 + 50*audioFeatures.predictions.mood_happy);
+    scene.fog = new THREE.Fog(0x050505, 30, 160 + 50*audioFeatures.predictions.mood_happy);
     centerLight.intensity =
       (centerLight.intensity * audioFeatures.predictions.mood_happy) /
       3 /* / 6 */;

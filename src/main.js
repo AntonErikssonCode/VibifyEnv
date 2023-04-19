@@ -77,10 +77,10 @@ function initMeyda(file) {
 
         if (features.energy > 0.001) {
           // Uses the mean of the 1000 lates rms values
-          if (lowPassEnergy.length < 1000) {
+          if (lowPassEnergy.length < 50000) {
             lowPassEnergy.push(features.rms);
           }
-          if (lowPassEnergy.length >= 1000) {
+          if (lowPassEnergy.length >= 50000) {
             var theRemovedElement = lowPassEnergy.shift();
             lowPassEnergy.push(features.rms);
           }
