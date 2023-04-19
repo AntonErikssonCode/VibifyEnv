@@ -398,7 +398,7 @@ scene.add(bufferGroup);
 function spawnBuffer() {
   for (let index = 0; index < numBand; index++) {
     var size = 0.2;
-    var geoBufferBand = new THREE.SphereGeometry(size, 1, 1);
+    var geoBufferBand = new THREE.PlaneGeometry(size, size, 1, 1);
     var bufferBand = new THREE.Mesh(geoBufferBand, matBuffer);
     bufferBand.position.x = index * size * 2;
     bufferGroup.position.x = -100;
